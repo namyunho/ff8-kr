@@ -35,7 +35,24 @@ DEFAULT_MAP = (PROJECT_ROOT / "fonts" / "galmuri11_16x16_12pt"
 
 CELL = 12               # FF8 글리프 셀
 COLS, ROWS = 21, 21     # 256x252 텍스처의 격자
-PER_BANK = COLS * ROWS  # 441
+CELLS_PER_BANK = COLS * ROWS        # 441
+PER_BANK = CELLS_PER_BANK * 2       # 882 — 셀 하나에 글리프 둘이 인터리브
+
+# 2중 팔레트 인터리브
+# ----------------------------------------------------------------------
+# sub_8002EE90 / sub_8002E8F8 은 글리프 인덱스로 다음을 계산한다.
+#
+#   U = 12 * ((index >> 1) % 21)      V = 12 * ((index >> 1) / 21)
+#   CLUT = 0x3812 (index 짝수)  또는  0x3852 (index 홀수)
+#
+# 즉 셀 위치는 index>>1 로 정하고 짝/홀은 CLUT 로 가른다. 4bpp 픽셀의
+# 하위 2비트가 짝수 글리프, 상위 2비트가 홀수 글리프다. 원본 CLUT 도
+# 이 구조를 그대로 보여준다.
+#
+#   pal0 = [c0 c1 c2 c3] * 4          -> 하위 2비트만 읽는다
+#   pal1 = [c0*4 c1*4 c2*4 c3*4]      -> 상위 2비트만 읽는다
+#
+# 그래서 441칸짜리 텍스처가 882글리프를 담는다.
 TEX_W, TEX_H = 256, 252
 TIM_OFFSET = 452        # 원본 #130 과 동일
 WIDTH_TABLE_BYTES = TIM_OFFSET - 8      # 파일상 444바이트
@@ -87,11 +104,17 @@ def ink_width(cell: list[list[int]]) -> int:
 
 
 def pack_bank(cells: list[list[list[int]]], level: int) -> bytes:
-    """441개 셀을 256x252 4bpp 텍스처로 편다. level 은 0..3 중 잉크 색."""
+    """882개 글리프를 441칸 256x252 4bpp 텍스처에 인터리브해 넣는다.
+
+    글리프 index 는 `index >> 1` 번째 셀에 들어가고, 짝수는 픽셀의 하위
+    2비트, 홀수는 상위 2비트를 쓴다. level 은 0..3 중 잉크 농도다.
+    """
     texture = bytearray(TEX_W * TEX_H // 2)
     for index, cell in enumerate(cells):
-        base_x = (index % COLS) * CELL
-        base_y = (index // COLS) * CELL
+        slot = index >> 1
+        odd = index & 1
+        base_x = (slot % COLS) * CELL
+        base_y = (slot // COLS) * CELL
         for y in range(CELL):
             row = base_y + y
             for x in range(CELL):
@@ -99,10 +122,14 @@ def pack_bank(cells: list[list[list[int]]], level: int) -> bytes:
                     continue
                 column = base_x + x
                 offset = row * (TEX_W // 2) + column // 2
-                if column & 1:
-                    texture[offset] = (texture[offset] & 0x0F) | (level << 4)
-                else:
-                    texture[offset] = (texture[offset] & 0xF0) | level
+                # 픽셀 안에서의 2비트 위치
+                value = (level & 3) << (2 if odd else 0)
+                mask = 0b1100 if odd else 0b0011
+                if column & 1:                       # 바이트의 상위 니블
+                    texture[offset] = (texture[offset] & ~(mask << 4) & 0xFF) \
+                                      | (value << 4)
+                else:                                # 바이트의 하위 니블
+                    texture[offset] = (texture[offset] & ~mask & 0xFF) | value
     return bytes(texture)
 
 
@@ -159,8 +186,8 @@ def main() -> int:
     parser.add_argument("--size", type=int, default=12,
                         help="래스터 픽셀 크기. 11 은 폰트 설계 크기, "
                              "12 는 12x12 셀을 더 채운다 (기본 12)")
-    parser.add_argument("--banks", type=int, default=5,
-                        help="만들 뱅크 수 (기본 5 = 2,205칸)")
+    parser.add_argument("--banks", type=int, default=3,
+                        help="만들 뱅크 수 (기본 3 = 2,646칸으로 완성형 전체 수용)")
     parser.add_argument("--level", type=int, default=3, choices=range(4),
                         help="잉크 픽셀 값 0..3 (기본 3 = 가장 밝음)")
     parser.add_argument("--output", type=Path,
