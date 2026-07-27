@@ -14,7 +14,7 @@ FF8은 단일 MODE2/2352 데이터 트랙에 중첩 컨테이너를 쓰는 구�
 | IDA Professional 9.4 | `/Applications/IDA Professional 9.4.app` | GUI 분석, 함수·xref·타입·바이트 확인 |
 | ida-pro-mcp / idalib-mcp | `~/Library/Application Support/pipx/venvs/ida-pro-mcp/` | IDA GUI 브리지와 headless idalib MCP |
 | Ghidra 12.1.2 | `/opt/homebrew/Cellar/ghidra/12.1.2/libexec` | MIPS 디컴파일 교차검증 |
-| GhidraMCP 12.1.2 | `~/tools/ghidra-mcp/` | Ghidra GUI 브리지 (HTTP `127.0.0.1:8080`) |
+| GhidraMCP 5.14.2 | `~/Library/Application Support/GhidraMCP/5.14.2/` | Ghidra GUI 브리지 (UDS + TCP `127.0.0.1:8089`) |
 | OpenJDK 21.0.11 | `/opt/homebrew/opt/openjdk@21` | Ghidra 실행 |
 | armips 0.11.0 | `~/.local/bin/armips` | MIPS R3000 코드 조립과 심볼 출력 |
 | mkpsxiso / dumpsxiso | `~/.local/bin/` | 디스크 구조 덤프·재구성 교차검증 |
@@ -30,6 +30,37 @@ Ghidra 헤드리스 실행 파일은 Homebrew 배치상 `bin/`이 아니라 `lib
 
 ```text
 /opt/homebrew/Cellar/ghidra/12.1.2/libexec/support/analyzeHeadless
+```
+
+`scripts/run_ghidra.sh`가 이 경로와 `JAVA_HOME`을 묶어 준다. GUI는 중복 실행을
+막고, 헤드리스는 GUI가 같은 프로젝트를 잡고 있으면 거부한다.
+
+```bash
+./scripts/run_ghidra.sh                                  # GUI 실행
+./scripts/run_ghidra.sh --status                          # 실행 상태와 8089 확인
+./scripts/run_ghidra.sh --headless 0x8002E4A0,0x8002C358  # 지정 주소만 디컴파일
+```
+
+### GhidraMCP 버전과 포트 — 실측
+
+설치된 확장은 **GhidraMCP 5.14.2**이며 다음을 실측으로 확인했다.
+
+- 서버 포트는 **8089**다. `8080`은 구형 LaurieWired GhidraMCP의 포트이고
+  이 설치본에는 해당하지 않는다.
+- 서버는 **Ghidra 시작과 동시에 뜬다.** 프로그램을 열어야 포트가 열린다는
+  서술은 틀렸다. 다만 디컴파일 등 프로그램 대상 질의는 당연히 프로그램이
+  열려 있어야 한다.
+- 브리지는 TCP보다 **UDS를 먼저** 쓴다. 소켓은
+  `$TMPDIR/ghidra-mcp-$USER/ghidra-<pid>.sock`에 생긴다.
+- 브리지가 노출하는 도구는 처음에 **8개뿐**이다(`list_instances`,
+  `connect_instance`, `list_tool_groups`, `load_tool_group`,
+  `unload_tool_group`, `check_tools`, `search_tools`, `import_file`).
+  나머지 251개는 인스턴스에 붙은 뒤 **그룹 단위로 적재**된다. 도구 목록이
+  짧다고 해서 연결이 실패한 것이 아니다.
+
+```bash
+curl -s http://127.0.0.1:8089/instances     # 404 가 정상 — 라우트가 다르다
+./scripts/run_ghidra.sh --status            # 포트 개방 여부 확인
 ```
 
 ## MCP 서버
