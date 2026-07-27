@@ -78,7 +78,9 @@ PSX BIOS 폰트 활용은 기각했다. `SCPH-1001` 을 역공학한 결과 16 �
 
 | 문서 | 내용 |
 |---|---|
-| [`docs/disc1-baseline.md`](docs/disc1-baseline.md) | 원본 식별값, ISO/IMG 구조, 압축, 그래픽 자산 |
+| [`docs/roadmap.md`](docs/roadmap.md) | **이정표** — 단계별 진행 상황, 통과 조건, 위험 목록 |
+| [`docs/disc1-baseline.md`](docs/disc1-baseline.md) | 원본 식별값, ISO/IMG 구조, 모듈 적재 경로, 압축, 그래픽 자산 |
+| [`docs/external-sources.md`](docs/external-sources.md) | 외부 커뮤니티 자료의 주장별 대조 결과 |
 | [`docs/font-analysis.md`](docs/font-analysis.md) | 폰트 파일 구조, VRAM 슬롯, 폭 테이블, 텍스트 인코딩 |
 | [`docs/korean-font-feasibility.md`](docs/korean-font-feasibility.md) | 갈무리 폰트 삽입 판정과 실현 경로 |
 | [`docs/reverse-engineering-mcp.md`](docs/reverse-engineering-mcp.md) | IDA / Ghidra 병렬 운용, MCP, import 규칙 |

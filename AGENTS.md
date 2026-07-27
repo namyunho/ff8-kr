@@ -1,10 +1,15 @@
 # AGENTS.md — 파이널 판타지 VIII PS1 한국어화
 
 이 저장소는 PlayStation용 《파이널 판타지 VIII》(일본판) Disc 1의 한국어 패치를
-만든다. 현재 상태는 `README.md`, 매체·구조 기준선은 `docs/disc1-baseline.md`,
-글꼴과 문자 인코딩은 `docs/font-analysis.md`, 한글 폰트 판정은
-`docs/korean-font-feasibility.md`, 도구 운용은 `docs/reverse-engineering-mcp.md`,
-브랜치와 커밋 규칙은 `docs/git-workflow.md`를 정본으로 삼는다.
+만든다. **진행 단계와 다음 게이트는 `docs/roadmap.md`가 정본이다.** 현재 상태
+요약은 `README.md`, 매체·구조 기준선은 `docs/disc1-baseline.md`, 글꼴과 문자
+인코딩은 `docs/font-analysis.md`, 한글 폰트 판정은
+`docs/korean-font-feasibility.md`, 외부 자료 대조는 `docs/external-sources.md`,
+도구 운용은 `docs/reverse-engineering-mcp.md`, 브랜치와 커밋 규칙은
+`docs/git-workflow.md`를 정본으로 삼는다.
+
+**외부 커뮤니티 자료를 판정 근거로 쓰지 않는다.** 탐색 방향을 좁히는 데만 쓰고,
+채택 전에 이 디스크에 대조해 `docs/external-sources.md`에 결과를 남긴다.
 
 ## 하드 불변식
 
@@ -64,13 +69,22 @@ MCP 설정과 import 규칙은 `docs/reverse-engineering-mcp.md`를 따른다. `
 | 대상 | 값 |
 |---|---|
 | 부트 EXE | `SLPS_018.80`, entry `0x8001152C`, load `0x80010000`, text `0x190800` |
-| 폰트 파일 | IMG TOC #130, LBA 849, 33,764바이트 |
+| 폰트 파일 | IMG TOC #130 (`sysfnt.tdw`), LBA 849, 33,764바이트 |
+| 폰트 픽셀 오프셋 | **`0x05E4`** — CLUT 블록의 `blockSize` 1,036 이 정한다 |
 | 폰트 적재기 | `sub_8002C358` — 유일 호출자 `sub_80011CA8`, 뱅크 인자 상수 `0` |
 | 글리프 폭 | `sub_8002E3EC` — 니블 팩, 뱅크 비트 `0x400` |
 | 문자열 측정 | `sub_8002E4A0` — **텍스트 인코딩 정본** |
 | TIM 로더 | `sub_80035EC4` |
 | 폭 테이블 RAM | 뱅크0 `0x800821F8` / 뱅크1 `0x800823BC` (각 452바이트) |
 | VRAM 폰트 슬롯 | 뱅크0 `(832,256)`, CLUT `(896,256)`, 뱅크1 `(960,256)` |
+| IMG TOC 적재 | LBA 826, 1,072바이트 = 134엔트리 → RAM `0x80099400` |
+| CD 읽기 | `sub_800385E4` 요청 세터 / `sub_8003924C` 상태 머신 펌프 |
+| 아카이브 해석기 | `sub_80035C84` — 기준 `0x80099420` (= TOC#4), `아카이브 = TOC − 4` |
+| 오버레이 목적지 표 | `0x80054340` — `(u32 dest, u32 이름포인터)` × 23 |
+| 서브엔트리 디렉터리 | `0x800543F8` — `(u32 오프셋+플래그, u32 크기)`, `>> 11` 로 섹터 |
+| 메뉴 메시지 | `mngrp.bin`(TOC#22) 서브 1, LBA 98,036, 10,240B → RAM `0x801E1000` |
+| 필드 색인 | `field.bin`(TOC#2) 해제본 `+0x28668`, 1,003엔트리 `[u32 LBA][u32 크기]` |
+| 필드 텍스트 | 각 필드 DAT 의 섹션 포인터 `[8]` = MSD, `[u32 오프셋 배열]` |
 
 ## 기여 표기
 
