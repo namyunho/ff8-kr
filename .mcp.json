@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "ida-pro-mcp": {
+      "command": "/Users/namyunho/Library/Application Support/pipx/venvs/ida-pro-mcp/bin/python",
+      "args": [
+        "/Users/namyunho/Library/Application Support/pipx/venvs/ida-pro-mcp/lib/python3.14/site-packages/ida_pro_mcp/server.py"
+      ]
+    },
+    "idalib-mcp": {
+      "command": "/Users/namyunho/Library/Application Support/pipx/venvs/ida-pro-mcp/bin/idalib-mcp",
+      "args": ["--stdio"]
+    },
+    "ghidra": {
+      "command": "/Users/namyunho/tools/ghidra-mcp/venv/bin/python",
+      "args": [
+        "/Users/namyunho/tools/ghidra-mcp/bridge_mcp_ghidra.py",
+        "--transport",
+        "stdio"
+      ]
+    }
+  }
+}

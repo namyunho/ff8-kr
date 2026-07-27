@@ -1,0 +1,40 @@
+# 저작권 있는 원본 매체와 펌웨어
+roms/
+*.bin
+*.cue
+*.iso
+*.ccd
+*.chd
+*.ecm
+*.img
+*.mds
+*.pbp
+*.sbi
+*.sub
+
+# 한국어 폰트 소스는 추적한다(원본 매체가 아님)
+!fonts/**/*.bin
+
+# 생성물·추출물·역공학 작업본
+work/
+out/
+tmp/
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+
+# IDA / Ghidra 산출물
+*.i64
+*.idb
+*.id0
+*.id1
+*.id2
+*.nam
+*.til
+*.gpr
+*.rep/
+
+# 머신별 경로 재정의
+/config/original-media.local.json
+*.zip

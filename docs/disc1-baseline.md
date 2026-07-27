@@ -1,0 +1,223 @@
+# Disc 1 수정 전 역공학 기준선
+
+검토일: 2026-07-27
+대상: `Final Fantasy VIII (Japan, Asia) (Disc 1)`
+
+이 문서는 한국어 데이터를 쓰기 전에 고정한 구조 기준선이다. 여기서 "완전"은
+Disc 1의 저장 단위가 빠짐없이 분모에 들어가고, 각 단위가 알려진 종류 중
+하나로 분류됐다는 뜻이다. 게임의 모든 실행 코드나 모든 텍스트를 해독했다는
+뜻이 아니다.
+
+현재 새 바이너리 수정은 시작하지 않았다.
+
+## 원본 기준
+
+기본 원본 위치:
+
+```text
+roms/Final Fantasy VIII (Japan, Asia) (Disc 1).cue
+roms/Final Fantasy VIII (Japan, Asia) (Disc 1).bin
+```
+
+CUE는 단일 트랙이다. CDDA 트랙은 없다.
+
+```text
+FILE "Final Fantasy VIII (Japan, Asia) (Disc 1).bin" BINARY
+  TRACK 01 MODE2/2352
+    INDEX 01 00:00:00
+```
+
+| 식별값 | 값 |
+|---|---|
+| 크기 | 732,692,688바이트 |
+| raw sector | 311,519 |
+| CRC32 | `2319B365` |
+| MD5 | `cd2a9d4a92c8cea33b434fd41bbf002c` |
+| SHA-256 | `6e26677aca74e364fa90f287d0755fb3777d20d841f4d4a0917801eaa5da42eb` |
+
+표본 검사한 sector는 모두 Mode 2 Form 1이고 sync가 정상이며 subheader가
+복제돼 있다. 원본은 읽기 전용으로 취급하며 `config/original-media.json`과
+`scripts/psx_disc.py verify`가 위치와 식별값을 검증한다.
+
+## 2단 컨테이너 구조
+
+FF8은 사이버 포뮬러처럼 개별 자산을 ISO 루트에 노출하지 않는다. 바깥
+ISO9660에는 파일이 **정확히 3개**뿐이고, 게임 데이터 전부가 단일 컨테이너
+안에 들어 있다.
+
+| LBA | 크기 | 파일 |
+|---:|---:|---|
+| 23 | 68 | `/SYSTEM.CNF` |
+| 24 | 1,642,496 | `/SLPS_018.80` |
+| 826 | 635,992,064 | `/FF8DISC1.IMG` |
+
+PVD의 system identifier와 application identifier는 모두 `PLAYSTATION`이고
+volume identifier는 비어 있다. 논리 블록 수는 311,519 × 2048이다.
+
+```text
+BOOT = cdrom:\SLPS_018.80;1
+TCB = 4
+EVENT = 16
+STACK = 80200000
+```
+
+**PC판의 `menu.fs` / `Data\menu\...` 경로는 이 디스크에 존재하지 않는다.**
+PC판 자료를 참고할 때 경로 이름으로 PSX 자산을 찾으려 하면 안 된다. PSX에서는
+아래 숫자 인덱스로 접근한다.
+
+## 실행 파일
+
+부트 파일 `SLPS_018.80`의 PS-X EXE 경계:
+
+| 항목 | 값 |
+|---|---:|
+| entry | `0x8001152C` |
+| load address | `0x80010000` |
+| text size | `0x190800` |
+| file payload | `+0x800` |
+| data / bss / stack | `0` |
+| region 문자열 | `Sony Computer Entertainment Inc. for Japan area` |
+
+파일 전체가 header + text이며 별도 data section이 없다. IDA에서 함수 1,472개가
+인식되고 그중 417개에 PsyQ 런타임 signature가 적용된다.
+
+## IMG TOC — 파일 분모
+
+`FF8DISC1.IMG`의 **첫 섹터가 곧 목차**다. 2048바이트를
+`(u32 절대 LBA, u32 바이트 크기)` 쌍 256개로 읽으며, 그중 **134개가 유효**하다.
+파일명 문자열은 없다.
+
+배치 규칙은 `다음 엔트리 LBA = 현재 LBA + ceil(size / 2048)`이며 134개 중
+125개가 이를 만족한다. 규칙이 끊기는 8곳이 그룹 경계다.
+
+LBA 범위는 827..99,305이고 모두 디스크 범위 안에 있다. **TOC가 담는 값은 IMG
+내부 상대 오프셋이 아니라 디스크 절대 LBA다.** 자산 크기를 바꾸면 뒤 파일이
+밀리고 TOC 전체를 다시 써야 하므로, 기본 전략은 크기를 유지하는 in-place
+교체다.
+
+### 이 TOC는 디스크 전체의 분모가 아니다
+
+TOC 134개가 덮는 섹터는 **10,161개(약 20MB)** 뿐이다. 디스크는 311,519섹터
+(약 732MB)이므로 **300,532섹터(약 615MB)가 이 TOC 밖에 있다.**
+
+밖의 구역을 표본 조사한 결과는 다음과 같다.
+
+| 구역 | 내용 |
+|---|---|
+| LBA 99,306 부근 | u32 오프셋 테이블을 가진 추가 아카이브 |
+| LBA 약 180,000 이상 | 매직 `SMR` 로 시작하는 **FMV 동영상 스트림** |
+| LBA 311,500 부근 | Mode 2 **Form 2** 섹터 (스트리밍 미디어 꼬리) |
+
+표본 1,000섹터 중 Form 2는 0개였고 대부분 Form 1이다. FF8의 FMV가 Form 1
+`SMR` 컨테이너를 쓴다는 뜻이다.
+
+**따라서 "파일 분모가 닫혔다"고 말할 수 있는 범위는 TOC가 덮는 20MB뿐이다.**
+폰트·코드·필드·사운드는 이 안에 있으므로 한국어화 1단계에는 충분하지만,
+디스크 전체를 재구성하려면 TOC 밖 구역의 인덱스를 따로 찾아야 한다.
+
+### 종류별 분류
+
+`scripts/psx_disc.py toc`가 선두 바이트로 판정한 결과다.
+
+| 종류 | 개수 | 판정 근거 |
+|---|---:|---|
+| `field-archive` | 98 | 선두가 `02 00 00 00` + `14 00 00 00` 인 미니 아카이브 |
+| `unknown` | 14 | 아직 판정 근거가 없는 엔트리 |
+| `mips-overlay` | 12 | 선두가 `addiu $sp, $sp, -N` 프롤로그 |
+| `lzss` | 4 | 선두 u32 == 전체 크기 − 4 |
+| `akao-sound` | 4 | 매직 `AKAO` |
+| `font` | 1 | `[u32 표 오프셋][u32 TIM 오프셋]` 구조 |
+| `tim` | 1 | 매직 `0x00000010` |
+
+합계 134. 판정 근거가 없는 14개는 **추측으로 채우지 않고 `unknown`으로 둔다.**
+
+### 주요 엔트리
+
+| # | LBA | 크기 | 내용 |
+|---:|---:|---:|---|
+| 0 | 827 | 1,176 | MIPS 코드 |
+| 1 | 828 | 4,146 | LZSS → 6,960B, Shift-JIS 텍스트 포함 |
+| 2 | 33,249 | 102,500 | LZSS → 191,824B |
+| 4..21 | 97,859.. | — | MIPS 오버레이 묶음 |
+| 22 | 98,035 | 2,168,832 | 8bpp TIM 38장 (256×192 / 320×216) |
+| 24 | 971 | 683,003 | LZSS → 1,091,704B, 트리플 트라이어드 모듈 |
+| 25 | 99,096 | 80,376 | ASCII 빌드 타임스탬프 `Jan 10 1999` |
+| 26 | 99,136 | 346,560 | RAM 포인터 배열 (`0x8009BDB8` 계열) |
+| 27 | 1,305 | 118,826 | LZSS → 198,584B, 월드맵 모듈 |
+| 28..30, 133 | 885.. | — | `AKAO` 사운드 시퀀스 |
+| 31..128 | 87,862.. | — | 필드 아카이브 98개 |
+| **130** | **849** | **33,764** | **12×12 폰트 (아래 참조)** |
+| 131 | 866 | 33,312 | 4bpp 256×256 TIM, 베이크드 UI 그래픽 |
+
+## 압축
+
+압축된 엔트리는 `[u32 원본 크기][LZSS 스트림]` 형식이다. LZSS는 Okumura 계열,
+4096바이트 링버퍼, 초기 위치 `0xFEE`, 제어 바이트 8비트(LSB 우선), 참조는
+2바이트로 `offset = lo | ((hi & 0xF0) << 4)`, `length = (hi & 0x0F) + 3`이다.
+
+`scripts/psx_disc.py extract`가 해제까지 수행한다. 4개 엔트리에서 1.60~1.87배로
+해제되며, #27은 다음과 같은 깨끗한 경로 문자열을 낸다.
+
+```text
+\DAT\TEXL.OBJ;1   \DAT\WMY.OBJ;1    \DAT\WMX.OBJ;1
+\DAT\RAIL.OBJ;1   \DAT\WMSET.OBJ;1  \DAT\MUSIC0..5.OBJ;1
+x:\JPPC\WORLD     x:\jppc\world\esk
+```
+
+**TOC 최상위에서 LZSS인 엔트리는 4개뿐이다.** 나머지는 비압축이거나 내부
+서브아카이브 단위로 압축된다. 후자는 아직 조사하지 않았다.
+
+## 그래픽 자산
+
+TIM은 표준 형식이며 게임의 로더는 `sub_80035EC4`다. 다음을 확인했다.
+
+```c
+if (*(BYTE *)file == 0x10) {              // TIM 매직
+    clut = file + 8;
+    if (*(BYTE *)(file + 4) & 8)          // flag & 8 → CLUT 있음
+        image = file + *(DWORD *)(file + 8) + 8;
+    else { clut = 0; image = file + 8; }
+    if (clut) { LoadImage(clut + 4, clut + 12); DrawSync(0); }
+    return LoadImage(image + 4, image + 12);
+}
+```
+
+즉 **RECT(`blk + 4`)와 픽셀 포인터(`blk + 12`)만 사용하고 `blockSize`는 쓰지
+않는다.** 파일에 기록된 `blockSize`가 실제 데이터 길이와 다른 경우가 있으므로
+RECT를 정본으로 삼는다.
+
+번역 대상이 확인된 베이크드 그래픽:
+
+- 엔트리 #24(트리플 트라이어드): `You Win!` / `You Lose...` / `Draw` /
+  `SAME!` / `PLUS!` / `COMBO!` 와 카드 숫자
+- 엔트리 #131: 「スコール」「リノア」「バイブレーション」「ON / OFF」
+  「Hit!!」「Trigger!!」「Perfect!!」 와 메뉴 프레임
+- 엔트리 #22: 8bpp 256×192 / 320×216 이미지 38장
+
+개별 그래픽의 편집 게이트는 실제 화면 소비 경로(Texpage/UV/CLUT, VRAM을 마지막
+으로 채운 전송)를 확인하기 전까지 닫혀 있다. 구조가 파악됐다는 이유만으로
+일괄 수정하지 않는다.
+
+## 아직 닫히지 않은 항목
+
+1. **텍스트 인코딩 테이블** — 글리프 인덱스와 문자 대응이 미확정이다.
+   대사 추출의 전제 조건이다.
+2. **`unknown` 14개 엔트리** — 판정 근거가 없다.
+3. **필드 아카이브 내부 구조** — 98개 파일의 서브 엔트리를 열지 않았다.
+4. **452바이트 폰트 부속 테이블의 의미** — `docs/font-analysis.md` 참조.
+5. **런타임 검증** — 실행기에서 VRAM·RAM을 확인하지 않았다. 현재 판정은
+   전부 정적 분석과 두 디컴파일러의 교차검증에 근거한다.
+
+## 재현 명령
+
+```bash
+python3 scripts/psx_disc.py verify
+python3 scripts/psx_disc.py iso
+python3 scripts/psx_disc.py toc
+python3 scripts/psx_disc.py extract --index 1 2 24 27
+python3 scripts/psx_disc.py report --output work/analysis/disc1-structure.json
+python3 scripts/build_ida_db.py work/disc1/SLPS_018.80 --force
+```
+
+`work/`의 추출물·DB·이미지는 커밋하지 않는다. 저장소에는 생성기, 주소·수량·
+해시와 판정만 남긴다.

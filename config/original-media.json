@@ -1,0 +1,12 @@
+{
+  "disc1": {
+    "cue": "roms/Final Fantasy VIII (Japan, Asia) (Disc 1).cue",
+    "bin": "roms/Final Fantasy VIII (Japan, Asia) (Disc 1).bin",
+    "track_mode": "MODE2/2352",
+    "size": 732692688,
+    "sectors": 311519,
+    "crc32": "2319B365",
+    "md5": "cd2a9d4a92c8cea33b434fd41bbf002c",
+    "sha256": "6e26677aca74e364fa90f287d0755fb3777d20d841f4d4a0917801eaa5da42eb"
+  }
+}
