@@ -11,12 +11,17 @@
     0x0000     4      u32 = 8    (폭 테이블 오프셋)
     0x0004     4      u32 = 452  (TIM 헤더 오프셋)
     0x0008   452      글리프 폭 테이블 (니블 팩, 뱅크당 904 엔트리)
-    0x01C4    12      TIM 헤더  magic 0x10 / flag 0x08 (4bpp + CLUT)
-    0x01D0  1024      CLUT
-    0x05E4    12      IMG 블록 헤더  RECT (x, y) 64 x 252
-    0x05F0 32256      픽셀 (256 x 252, 4bpp)
+    0x01C4     8      TIM 헤더  magic 0x10 / flag 0x08 (4bpp + CLUT)
+    0x01CC    12      CLUT 블록 헤더  blockSize = 1036
+    0x01D8  1024      CLUT 데이터
+    0x05D8    12      IMG 블록 헤더  RECT (x, y) 64 x 252
+    0x05E4 32256      픽셀 (256 x 252, 4bpp)
 
-게임은 TIM 의 RECT 를 무시하고 하드코딩된 VRAM 좌표를 쓰므로, 여기 적는 RECT
+적재기 `sub_8002C358` 은 **블록을 건너뛸 때 `blockSize` 를 쓰고** VRAM 전송량은
+RECT 로 정한다. 그래서 CLUT 블록의 `blockSize` 1036 이 픽셀 시작 위치를
+결정한다. 이 값을 바꾸면 픽셀 시작이 밀려 글리프가 통째로 어긋난다.
+
+게임은 TIM 의 RECT 좌표를 무시하고 하드코딩된 VRAM 좌표를 쓰므로, 여기 적는
 좌표는 참고값이다. 자세한 내용은 docs/font-analysis.md 를 본다.
 """
 
