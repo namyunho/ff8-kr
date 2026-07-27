@@ -123,6 +123,53 @@ FF8_DECOMP_TARGETS="0x80035EC4,0x8002C358" \
   -scriptPath scripts/ghidra -postScript DecompileTargets.java
 ```
 
+## 오버레이 적재 base 역산
+
+IMG TOC 의 오버레이는 헤더가 없어 load address 를 모른다. 잘못된 base 로 열면
+주소가 전부 어긋나 분석이 무의미해진다.
+
+`jal` 이 절대 주소를 인코딩한다는 점을 이용해 역산한다. 올바른 base 에서는
+오버레이 내부를 가리키는 `jal` 타깃이 **함수 프롤로그(`addiu $sp, $sp, -N`)**
+에 집중된다. 틀린 base 에서는 적중률이 몇 퍼센트로 떨어지므로 판정이 선명하다.
+
+```bash
+python3 scripts/psx_disc.py extract --index 12
+python3 scripts/wrap_psx_overlay.py work/extracted/img_012_lba97933.bin --solve
+```
+
+실측 결과다. 1순위와 2순위가 15배 이상 벌어진다.
+
+| 오버레이 | base | 내부 jal | 프롤로그 적중 | 차순위 |
+|---|---|---:|---:|---:|
+| #12 (LBA 97,933) | `0x801E4000` | 248 | **65.7 %** | 4.1 % |
+| #4 (LBA 97,859) | `0x801F0000` | 285 | **64.6 %** | 1.8 % |
+
+base 가 정해지면 조사용 PS-X EXE 로 감싸 기존 도구 흐름에 태운다.
+
+```bash
+python3 scripts/wrap_psx_overlay.py work/extracted/img_012_lba97933.bin \
+    --base 0x801E4000
+python3 scripts/build_ida_db.py work/overlay/img_012_lba97933.psxexe \
+    --output work/ida/ov12.i64 --force
+```
+
+오버레이는 서로 다른 base 를 쓰므로 **DB 를 합치지 않는다.** 같은 파일이라도
+적재 위치가 다르면 별도 DB 로 연다.
+
+### 부트 EXE 함수 호출 지점 찾기
+
+오버레이는 부트 EXE 함수를 고정 주소로 호출한다. `jal` 은 대상 주소를 26비트로
+인코딩하므로 특정 함수 호출은 **디스크 상에서 유일한 4바이트 패턴**이 된다.
+
+```python
+instr = (0x03 << 26) | ((target >> 2) & 0x03FFFFFF)
+pattern = struct.pack("<I", instr)      # 4바이트 정렬 위치만 유효
+```
+
+예: `jal 0x8002D670` → `9C B5 00 0C`. 이 패턴으로 디스크를 훑으면 해당 API 를
+쓰는 오버레이가 바로 나온다. 4바이트 정렬이 아닌 일치는 데이터 우연이므로
+버린다.
+
 ## 도구 선택 원칙
 
 IDA/idalib과 Ghidra는 대체 관계가 아니다.
