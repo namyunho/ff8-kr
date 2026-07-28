@@ -3,27 +3,27 @@
   "entries": {
     "74": {
       "char": "カ",
-      "source": "read"
+      "source": "confirmed"
     },
     "76": {
       "char": "キ",
-      "source": "read"
+      "source": "confirmed"
     },
     "78": {
       "char": "ク",
-      "source": "read"
+      "source": "confirmed"
     },
     "80": {
       "char": "ケ",
-      "source": "read"
+      "source": "confirmed"
     },
     "82": {
       "char": "コ",
-      "source": "read"
+      "source": "confirmed"
     },
     "38": {
       "char": "ド",
-      "source": "read"
+      "source": "confirmed"
     },
     "150": {
       "char": "ワ",
@@ -35,7 +35,7 @@
     },
     "106": {
       "char": "ア",
-      "source": "read"
+      "source": "confirmed"
     },
     "136": {
       "char": "リ",
@@ -43,7 +43,7 @@
     },
     "114": {
       "char": "ナ",
-      "source": "read"
+      "source": "confirmed"
     },
     "128": {
       "char": "ム",
@@ -51,7 +51,7 @@
     },
     "14": {
       "char": "グ",
-      "source": "read"
+      "source": "confirmed"
     },
     "223": {
       "char": "ー",
@@ -1462,7 +1462,7 @@
       "source": "read"
     },
     "577": {
-      "char": "客",
+      "char": "各",
       "source": "read"
     },
     "578": {
@@ -2886,7 +2886,7 @@
       "source": "read"
     },
     "816": {
-      "char": "間",
+      "char": "聞",
       "source": "read"
     },
     "817": {
@@ -3135,6 +3135,386 @@
     },
     "879": {
       "char": "約",
+      "source": "read"
+    },
+    "129": {
+      "char": "む",
+      "source": "read"
+    },
+    "130": {
+      "char": "メ",
+      "source": "read"
+    },
+    "131": {
+      "char": "め",
+      "source": "read"
+    },
+    "132": {
+      "char": "モ",
+      "source": "read"
+    },
+    "133": {
+      "char": "も",
+      "source": "read"
+    },
+    "134": {
+      "char": "ラ",
+      "source": "read"
+    },
+    "135": {
+      "char": "ら",
+      "source": "read"
+    },
+    "137": {
+      "char": "り",
+      "source": "read"
+    },
+    "139": {
+      "char": "る",
+      "source": "read"
+    },
+    "140": {
+      "char": "レ",
+      "source": "read"
+    },
+    "141": {
+      "char": "れ",
+      "source": "read"
+    },
+    "142": {
+      "char": "ロ",
+      "source": "read"
+    },
+    "143": {
+      "char": "ろ",
+      "source": "read"
+    },
+    "144": {
+      "char": "ヤ",
+      "source": "read"
+    },
+    "145": {
+      "char": "や",
+      "source": "read"
+    },
+    "146": {
+      "char": "ユ",
+      "source": "read"
+    },
+    "147": {
+      "char": "ゆ",
+      "source": "read"
+    },
+    "148": {
+      "char": "ヨ",
+      "source": "read"
+    },
+    "149": {
+      "char": "よ",
+      "source": "read"
+    },
+    "151": {
+      "char": "わ",
+      "source": "read"
+    },
+    "152": {
+      "char": "ン",
+      "source": "read"
+    },
+    "153": {
+      "char": "ん",
+      "source": "read"
+    },
+    "154": {
+      "char": "ヲ",
+      "source": "read"
+    },
+    "155": {
+      "char": "を",
+      "source": "read"
+    },
+    "156": {
+      "char": "ッ",
+      "source": "read"
+    },
+    "157": {
+      "char": "っ",
+      "source": "read"
+    },
+    "158": {
+      "char": "ャ",
+      "source": "read"
+    },
+    "159": {
+      "char": "ゃ",
+      "source": "read"
+    },
+    "160": {
+      "char": "ュ",
+      "source": "read"
+    },
+    "161": {
+      "char": "ゅ",
+      "source": "read"
+    },
+    "162": {
+      "char": "ョ",
+      "source": "read"
+    },
+    "163": {
+      "char": "ょ",
+      "source": "read"
+    },
+    "164": {
+      "char": "ァ",
+      "source": "read"
+    },
+    "165": {
+      "char": "ぁ",
+      "source": "read"
+    },
+    "166": {
+      "char": "ィ",
+      "source": "read"
+    },
+    "167": {
+      "char": "ぃ",
+      "source": "read"
+    },
+    "168": {
+      "char": "ゥ",
+      "source": "read"
+    },
+    "169": {
+      "char": "ぅ",
+      "source": "read"
+    },
+    "170": {
+      "char": "ェ",
+      "source": "read"
+    },
+    "171": {
+      "char": "ぇ",
+      "source": "read"
+    },
+    "172": {
+      "char": "ォ",
+      "source": "read"
+    },
+    "173": {
+      "char": "ぉ",
+      "source": "read"
+    },
+    "174": {
+      "char": "A",
+      "source": "read"
+    },
+    "175": {
+      "char": "B",
+      "source": "read"
+    },
+    "176": {
+      "char": "C",
+      "source": "read"
+    },
+    "177": {
+      "char": "D",
+      "source": "read"
+    },
+    "178": {
+      "char": "E",
+      "source": "read"
+    },
+    "179": {
+      "char": "F",
+      "source": "read"
+    },
+    "180": {
+      "char": "G",
+      "source": "read"
+    },
+    "181": {
+      "char": "H",
+      "source": "read"
+    },
+    "182": {
+      "char": "I",
+      "source": "read"
+    },
+    "183": {
+      "char": "J",
+      "source": "read"
+    },
+    "184": {
+      "char": "K",
+      "source": "read"
+    },
+    "185": {
+      "char": "L",
+      "source": "read"
+    },
+    "186": {
+      "char": "M",
+      "source": "read"
+    },
+    "187": {
+      "char": "N",
+      "source": "read"
+    },
+    "188": {
+      "char": "O",
+      "source": "read"
+    },
+    "189": {
+      "char": "P",
+      "source": "read"
+    },
+    "190": {
+      "char": "Q",
+      "source": "read"
+    },
+    "191": {
+      "char": "R",
+      "source": "read"
+    },
+    "192": {
+      "char": "S",
+      "source": "read"
+    },
+    "193": {
+      "char": "T",
+      "source": "read"
+    },
+    "194": {
+      "char": "U",
+      "source": "read"
+    },
+    "195": {
+      "char": "V",
+      "source": "read"
+    },
+    "196": {
+      "char": "W",
+      "source": "read"
+    },
+    "197": {
+      "char": "X",
+      "source": "read"
+    },
+    "198": {
+      "char": "Y",
+      "source": "read"
+    },
+    "199": {
+      "char": "Z",
+      "source": "read"
+    },
+    "200": {
+      "char": "!",
+      "source": "read"
+    },
+    "201": {
+      "char": "?",
+      "source": "read"
+    },
+    "202": {
+      "char": "…",
+      "source": "read"
+    },
+    "203": {
+      "char": "+",
+      "source": "read"
+    },
+    "204": {
+      "char": "−",
+      "source": "read"
+    },
+    "205": {
+      "char": "=",
+      "source": "read"
+    },
+    "206": {
+      "char": "※",
+      "source": "read"
+    },
+    "207": {
+      "char": "/",
+      "source": "read"
+    },
+    "208": {
+      "char": "%",
+      "source": "read"
+    },
+    "209": {
+      "char": "&",
+      "source": "read"
+    },
+    "210": {
+      "char": "「",
+      "source": "read"
+    },
+    "211": {
+      "char": "」",
+      "source": "read"
+    },
+    "212": {
+      "char": "(",
+      "source": "read"
+    },
+    "213": {
+      "char": ")",
+      "source": "read"
+    },
+    "214": {
+      "char": "収",
+      "source": "read"
+    },
+    "215": {
+      "char": "容",
+      "source": "read"
+    },
+    "216": {
+      "char": "所",
+      "source": "read"
+    },
+    "217": {
+      "char": "駅",
+      "source": "read"
+    },
+    "218": {
+      "char": "・",
+      "source": "read"
+    },
+    "219": {
+      "char": ".",
+      "source": "read"
+    },
+    "220": {
+      "char": ",",
+      "source": "read"
+    },
+    "221": {
+      "char": ":",
+      "source": "read"
+    },
+    "222": {
+      "char": "～",
+      "source": "read"
+    },
+    "533": {
+      "char": "嘯",
+      "source": "read"
+    },
+    "545": {
+      "char": "翼",
+      "source": "read"
+    },
+    "602": {
+      "char": "遺",
+      "source": "read"
+    },
+    "864": {
+      "char": "敷",
       "source": "read"
     }
   }

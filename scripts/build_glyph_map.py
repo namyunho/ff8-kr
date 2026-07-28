@@ -64,11 +64,17 @@ def save_map(document: dict) -> None:
 
 
 def seed_confirmed(document: dict) -> int:
+    """확정값을 되돌린다.
+
+    같은 문자를 담은 시트를 `--ingest` 하면 출처가 `read` 로 덮인다. 문서에서
+    검증한 항목이라는 표시가 사라지므로 값이 같아도 출처까지 다시 세운다.
+    """
+    entry = {"source": "confirmed"}
     added = 0
     for index, char in CONFIRMED.items():
         key = str(index)
-        if document["entries"].get(key, {}).get("char") != char:
-            document["entries"][key] = {"char": char, "source": "confirmed"}
+        if document["entries"].get(key) != {"char": char, **entry}:
+            document["entries"][key] = {"char": char, **entry}
             added += 1
     return added
 
