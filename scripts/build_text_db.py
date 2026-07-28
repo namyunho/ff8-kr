@@ -53,7 +53,23 @@ def dat_pointers(dat: bytes) -> tuple[int, ...] | None:
     return pointers
 
 
-def message_records(msd: bytes, glyphs: GT.GlyphMap) -> tuple[list[dict], int]:
+def bank1_for(index: int, msd: bytes, glyphs: GT.GlyphMap) -> GT.Bank1Map | None:
+    """이 필드의 뱅크1 표. MIM 은 3종 세트에서 DAT 바로 앞이다."""
+    slots = {token[1] & ~GT.BANK1
+             for offset in FT.message_offsets(msd)
+             for token in FT.tokenize(msd, offset)
+             if token[0] == "g" and token[1] & GT.BANK1}
+    if not slots:
+        return None
+    try:
+        font = FT.field_font(FT.load_entry(index - 1))
+    except Exception:
+        return None
+    return GT.Bank1Map.build(font, slots, glyphs) if font else None
+
+
+def message_records(msd: bytes, glyphs: GT.GlyphMap,
+                    bank1: GT.Bank1Map | None) -> tuple[list[dict], int]:
     records, broken = [], 0
     for index, offset in enumerate(FT.message_offsets(msd)):
         end = msd.find(b"\x00", offset)
@@ -61,8 +77,8 @@ def message_records(msd: bytes, glyphs: GT.GlyphMap) -> tuple[list[dict], int]:
             end = len(msd)
         data = bytes(msd[offset:end])
         tokens = FT.tokenize(msd, offset)
-        text = GT.decode(data, glyphs)
-        if GT.encode(text, glyphs) != data:
+        text = GT.decode(data, glyphs, bank1)
+        if GT.encode(text, glyphs, bank1) != data:
             broken += 1
             text = ""
         records.append({
@@ -98,7 +114,8 @@ def build(glyphs: GT.GlyphMap) -> tuple[list[dict], dict]:
             # 대사가 없는 필드다. MSD 섹션 자체가 비어 있다.
             stats["empty"] += 1
             continue
-        records, broken = message_records(msd, glyphs)
+        records, broken = message_records(msd, glyphs,
+                                          bank1_for(index, msd, glyphs))
         stats["messages"] += len(records)
         stats["broken"] += broken
         stats["bank1"] += sum(r["ja"].count("{b1:") for r in records)
@@ -129,8 +146,8 @@ def main() -> int:
     print(f"  그중 MSD 가 비어 대사가 없는 필드 {stats['empty']}개")
     print(f"  메시지 {stats['messages']:,}건, 왕복 실패 {stats['broken']}건")
     print(f"  이름을 못 읽은 필드 {stats['unnamed']}개")
-    print(f"  필드 전용 폰트(뱅크1) 글리프 {stats['bank1']:,}개"
-          " — 뱅크0 표의 대상이 아니다")
+    print(f"  아직 문자를 모르는 뱅크1 글리프 {stats['bank1']:,}개"
+          " — data/glyph-map-bank1.json 을 채우면 줄어든다")
 
     if stats["broken"]:
         print("왕복에 실패한 메시지가 있어 쓰지 않는다.")

@@ -49,6 +49,35 @@ TOKEN = re.compile(r"\{(?:b1:(\d+)|g:(\d+)|"
 LEADS = ((0x19, 224, 192), (0x1A, 448, 416), (0x1B, 672, 640))
 
 
+class Bank1Map:
+    """한 필드의 뱅크1 글리프 ↔ 문자.
+
+    뱅크1 은 필드마다 내용이 다르므로 인덱스가 아니라 **비트맵**으로 표를 찾는다.
+    `data/glyph-map-bank1.json` 이 정본이고 키는 셀 값 해시다.
+
+    뱅크0 으로도 낼 수 있는 문자는 일부러 풀지 않는다. 풀어 버리면 그 문자를
+    다시 바이트로 되돌릴 때 뱅크0 과 뱅크1 중 어느 쪽이었는지 알 수 없다.
+    """
+
+    def __init__(self, char: dict[int, str]):
+        self.char = char
+        self.index: dict[str, int] = {}
+        for slot in sorted(char):
+            self.index.setdefault(char[slot], slot)
+
+    @classmethod
+    def build(cls, font, slots, glyphs: "GlyphMap") -> "Bank1Map":
+        import build_bank1_map as B1
+
+        table = B1.load_map()["entries"]
+        char = {}
+        for slot in slots:
+            entry = table.get(B1.shape_key(font.glyph(slot)))
+            if entry and entry["char"] not in glyphs.index:
+                char[slot] = entry["char"]
+        return cls(char)
+
+
 class GlyphMap:
     """인덱스 ↔ 문자. 같은 문자가 둘 이상이면 작은 인덱스를 표준으로 삼는다."""
 
@@ -68,7 +97,7 @@ class GlyphMap:
         return char is not None and self.index[char] == index
 
 
-def decode(data: bytes, glyphs: GlyphMap) -> str:
+def decode(data: bytes, glyphs: GlyphMap, bank1: Bank1Map | None = None) -> str:
     out: list[str] = []
     for token in FT.tokenize(data, 0):
         if token[0] == "ctrl":
@@ -78,7 +107,9 @@ def decode(data: bytes, glyphs: GlyphMap) -> str:
             continue
         index = token[1]
         if index & BANK1:
-            out.append(f"{{b1:{index & ~BANK1}}}")
+            slot = index & ~BANK1
+            char = bank1.char.get(slot) if bank1 else None
+            out.append(char if char else f"{{b1:{slot}}}")
         elif glyphs.is_canonical(index):
             out.append(glyphs.char[index])
         elif index in glyphs.char:
@@ -105,27 +136,31 @@ def glyph_bytes(index: int, bank1: bool = False) -> bytes:
     raise ValueError(f"범위 밖 글리프 인덱스: {index}")
 
 
-def encode(text: str, glyphs: GlyphMap) -> bytes:
+def encode(text: str, glyphs: GlyphMap, bank1: Bank1Map | None = None) -> bytes:
     out = bytearray()
     pos = 0
     while pos < len(text):
         match = TOKEN.match(text, pos)
         if match:
-            bank1, raw_index, code, param = match.groups()
+            # 매개변수 `bank1` 을 가리지 않도록 다른 이름을 쓴다.
+            b1_slot, raw_index, code, param = match.groups()
             if code is not None:
                 out.append(int(code, 16))
                 if param is not None:
                     out.append(int(param, 16))
-            elif bank1 is not None:
-                out += glyph_bytes(int(bank1), bank1=True)
+            elif b1_slot is not None:
+                out += glyph_bytes(int(b1_slot), bank1=True)
             else:
                 out += glyph_bytes(int(raw_index))
             pos = match.end()
             continue
         char = text[pos]
-        if char not in glyphs.index:
+        if char in glyphs.index:
+            out += glyph_bytes(glyphs.index[char])
+        elif bank1 and char in bank1.index:
+            out += glyph_bytes(bank1.index[char], bank1=True)
+        else:
             raise ValueError(f"대응표에 없는 문자: {char!r} (위치 {pos})")
-        out += glyph_bytes(glyphs.index[char])
         pos += 1
     return bytes(out)
 

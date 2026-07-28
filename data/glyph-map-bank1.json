@@ -1,0 +1,198 @@
+{
+  "bank": 1,
+  "note": "키는 12x12 셀 값의 해시 앞 12자리다. 뱅크1 인덱스는 필드마다 뜻이 달라 키가 될 수 없다.",
+  "entries": {
+    "4dd31bcaf996": {
+      "char": "】",
+      "source": "read"
+    },
+    "6ce3c8d6ad61": {
+      "char": "【",
+      "source": "read"
+    },
+    "d845e89829a9": {
+      "char": "戻",
+      "source": "read"
+    },
+    "2514b6c58c9e": {
+      "char": "日",
+      "source": "read"
+    },
+    "c8247c68d06a": {
+      "char": "■",
+      "source": "read"
+    },
+    "f2c4ec627e43": {
+      "char": "徒",
+      "source": "read"
+    },
+    "e0b37d82aba0": {
+      "char": "a",
+      "source": "read"
+    },
+    "5f1186936a69": {
+      "char": "様",
+      "source": "read"
+    },
+    "7365fec09b35": {
+      "char": "旅",
+      "source": "read"
+    },
+    "a0f9dd56944c": {
+      "char": "委",
+      "source": "read"
+    },
+    "f9092957d0da": {
+      "char": "o",
+      "source": "read"
+    },
+    "2b385f70083a": {
+      "char": "年",
+      "source": "read"
+    },
+    "6185aa965c05": {
+      "char": "t",
+      "source": "read"
+    },
+    "f6415d84bc45": {
+      "char": "送",
+      "source": "read"
+    },
+    "2dd2b0a5e62b": {
+      "char": "令",
+      "source": "read"
+    },
+    "13338247785b": {
+      "char": "張",
+      "source": "read"
+    },
+    "867aac903783": {
+      "char": "任",
+      "source": "read"
+    },
+    "c39d1285a5a0": {
+      "char": "◎",
+      "source": "read"
+    },
+    "3e5685807272": {
+      "char": "服",
+      "source": "read"
+    },
+    "8859296328c2": {
+      "char": "仕",
+      "source": "read"
+    },
+    "41fbbf9b3774": {
+      "char": "i",
+      "source": "read"
+    },
+    "50a2b7d762ce": {
+      "char": "s",
+      "source": "read"
+    },
+    "f4f2c328a291": {
+      "char": "奴",
+      "source": "read"
+    },
+    "58bc73303ad5": {
+      "char": "考",
+      "source": "read"
+    },
+    "3b7617643a73": {
+      "char": "派",
+      "source": "read"
+    },
+    "5d762c8350b1": {
+      "char": "n",
+      "source": "read"
+    },
+    "9927efedfe4c": {
+      "char": "到",
+      "source": "read"
+    },
+    "9f686a8c338c": {
+      "char": "彼",
+      "source": "read"
+    },
+    "d9b3ce3be515": {
+      "char": "夫",
+      "source": "read"
+    },
+    "02567fa97c13": {
+      "char": "僕",
+      "source": "read"
+    },
+    "21e450c22889": {
+      "char": "坊",
+      "source": "read"
+    },
+    "84fa0ee74c29": {
+      "char": "護",
+      "source": "read"
+    },
+    "c17c341d4175": {
+      "char": "丈",
+      "source": "read"
+    },
+    "c5a89346088b": {
+      "char": "r",
+      "source": "read"
+    },
+    "36d440cda7c6": {
+      "char": "u",
+      "source": "read"
+    },
+    "d9a4a7249624": {
+      "char": "衛",
+      "source": "read"
+    },
+    "93841316e47e": {
+      "char": "替",
+      "source": "read"
+    },
+    "d5635be20eea": {
+      "char": "父",
+      "source": "read"
+    },
+    "9a903cd71b36": {
+      "char": "観",
+      "source": "read"
+    },
+    "84b3a1d867ac": {
+      "char": "□",
+      "source": "read"
+    },
+    "8bb0ca5b5cfa": {
+      "char": "登",
+      "source": "read"
+    },
+    "e024059afd6b": {
+      "char": "拡",
+      "source": "read"
+    },
+    "40a987c769aa": {
+      "char": "飲",
+      "source": "read"
+    },
+    "6ebc75548bea": {
+      "char": "緒",
+      "source": "read"
+    },
+    "7fa007bc1f42": {
+      "char": "若",
+      "source": "read"
+    },
+    "c56936d53f76": {
+      "char": "輩",
+      "source": "read"
+    },
+    "c7adbdbee68d": {
+      "char": "◆",
+      "source": "read"
+    },
+    "e75db7697ab5": {
+      "char": "然",
+      "source": "read"
+    }
+  }
+}
