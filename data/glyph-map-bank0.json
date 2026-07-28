@@ -550,23 +550,23 @@
       "source": "read"
     },
     "347": {
-      "char": "襲",
+      "char": "臭",
       "source": "read"
     },
     "348": {
-      "char": "集",
+      "char": "襲",
       "source": "read"
     },
     "349": {
-      "char": "出",
+      "char": "集",
       "source": "read"
     },
     "350": {
-      "char": "術",
+      "char": "出",
       "source": "read"
     },
     "351": {
-      "char": "瞬",
+      "char": "術",
       "source": "read"
     },
     "352": {
@@ -2618,7 +2618,7 @@
       "source": "read"
     },
     "749": {
-      "char": "償",
+      "char": "後",
       "source": "read"
     },
     "750": {
@@ -3426,7 +3426,7 @@
       "source": "read"
     },
     "204": {
-      "char": "−",
+      "char": "-",
       "source": "read"
     },
     "205": {
@@ -3515,6 +3515,10 @@
     },
     "864": {
       "char": "敷",
+      "source": "read"
+    },
+    "63": {
+      "char": " ",
       "source": "read"
     }
   }

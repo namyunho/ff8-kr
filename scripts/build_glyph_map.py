@@ -119,8 +119,15 @@ def render_sheet(font: FT.Font, start: int, count: int, path: Path) -> None:
     image.save(path)
 
 
+# 탭 구분 파일에서는 공백을 그대로 적을 수 없다. 빈 칸과 구분되지 않는다.
+ESCAPES = {"\\s": " "}
+
+
 def ingest(document: dict, path: Path) -> tuple[int, list[str]]:
-    """`인덱스<탭>문자` 줄을 읽어 합친다. 빈 문자는 건너뛴다."""
+    """`인덱스<탭>문자` 줄을 읽어 합친다. 빈 문자는 건너뛴다.
+
+    문자 자리에 `\\s` 를 적으면 공백으로 받는다.
+    """
     added = 0
     problems: list[str] = []
     for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
@@ -132,6 +139,7 @@ def ingest(document: dict, path: Path) -> tuple[int, list[str]]:
             problems.append(f"{path.name}:{number} 형식이 아니다: {line!r}")
             continue
         raw_index, char = parts[0].strip(), parts[1].strip()
+        char = ESCAPES.get(char, char)
         if not raw_index.isdigit():
             problems.append(f"{path.name}:{number} 인덱스가 숫자가 아니다: {raw_index!r}")
             continue
