@@ -71,34 +71,59 @@ GAP = 1                 # 글리프 오른쪽 여백 -> 진행폭 = 잉크폭 + 
 
 
 def rasterize(ttf: Path, size: int, chars: list[str]) -> dict[str, list[list[int]]]:
-    """TTF 를 지정 픽셀 크기로 래스터라이즈해 12x12 셀 비트맵을 만든다."""
+    """TTF 를 지정 픽셀 크기로 래스터라이즈해 12x12 셀 비트맵을 만든다.
+
+    **세로 위치는 글자마다 정하지 않고 전체 공통으로 잡는다.** 글자별
+    잉크 높이로 중앙 정렬하면 받침 없는 '도'·'보' 가 받침 있는 '랄' 보다
+    1픽셀 내려앉아 베이스라인이 흔들린다. 그래서 먼저 전체를 그려 잉크
+    범위를 모은 뒤 하나의 세로 기준을 적용한다.
+
+    가로는 글자별 중앙 정렬을 유지한다. 한글은 모아쓰기라 글자마다 폭이
+    달라도 어색하지 않고, 폭 테이블이 진행폭을 따로 정한다.
+    """
     from PIL import Image, ImageDraw, ImageFont
 
     font = ImageFont.truetype(str(ttf), size)
     box = CELL * 3
-    cells: dict[str, list[list[int]]] = {}
+
+    drawn: dict[str, list[tuple[int, int]]] = {}
     for char in chars:
         image = Image.new("1", (box, box), 0)
         draw = ImageDraw.Draw(image)
         draw.fontmode = "1"          # 픽셀 폰트: 안티에일리어싱 금지
         draw.text((CELL, CELL - 2), char, font=font, fill=1)
         pixels = image.load()
-        points = [(x, y) for y in range(box) for x in range(box) if pixels[x, y]]
+        drawn[char] = [(x, y) for y in range(box) for x in range(box)
+                       if pixels[x, y]]
+
+    inked = [p for points in drawn.values() for p in points]
+    if inked:
+        top = min(y for _, y in inked)
+        bottom = max(y for _, y in inked)
+        span = bottom - top + 1
+        if span > CELL:
+            raise ValueError(
+                f"글자들의 세로 범위가 {size}px 에서 {span}px 로 셀 {CELL} 을 "
+                f"넘는다. --size 를 줄인다."
+            )
+        base_y = (CELL - span) // 2 - top
+    else:
+        base_y = 0
+
+    cells: dict[str, list[list[int]]] = {}
+    for char, points in drawn.items():
         cell = [[0] * CELL for _ in range(CELL)]
         if points:
             min_x = min(x for x, _ in points)
-            min_y = min(y for _, y in points)
             width = max(x for x, _ in points) - min_x + 1
-            height = max(y for _, y in points) - min_y + 1
-            if width > CELL or height > CELL:
+            if width > CELL:
                 raise ValueError(
-                    f"'{char}' 가 {size}px 에서 {width}x{height} 로 셀을 넘는다. "
+                    f"'{char}' 가 {size}px 에서 가로 {width}px 로 셀을 넘는다. "
                     f"--size 를 줄인다."
                 )
             off_x = (CELL - width) // 2
-            off_y = (CELL - height) // 2
             for x, y in points:
-                cell[y - min_y + off_y][x - min_x + off_x] = 1
+                cell[y + base_y][x - min_x + off_x] = 1
         cells[char] = cell
     return cells
 
