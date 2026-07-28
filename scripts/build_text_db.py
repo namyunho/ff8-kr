@@ -83,7 +83,7 @@ def message_records(msd: bytes, glyphs: GT.GlyphMap) -> tuple[list[dict], int]:
 def build(glyphs: GT.GlyphMap) -> tuple[list[dict], dict]:
     entries = FT.field_list()
     fields: list[dict] = []
-    stats = {"entries": len(entries), "dat": 0, "messages": 0,
+    stats = {"entries": len(entries), "dat": 0, "empty": 0, "messages": 0,
              "broken": 0, "bank1": 0, "unnamed": 0}
     for index, (lba, size) in enumerate(entries):
         try:
@@ -92,12 +92,13 @@ def build(glyphs: GT.GlyphMap) -> tuple[list[dict], dict]:
             continue
         if dat_pointers(dat) is None:
             continue
-        try:
-            msd = FT.msd_section(dat)
-            records, broken = message_records(msd, glyphs)
-        except Exception:
-            continue
         stats["dat"] += 1
+        msd = FT.msd_section(dat)
+        if len(msd) < 4:
+            # 대사가 없는 필드다. MSD 섹션 자체가 비어 있다.
+            stats["empty"] += 1
+            continue
+        records, broken = message_records(msd, glyphs)
         stats["messages"] += len(records)
         stats["broken"] += broken
         stats["bank1"] += sum(r["ja"].count("{b1:") for r in records)
@@ -125,6 +126,7 @@ def main() -> int:
     fields, stats = build(glyphs)
 
     print(f"목록 {stats['entries']}엔트리 중 DAT {stats['dat']}개")
+    print(f"  그중 MSD 가 비어 대사가 없는 필드 {stats['empty']}개")
     print(f"  메시지 {stats['messages']:,}건, 왕복 실패 {stats['broken']}건")
     print(f"  이름을 못 읽은 필드 {stats['unnamed']}개")
     print(f"  필드 전용 폰트(뱅크1) 글리프 {stats['bank1']:,}개"

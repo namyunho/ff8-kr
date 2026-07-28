@@ -30,6 +30,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import extract_field_text as FT         # noqa: E402
+import lzss                             # noqa: E402
 
 RING_SIZE = 4096
 RING_START = 0xFEE
@@ -38,80 +39,9 @@ MAX_MATCH = 18                          # (hi & 0x0F) + 3 의 상한
 SECTOR = 2048
 
 
-def lzss_compress(src: bytes) -> bytes:
-    """`FT.lzss_decode` 와 짝이 되는 압축기.
-
-    링버퍼를 따로 유지하지 않는다. 해제기가 쓰는 링 내용은 곧 지금까지의
-    출력이고 출력은 곧 원본이므로, **원본 안에서 직접 일치를 찾고 위치만
-    링 좌표로 환산**하면 된다.
-
-        원본 위치 j 의 링 좌표 = (0xFEE + j) mod 4096
-
-    창은 4096바이트이므로 `j >= i - 4096` 이어야 한다. 겹치는 일치는
-    허용된다. 해제기가 방금 쓴 바이트를 다시 읽는 경우인데, 그 값은
-    `src[j+k]` 와 같아 결과가 어긋나지 않는다.
-
-    원본 압축기와 같은 바이트를 낼 것을 목표로 하지 않는다. 요구되는
-    것은 무손실과 크기다.
-    """
-    out = bytearray()
-    chunk = bytearray()
-    control = 0
-    bit = 0
-    i = 0
-
-    # 3바이트 키 -> 등장 위치. 뒤쪽 후보부터 보면 대개 더 긴 일치가 나온다.
-    buckets: dict[bytes, list[int]] = {}
-
-    def flush() -> None:
-        nonlocal control, bit
-        if bit:
-            out.append(control)
-            out.extend(chunk)
-            chunk.clear()
-            control = 0
-            bit = 0
-
-    while i < len(src):
-        best_len = 0
-        best_pos = 0
-        if i + MIN_MATCH <= len(src):
-            key = src[i:i + MIN_MATCH]
-            window_start = i - RING_SIZE
-            for candidate in reversed(buckets.get(key, [])[-128:]):
-                if candidate < window_start:
-                    break
-                length = 0
-                while (length < MAX_MATCH and i + length < len(src)
-                       and src[candidate + length] == src[i + length]):
-                    length += 1
-                if length > best_len:
-                    best_len, best_pos = length, candidate
-                    if length == MAX_MATCH:
-                        break
-
-        if best_len >= MIN_MATCH:
-            offset = (RING_START + best_pos) % RING_SIZE
-            chunk.append(offset & 0xFF)
-            chunk.append(((offset >> 4) & 0xF0) | (best_len - MIN_MATCH))
-            step = best_len
-        else:
-            control |= 1 << bit
-            chunk.append(src[i])
-            step = 1
-
-        bit += 1
-        if bit == 8:
-            flush()
-
-        for k in range(step):
-            at = i + k
-            if at + MIN_MATCH <= len(src):
-                buckets.setdefault(src[at:at + MIN_MATCH], []).append(at)
-        i += step
-
-    flush()
-    return bytes(out)
+# 압축기는 `scripts/lzss.py` 가 정본이다. 탐욕적 매칭을 쓰던 판이 여기 있었으나
+# 원본보다 커지는 필드가 있어(167, 281) 최적 파싱으로 옮겼다.
+lzss_compress = lzss.compress
 
 
 def serialize_msd(msd: bytes) -> bytes:

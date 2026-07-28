@@ -32,7 +32,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import build_text_db as DB                  # noqa: E402
 import extract_field_text as FT             # noqa: E402
-import verify_roundtrip as VR               # noqa: E402
+import lzss                                 # noqa: E402
 
 SECTOR = 2048
 BANK1 = 0x400
@@ -169,16 +169,18 @@ def analyse(limit: int | None) -> int:
     print("\n4. 섹터 적합 — IMG 목차가 절대 LBA 라 원래 섹터 수를 넘으면 안 된다")
     rows = []
     for index, size, dat, msd in fields:
-        packed_now = len(VR.lzss_compress(dat)) + 4
-        wide = splice_msd(dat, widen(msd))
-        real = splice_msd(dat, widen(msd, keep))
+        packed_now = len(lzss.compress(dat)) + 4
+        packed_wide = len(lzss.compress(splice_msd(dat, widen(msd)))) + 4
+        packed_real = len(lzss.compress(splice_msd(dat, widen(msd, keep)))) + 4
+        budget = sectors(size) * SECTOR
         rows.append({
             "field": index,
             "sectors": sectors(size),
             "now": sectors(packed_now),
-            "wide": sectors(len(VR.lzss_compress(wide)) + 4),
-            "real": sectors(len(VR.lzss_compress(real)) + 4),
-            "slack": sectors(size) * SECTOR - (len(VR.lzss_compress(real)) + 4),
+            "wide": sectors(packed_wide),
+            "real": sectors(packed_real),
+            "slack_wide": budget - packed_wide,
+            "slack_real": budget - packed_real,
         })
     over_now = [r for r in rows if r["now"] > r["sectors"]]
     over_wide = [r for r in rows if r["wide"] > r["sectors"]]
@@ -192,6 +194,13 @@ def analyse(limit: int | None) -> int:
         if group:
             print(f"   {label}: "
                   + ", ".join(str(r["field"]) for r in group[:10]))
+
+    print("\n5. 여유 — 최악(모두 2바이트)일 때 배정 섹터에 남는 바이트")
+    margins = sorted(r["slack_wide"] for r in rows)
+    print(f"   가장 빠듯한 필드 {margins[0]:,}B")
+    print(f"   중앙값           {margins[len(margins) // 2]:,}B")
+    print(f"   가장 여유로운 필드 {margins[-1]:,}B")
+    print("   번역문 글자 수가 원문과 같다는 가정이다. 더 길어지면 그만큼 줄어든다.")
     return 0
 
 
