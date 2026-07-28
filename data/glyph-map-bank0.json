@@ -1,0 +1,573 @@
+{
+  "bank": 0,
+  "entries": {
+    "74": {
+      "char": "カ",
+      "source": "confirmed"
+    },
+    "76": {
+      "char": "キ",
+      "source": "confirmed"
+    },
+    "78": {
+      "char": "ク",
+      "source": "confirmed"
+    },
+    "80": {
+      "char": "ケ",
+      "source": "confirmed"
+    },
+    "82": {
+      "char": "コ",
+      "source": "confirmed"
+    },
+    "38": {
+      "char": "ド",
+      "source": "confirmed"
+    },
+    "150": {
+      "char": "ワ",
+      "source": "confirmed"
+    },
+    "138": {
+      "char": "ル",
+      "source": "confirmed"
+    },
+    "106": {
+      "char": "ア",
+      "source": "confirmed"
+    },
+    "136": {
+      "char": "リ",
+      "source": "confirmed"
+    },
+    "114": {
+      "char": "ナ",
+      "source": "confirmed"
+    },
+    "128": {
+      "char": "ム",
+      "source": "confirmed"
+    },
+    "14": {
+      "char": "グ",
+      "source": "confirmed"
+    },
+    "223": {
+      "char": "ー",
+      "source": "confirmed"
+    },
+    "224": {
+      "char": "e",
+      "source": "read"
+    },
+    "225": {
+      "char": "皿",
+      "source": "read"
+    },
+    "226": {
+      "char": "悪",
+      "source": "read"
+    },
+    "227": {
+      "char": "安",
+      "source": "read"
+    },
+    "228": {
+      "char": "暗",
+      "source": "read"
+    },
+    "229": {
+      "char": "闇",
+      "source": "read"
+    },
+    "230": {
+      "char": "以",
+      "source": "read"
+    },
+    "231": {
+      "char": "異",
+      "source": "read"
+    },
+    "232": {
+      "char": "違",
+      "source": "read"
+    },
+    "233": {
+      "char": "一",
+      "source": "read"
+    },
+    "234": {
+      "char": "員",
+      "source": "read"
+    },
+    "235": {
+      "char": "右",
+      "source": "read"
+    },
+    "236": {
+      "char": "運",
+      "source": "read"
+    },
+    "237": {
+      "char": "鋭",
+      "source": "read"
+    },
+    "238": {
+      "char": "液",
+      "source": "read"
+    },
+    "239": {
+      "char": "越",
+      "source": "read"
+    },
+    "240": {
+      "char": "園",
+      "source": "read"
+    },
+    "241": {
+      "char": "援",
+      "source": "read"
+    },
+    "242": {
+      "char": "炎",
+      "source": "read"
+    },
+    "243": {
+      "char": "煙",
+      "source": "read"
+    },
+    "244": {
+      "char": "押",
+      "source": "read"
+    },
+    "245": {
+      "char": "屋",
+      "source": "read"
+    },
+    "246": {
+      "char": "音",
+      "source": "read"
+    },
+    "247": {
+      "char": "下",
+      "source": "read"
+    },
+    "248": {
+      "char": "化",
+      "source": "read"
+    },
+    "249": {
+      "char": "何",
+      "source": "read"
+    },
+    "250": {
+      "char": "果",
+      "source": "read"
+    },
+    "251": {
+      "char": "火",
+      "source": "read"
+    },
+    "252": {
+      "char": "我",
+      "source": "read"
+    },
+    "253": {
+      "char": "会",
+      "source": "read"
+    },
+    "254": {
+      "char": "回",
+      "source": "read"
+    },
+    "255": {
+      "char": "快",
+      "source": "read"
+    },
+    "256": {
+      "char": "海",
+      "source": "read"
+    },
+    "257": {
+      "char": "格",
+      "source": "read"
+    },
+    "258": {
+      "char": "確",
+      "source": "read"
+    },
+    "259": {
+      "char": "覚",
+      "source": "read"
+    },
+    "260": {
+      "char": "学",
+      "source": "read"
+    },
+    "261": {
+      "char": "喚",
+      "source": "read"
+    },
+    "262": {
+      "char": "完",
+      "source": "read"
+    },
+    "263": {
+      "char": "間",
+      "source": "read"
+    },
+    "264": {
+      "char": "関",
+      "source": "read"
+    },
+    "265": {
+      "char": "岸",
+      "source": "read"
+    },
+    "266": {
+      "char": "顔",
+      "source": "read"
+    },
+    "267": {
+      "char": "器",
+      "source": "read"
+    },
+    "268": {
+      "char": "機",
+      "source": "read"
+    },
+    "269": {
+      "char": "気",
+      "source": "read"
+    },
+    "270": {
+      "char": "技",
+      "source": "read"
+    },
+    "271": {
+      "char": "吸",
+      "source": "read"
+    },
+    "272": {
+      "char": "急",
+      "source": "read"
+    },
+    "273": {
+      "char": "給",
+      "source": "read"
+    },
+    "274": {
+      "char": "居",
+      "source": "read"
+    },
+    "275": {
+      "char": "巨",
+      "source": "read"
+    },
+    "276": {
+      "char": "共",
+      "source": "read"
+    },
+    "277": {
+      "char": "強",
+      "source": "read"
+    },
+    "278": {
+      "char": "恐",
+      "source": "read"
+    },
+    "279": {
+      "char": "近",
+      "source": "read"
+    },
+    "280": {
+      "char": "金",
+      "source": "read"
+    },
+    "281": {
+      "char": "空",
+      "source": "read"
+    },
+    "282": {
+      "char": "軍",
+      "source": "read"
+    },
+    "283": {
+      "char": "形",
+      "source": "read"
+    },
+    "284": {
+      "char": "警",
+      "source": "read"
+    },
+    "285": {
+      "char": "撃",
+      "source": "read"
+    },
+    "286": {
+      "char": "激",
+      "source": "read"
+    },
+    "287": {
+      "char": "血",
+      "source": "read"
+    },
+    "288": {
+      "char": "月",
+      "source": "read"
+    },
+    "289": {
+      "char": "剣",
+      "source": "read"
+    },
+    "290": {
+      "char": "見",
+      "source": "read"
+    },
+    "291": {
+      "char": "験",
+      "source": "read"
+    },
+    "292": {
+      "char": "減",
+      "source": "read"
+    },
+    "293": {
+      "char": "言",
+      "source": "read"
+    },
+    "294": {
+      "char": "個",
+      "source": "read"
+    },
+    "295": {
+      "char": "呼",
+      "source": "read"
+    },
+    "296": {
+      "char": "己",
+      "source": "read"
+    },
+    "297": {
+      "char": "御",
+      "source": "read"
+    },
+    "298": {
+      "char": "光",
+      "source": "read"
+    },
+    "299": {
+      "char": "効",
+      "source": "read"
+    },
+    "300": {
+      "char": "口",
+      "source": "read"
+    },
+    "301": {
+      "char": "好",
+      "source": "read"
+    },
+    "302": {
+      "char": "攻",
+      "source": "read"
+    },
+    "303": {
+      "char": "校",
+      "source": "read"
+    },
+    "304": {
+      "char": "甲",
+      "source": "read"
+    },
+    "305": {
+      "char": "行",
+      "source": "read"
+    },
+    "306": {
+      "char": "降",
+      "source": "read"
+    },
+    "307": {
+      "char": "高",
+      "source": "read"
+    },
+    "308": {
+      "char": "合",
+      "source": "read"
+    },
+    "309": {
+      "char": "告",
+      "source": "read"
+    },
+    "310": {
+      "char": "黒",
+      "source": "read"
+    },
+    "311": {
+      "char": "獄",
+      "source": "read"
+    },
+    "312": {
+      "char": "今",
+      "source": "read"
+    },
+    "313": {
+      "char": "混",
+      "source": "read"
+    },
+    "314": {
+      "char": "佐",
+      "source": "read"
+    },
+    "315": {
+      "char": "左",
+      "source": "read"
+    },
+    "316": {
+      "char": "砂",
+      "source": "read"
+    },
+    "317": {
+      "char": "催",
+      "source": "read"
+    },
+    "318": {
+      "char": "殺",
+      "source": "read"
+    },
+    "319": {
+      "char": "三",
+      "source": "read"
+    },
+    "320": {
+      "char": "山",
+      "source": "read"
+    },
+    "321": {
+      "char": "散",
+      "source": "read"
+    },
+    "322": {
+      "char": "斬",
+      "source": "read"
+    },
+    "323": {
+      "char": "使",
+      "source": "read"
+    },
+    "324": {
+      "char": "士",
+      "source": "read"
+    },
+    "325": {
+      "char": "始",
+      "source": "read"
+    },
+    "326": {
+      "char": "止",
+      "source": "read"
+    },
+    "327": {
+      "char": "死",
+      "source": "read"
+    },
+    "328": {
+      "char": "試",
+      "source": "read"
+    },
+    "329": {
+      "char": "事",
+      "source": "read"
+    },
+    "330": {
+      "char": "持",
+      "source": "read"
+    },
+    "331": {
+      "char": "時",
+      "source": "read"
+    },
+    "332": {
+      "char": "次",
+      "source": "read"
+    },
+    "333": {
+      "char": "治",
+      "source": "read"
+    },
+    "334": {
+      "char": "自",
+      "source": "read"
+    },
+    "335": {
+      "char": "失",
+      "source": "read"
+    },
+    "336": {
+      "char": "実",
+      "source": "read"
+    },
+    "337": {
+      "char": "射",
+      "source": "read"
+    },
+    "338": {
+      "char": "捨",
+      "source": "read"
+    },
+    "339": {
+      "char": "弱",
+      "source": "read"
+    },
+    "340": {
+      "char": "取",
+      "source": "read"
+    },
+    "341": {
+      "char": "手",
+      "source": "read"
+    },
+    "342": {
+      "char": "殊",
+      "source": "read"
+    },
+    "343": {
+      "char": "受",
+      "source": "read"
+    },
+    "344": {
+      "char": "呪",
+      "source": "read"
+    },
+    "345": {
+      "char": "修",
+      "source": "read"
+    },
+    "346": {
+      "char": "終",
+      "source": "read"
+    },
+    "347": {
+      "char": "襲",
+      "source": "read"
+    },
+    "348": {
+      "char": "集",
+      "source": "read"
+    },
+    "349": {
+      "char": "出",
+      "source": "read"
+    },
+    "350": {
+      "char": "術",
+      "source": "read"
+    },
+    "351": {
+      "char": "瞬",
+      "source": "read"
+    }
+  }
+}
