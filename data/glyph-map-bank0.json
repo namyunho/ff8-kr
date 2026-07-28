@@ -3,27 +3,27 @@
   "entries": {
     "74": {
       "char": "カ",
-      "source": "confirmed"
+      "source": "read"
     },
     "76": {
       "char": "キ",
-      "source": "confirmed"
+      "source": "read"
     },
     "78": {
       "char": "ク",
-      "source": "confirmed"
+      "source": "read"
     },
     "80": {
       "char": "ケ",
-      "source": "confirmed"
+      "source": "read"
     },
     "82": {
       "char": "コ",
-      "source": "confirmed"
+      "source": "read"
     },
     "38": {
       "char": "ド",
-      "source": "confirmed"
+      "source": "read"
     },
     "150": {
       "char": "ワ",
@@ -35,7 +35,7 @@
     },
     "106": {
       "char": "ア",
-      "source": "confirmed"
+      "source": "read"
     },
     "136": {
       "char": "リ",
@@ -43,7 +43,7 @@
     },
     "114": {
       "char": "ナ",
-      "source": "confirmed"
+      "source": "read"
     },
     "128": {
       "char": "ム",
@@ -51,7 +51,7 @@
     },
     "14": {
       "char": "グ",
-      "source": "confirmed"
+      "source": "read"
     },
     "223": {
       "char": "ー",
@@ -1579,6 +1579,478 @@
     },
     "607": {
       "char": "応",
+      "source": "read"
+    },
+    "0": {
+      "char": "バ",
+      "source": "read"
+    },
+    "1": {
+      "char": "ば",
+      "source": "read"
+    },
+    "2": {
+      "char": "ビ",
+      "source": "read"
+    },
+    "3": {
+      "char": "び",
+      "source": "read"
+    },
+    "4": {
+      "char": "ブ",
+      "source": "read"
+    },
+    "5": {
+      "char": "ぶ",
+      "source": "read"
+    },
+    "6": {
+      "char": "ベ",
+      "source": "read"
+    },
+    "7": {
+      "char": "べ",
+      "source": "read"
+    },
+    "8": {
+      "char": "ボ",
+      "source": "read"
+    },
+    "9": {
+      "char": "ぼ",
+      "source": "read"
+    },
+    "10": {
+      "char": "ガ",
+      "source": "read"
+    },
+    "11": {
+      "char": "が",
+      "source": "read"
+    },
+    "12": {
+      "char": "ギ",
+      "source": "read"
+    },
+    "13": {
+      "char": "ぎ",
+      "source": "read"
+    },
+    "15": {
+      "char": "ぐ",
+      "source": "read"
+    },
+    "16": {
+      "char": "ゲ",
+      "source": "read"
+    },
+    "17": {
+      "char": "げ",
+      "source": "read"
+    },
+    "18": {
+      "char": "ゴ",
+      "source": "read"
+    },
+    "19": {
+      "char": "ご",
+      "source": "read"
+    },
+    "20": {
+      "char": "ザ",
+      "source": "read"
+    },
+    "21": {
+      "char": "ざ",
+      "source": "read"
+    },
+    "22": {
+      "char": "ジ",
+      "source": "read"
+    },
+    "23": {
+      "char": "じ",
+      "source": "read"
+    },
+    "24": {
+      "char": "ズ",
+      "source": "read"
+    },
+    "25": {
+      "char": "ず",
+      "source": "read"
+    },
+    "26": {
+      "char": "ゼ",
+      "source": "read"
+    },
+    "27": {
+      "char": "ぜ",
+      "source": "read"
+    },
+    "28": {
+      "char": "ゾ",
+      "source": "read"
+    },
+    "29": {
+      "char": "ぞ",
+      "source": "read"
+    },
+    "30": {
+      "char": "ダ",
+      "source": "read"
+    },
+    "31": {
+      "char": "だ",
+      "source": "read"
+    },
+    "32": {
+      "char": "ヂ",
+      "source": "read"
+    },
+    "33": {
+      "char": "ぢ",
+      "source": "read"
+    },
+    "34": {
+      "char": "ヅ",
+      "source": "read"
+    },
+    "35": {
+      "char": "づ",
+      "source": "read"
+    },
+    "36": {
+      "char": "デ",
+      "source": "read"
+    },
+    "37": {
+      "char": "で",
+      "source": "read"
+    },
+    "39": {
+      "char": "ど",
+      "source": "read"
+    },
+    "40": {
+      "char": "ヴ",
+      "source": "read"
+    },
+    "41": {
+      "char": "パ",
+      "source": "read"
+    },
+    "42": {
+      "char": "ぱ",
+      "source": "read"
+    },
+    "43": {
+      "char": "ピ",
+      "source": "read"
+    },
+    "44": {
+      "char": "ぴ",
+      "source": "read"
+    },
+    "45": {
+      "char": "プ",
+      "source": "read"
+    },
+    "46": {
+      "char": "ぷ",
+      "source": "read"
+    },
+    "47": {
+      "char": "ペ",
+      "source": "read"
+    },
+    "48": {
+      "char": "ぺ",
+      "source": "read"
+    },
+    "49": {
+      "char": "ポ",
+      "source": "read"
+    },
+    "50": {
+      "char": "ぽ",
+      "source": "read"
+    },
+    "51": {
+      "char": "0",
+      "source": "read"
+    },
+    "52": {
+      "char": "1",
+      "source": "read"
+    },
+    "53": {
+      "char": "2",
+      "source": "read"
+    },
+    "54": {
+      "char": "3",
+      "source": "read"
+    },
+    "55": {
+      "char": "4",
+      "source": "read"
+    },
+    "56": {
+      "char": "5",
+      "source": "read"
+    },
+    "57": {
+      "char": "6",
+      "source": "read"
+    },
+    "58": {
+      "char": "7",
+      "source": "read"
+    },
+    "59": {
+      "char": "8",
+      "source": "read"
+    },
+    "60": {
+      "char": "9",
+      "source": "read"
+    },
+    "61": {
+      "char": "、",
+      "source": "read"
+    },
+    "62": {
+      "char": "。",
+      "source": "read"
+    },
+    "64": {
+      "char": "ハ",
+      "source": "read"
+    },
+    "65": {
+      "char": "は",
+      "source": "read"
+    },
+    "66": {
+      "char": "ヒ",
+      "source": "read"
+    },
+    "67": {
+      "char": "ひ",
+      "source": "read"
+    },
+    "68": {
+      "char": "フ",
+      "source": "read"
+    },
+    "69": {
+      "char": "ふ",
+      "source": "read"
+    },
+    "70": {
+      "char": "ヘ",
+      "source": "read"
+    },
+    "71": {
+      "char": "へ",
+      "source": "read"
+    },
+    "72": {
+      "char": "ホ",
+      "source": "read"
+    },
+    "73": {
+      "char": "ほ",
+      "source": "read"
+    },
+    "75": {
+      "char": "か",
+      "source": "read"
+    },
+    "77": {
+      "char": "き",
+      "source": "read"
+    },
+    "79": {
+      "char": "く",
+      "source": "read"
+    },
+    "81": {
+      "char": "け",
+      "source": "read"
+    },
+    "83": {
+      "char": "こ",
+      "source": "read"
+    },
+    "84": {
+      "char": "サ",
+      "source": "read"
+    },
+    "85": {
+      "char": "さ",
+      "source": "read"
+    },
+    "86": {
+      "char": "シ",
+      "source": "read"
+    },
+    "87": {
+      "char": "し",
+      "source": "read"
+    },
+    "88": {
+      "char": "ス",
+      "source": "read"
+    },
+    "89": {
+      "char": "す",
+      "source": "read"
+    },
+    "90": {
+      "char": "セ",
+      "source": "read"
+    },
+    "91": {
+      "char": "せ",
+      "source": "read"
+    },
+    "92": {
+      "char": "ソ",
+      "source": "read"
+    },
+    "93": {
+      "char": "そ",
+      "source": "read"
+    },
+    "94": {
+      "char": "タ",
+      "source": "read"
+    },
+    "95": {
+      "char": "た",
+      "source": "read"
+    },
+    "96": {
+      "char": "チ",
+      "source": "read"
+    },
+    "97": {
+      "char": "ち",
+      "source": "read"
+    },
+    "98": {
+      "char": "ツ",
+      "source": "read"
+    },
+    "99": {
+      "char": "つ",
+      "source": "read"
+    },
+    "100": {
+      "char": "テ",
+      "source": "read"
+    },
+    "101": {
+      "char": "て",
+      "source": "read"
+    },
+    "102": {
+      "char": "ト",
+      "source": "read"
+    },
+    "103": {
+      "char": "と",
+      "source": "read"
+    },
+    "104": {
+      "char": "ウ",
+      "source": "read"
+    },
+    "105": {
+      "char": "う",
+      "source": "read"
+    },
+    "107": {
+      "char": "あ",
+      "source": "read"
+    },
+    "108": {
+      "char": "イ",
+      "source": "read"
+    },
+    "109": {
+      "char": "い",
+      "source": "read"
+    },
+    "110": {
+      "char": "エ",
+      "source": "read"
+    },
+    "111": {
+      "char": "え",
+      "source": "read"
+    },
+    "112": {
+      "char": "オ",
+      "source": "read"
+    },
+    "113": {
+      "char": "お",
+      "source": "read"
+    },
+    "115": {
+      "char": "な",
+      "source": "read"
+    },
+    "116": {
+      "char": "ニ",
+      "source": "read"
+    },
+    "117": {
+      "char": "に",
+      "source": "read"
+    },
+    "118": {
+      "char": "ヌ",
+      "source": "read"
+    },
+    "119": {
+      "char": "ぬ",
+      "source": "read"
+    },
+    "120": {
+      "char": "ネ",
+      "source": "read"
+    },
+    "121": {
+      "char": "ね",
+      "source": "read"
+    },
+    "122": {
+      "char": "ノ",
+      "source": "read"
+    },
+    "123": {
+      "char": "の",
+      "source": "read"
+    },
+    "124": {
+      "char": "マ",
+      "source": "read"
+    },
+    "125": {
+      "char": "ま",
+      "source": "read"
+    },
+    "126": {
+      "char": "ミ",
+      "source": "read"
+    },
+    "127": {
+      "char": "み",
       "source": "read"
     }
   }
