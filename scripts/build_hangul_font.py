@@ -225,7 +225,12 @@ def main() -> int:
     args = parser.parse_args()
 
     glyph_map = json.loads(args.glyph_map.read_text(encoding="utf-8"))
-    chars = list(glyph_map.keys())
+    # 두 가지 입력을 받는다. 완성형 전체 대응표는 문자를 **키**로 담고,
+    # `count_korean_syllables.py --layout` 이 내는 배치 후보는 빈도순으로
+    # 정렬한 `chars` 배열을 담는다. 배치를 그대로 폰트로 만들 수 있어야
+    # 음절 수 판정이 실행 가능한 결론이 된다.
+    chars = (glyph_map["chars"] if isinstance(glyph_map, dict)
+             and "chars" in glyph_map else list(glyph_map))
     print(f"음절 {len(chars)}자, 래스터 {args.size}px, 뱅크 {args.banks}개 "
           f"(수용 {args.banks * PER_BANK}칸)")
 

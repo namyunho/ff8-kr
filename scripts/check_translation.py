@@ -4,21 +4,27 @@
 기계 번역이 저지르는 실수는 정해져 있다. **제어 코드를 빠뜨리거나 순서를 바꾸고,
 줄을 더 늘리고, 창을 넘긴다.** 사람이 눈으로 잡을 수 없는 양이므로 기계로 건다.
 
-여섯 가지를 본다.
+여덟 가지를 본다.
 
-    코드 누락    `ja` 에 있던 제어 코드가 `ko` 에 없다
-    코드 순서    있기는 한데 순서가 다르다
-    줄 수        `{02}` 개수가 늘었다
-    바이트       원본 예산을 넘겼다
-    줄 폭        한 줄이 창 폭을 넘겼다
-    없는 글자    원본 폰트에도, 넣을 한글 배치에도 없다
+    코드 누락      `ja` 에 있던 제어 코드가 `ko` 에 없다
+    코드 순서      있기는 한데 순서가 다르다
+    구멍 남음      `{b1:N}` 을 안 메우고 그대로 뒀다
+    일본어 남음    옮기다 만 가나·한자가 있다
+    줄 수          `{02}` 개수가 늘었다
+    바이트         원본 예산을 넘겼다
+    줄 폭          한 줄이 창 폭을 넘겼다
+    없는 글자      원본 폰트에도, 넣을 한글 배치에도 없다
 
 한글 글리프의 폭과 인덱스는 **우리가 정한다.** 아직 폰트를 만들지 않았으므로
 기본값은 보수적으로 잡는다. 음절 하나에 12픽셀, 2바이트다. `--layout` 으로
 배치를 주면 앞 224자는 1바이트로 계산한다.
 
+`--report` 는 문제를 건별로 JSON 에 적는다. 9,000건 규모에서는 사람이 눈으로
+훑을 수 없으므로 고칠 자리를 기계로 다시 돌리는 데 쓴다.
+
     python3 scripts/check_translation.py work/translate
     python3 scripts/check_translation.py work/translate --layout work/hangul-layout.json
+    python3 scripts/check_translation.py work/translate --report work/translate-check.json
 """
 
 from __future__ import annotations
@@ -26,6 +32,7 @@ from __future__ import annotations
 import argparse
 import collections
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -37,6 +44,8 @@ import glyph_text as GT                     # noqa: E402
 import text_metrics as TM                   # noqa: E402
 
 DEFAULT_LINE_PIXELS = TM.LINE_PIXELS
+# 가나와 한자. 한국어 폰트에는 이 글자가 없다.
+JAPANESE = re.compile(r"[\u3040-\u30ff\u4e00-\u9fff]")
 
 
 def codes(text: str) -> list[str]:
@@ -82,6 +91,12 @@ def inspect(entry: dict, used: int, pixels: list[int], unknown: set[str],
     # 전용 폰트의 엉뚱한 글리프가 그려진다.
     if TM.BANK1 in text:
         found.append(("구멍 남음", " ".join(TM.BANK1_TOKEN.findall(text))))
+
+    # 기계 번역은 옮기다 만 조각을 남긴다. 구조 검사로는 안 걸리고, 한국어
+    # 폰트에는 가나도 한자도 없으므로 화면에서 빈칸이나 엉뚱한 글리프가 된다.
+    left = JAPANESE.findall(TM.TOKEN.sub("", text))
+    if left:
+        found.append(("일본어 남음", "".join(sorted(set(left)))))
 
     lines = TM.line_count(text)
     if lines > max(entry["lines"], 1):
