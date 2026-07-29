@@ -234,6 +234,8 @@ def main() -> int:
     parser.add_argument("--sheets", type=Path, help="판독용 시트를 낸다")
     parser.add_argument("--ingest", type=Path, nargs="*",
                         help="`키<탭>문자` 파일을 합친다")
+    parser.add_argument("--identify", nargs="*", metavar="필드:슬롯=문자",
+                        help="원문을 아는 자리를 바로 등록한다. 예 296:2=痛")
     parser.add_argument("--status", action="store_true")
     parser.add_argument("--template", action="store_true",
                         help="문맥을 곁들인 판독용 TSV 뼈대를 낸다")
@@ -252,6 +254,28 @@ def main() -> int:
 
     document = load_map()
     cache = load_cache()
+
+    if args.identify:
+        added = 0
+        for item in args.identify:
+            place, _, char = item.partition("=")
+            field, _, slot = place.partition(":")
+            font = FT.field_font(FT.load_entry(int(field) - 1))
+            if font is None:
+                print(f"  경고: 필드 {field} 에 TDW 가 없다")
+                continue
+            key = shape_key(font.glyph(int(slot)))
+            if key not in cache["shapes"]:
+                print(f"  경고: {item} 의 도형이 목록에 없다 ({key})")
+                continue
+            before = document["entries"].get(key, {}).get("char")
+            if before and before != char:
+                print(f"  경고: {item} 는 이미 {before!r} 로 읽혀 있다. 덮어쓴다")
+            document["entries"][key] = {"char": char, "source": "original"}
+            print(f"  {item}  → {key}")
+            added += 1
+        save_map(document)
+        print(f"원문 대조로 {added}건을 등록했다")
 
     if args.sheets:
         render_sheets(cache, document["entries"], args.sheets)
