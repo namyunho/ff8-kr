@@ -202,7 +202,13 @@ python3 scripts/analyze_text_budget.py
 
 # 번역 내보내기 → 되받기 → 검사 → 음절 계수
 python3 scripts/export_for_translation.py work/translate
-python3 scripts/import_translation.py work/translate-draft work/translate
+
+# 밖에 넘길 꾸러미(지침·용어집 포함, 한 번에 붙여 넣을 크기)
+python3 scripts/import_translation.py work/translate-draft work/translate \
+  --bundle work/translate-bundle --bundle-size 300
+
+# 받은 답을 work/translate-reply/ 에 두고 되받는다
+python3 scripts/import_translation.py work/translate-reply work/translate
 python3 scripts/import_translation.py work/translate-draft work/translate --propagate
 python3 scripts/import_translation.py work/translate-draft work/translate --status
 python3 scripts/check_translation.py work/translate --report work/translate-check.json
@@ -267,6 +273,16 @@ build_hangul_font.py  그 배치로 FF8 형식 뱅크 생성
 
 되받기는 `ko` 말고 아무것도 받지 않는다. JSON 을 통째로 돌려받으면 번역기가
 원문이나 예산 칸을 조용히 바꿀 수 있다.
+
+번역을 밖에서 시킬 때는 **꾸러미**로 넘긴다. `--bundle` 이 남은 원문을 한 번에
+붙여 넣을 크기로 자르고 지침·용어집을 통째로 넣어 준다. 새 대화창에 파일 하나만
+붙여 넣으면 바로 일이 된다. 자르는 단위는 파일 개수가 아니라 메시지 수이며,
+**필드 번호 순서를 지켜** 자른다 — 번호가 가까운 필드는 게임에서도 붙어 있는
+장면이라 앞뒤 문맥이 살아 있어야 번역이 나아진다. 개발용 디버그 필드는 뒤로
+몰아 건너뛸 수 있게 표시한다.
+
+돌아온 답은 `== 필드이름 ==` 절로 나뉜 `id<탭>번역문` 이며, 되받기가 같은
+형식을 읽는다. 코드 울타리와 머리말이 섞여 와도 걷어낸다.
 
 **전체 메시지의 34.6%가 다른 곳에도 똑같이 있는 원문이다.** 고유 원문은
 6,667종뿐이고, 카드 규칙 안내문 하나가 60곳에 반복된다. `--propagate` 가 같은

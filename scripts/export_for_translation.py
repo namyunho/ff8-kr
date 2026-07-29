@@ -40,7 +40,9 @@ GLYPHS = GT.GlyphMap.load()
 
 # 이름은 대개 첫 줄에 홀로 오고 다음 줄이 「 로 시작한다.
 SPEAKER = re.compile(r"^([^{「」]{1,12})\{02\}\s*「")
-DEBUG_NAME = re.compile(r"^(test|debug|dummy|sample|gover|start0)", re.I)
+# `start` 는 「もりやのイベントテストページ」처럼 개발자 이름이 박힌
+# 워프 메뉴다. `start0` 만 걸러서는 안 된다.
+DEBUG_NAME = re.compile(r"^(test|debug|dummy|sample|gover|start)", re.I)
 # 자리표시자 판정은 두 번 틀렸다. 표본을 보기 전에는 믿지 않는다.
 #
 #   1차 "제어 코드 없는 짧은 항목" → 표본 13건이 전부 진짜 대사였다

@@ -25,13 +25,32 @@ import sys
 from pathlib import Path
 
 
-def read_tsv(path: Path) -> tuple[dict[int, str], list[str]]:
-    """`id<TAB>ko` 를 읽는다. 깨진 줄은 버리지 않고 이유와 함께 돌려준다."""
-    rows: dict[int, str] = {}
+SECTION = "=="
+
+
+def read_reply(path: Path) -> tuple[dict[str, dict[int, str]], list[str]]:
+    """번역 결과를 읽는다. 두 가지 모양을 다 받는다.
+
+    파일 하나가 필드 하나면 파일 이름이 곧 필드다. 여러 필드를 한 파일에
+    담아 오면 `== 필드이름 ==` 줄로 나눈다. 다른 AI 에게 꾸러미로 넘길 때는
+    여러 필드가 한 답으로 돌아오므로 후자가 필요하다.
+
+    깨진 줄은 버리지 않고 이유와 함께 돌려준다. 코드 울타리(```)와 주석은
+    붙여 넣기 과정에서 섞여 들어오므로 조용히 걷어낸다.
+    """
+    fields: dict[str, dict[int, str]] = {}
     complaints: list[str] = []
+    stem = path.stem
+    fenced = False
     for number, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
-        line = raw.rstrip("\r")
-        if not line.strip() or line.lstrip().startswith("#"):
+        line = raw.rstrip("\r").strip()
+        if line.startswith("```"):
+            fenced = not fenced
+            continue
+        if fenced or not line or line.startswith("#"):
+            continue
+        if line.startswith(SECTION) and line.endswith(SECTION):
+            stem = line.strip(SECTION).strip()
             continue
         if "\t" not in line:
             complaints.append(f"{path.name}:{number} 탭이 없다: {line[:60]}")
@@ -42,19 +61,21 @@ def read_tsv(path: Path) -> tuple[dict[int, str], list[str]]:
         except ValueError:
             complaints.append(f"{path.name}:{number} id 가 숫자가 아니다: {head[:20]}")
             continue
+        rows = fields.setdefault(stem, {})
         if identifier in rows:
-            complaints.append(f"{path.name}:{number} id {identifier} 가 중복이다")
+            complaints.append(f"{path.name}:{number} {stem} id {identifier} 중복")
         rows[identifier] = text.strip()
-    return rows, complaints
+    return fields, complaints
 
 
-def merge_field(tsv: Path, target: Path, dry_run: bool) -> tuple[int, list[str]]:
+def merge_field(rows: dict[int, str], sheet: Path, label: str,
+                dry_run: bool) -> tuple[int, list[str]]:
     """한 필드를 합친다. 워크시트에 없는 id 는 넣지 않고 알린다."""
-    rows, complaints = read_tsv(tsv)
-    document = json.loads(target.read_text(encoding="utf-8"))
+    complaints: list[str] = []
+    document = json.loads(sheet.read_text(encoding="utf-8"))
     known = {entry["id"] for entry in document["entries"]}
     for identifier in sorted(set(rows) - known):
-        complaints.append(f"{tsv.name} id {identifier} 가 워크시트에 없다")
+        complaints.append(f"{label} id {identifier} 가 워크시트에 없다")
 
     filled = 0
     for entry in document["entries"]:
@@ -64,20 +85,23 @@ def merge_field(tsv: Path, target: Path, dry_run: bool) -> tuple[int, list[str]]
         entry["ko"] = text
         filled += 1
     if not dry_run:
-        target.write_text(json.dumps(document, indent=2, ensure_ascii=False)
-                          + "\n", encoding="utf-8")
+        sheet.write_text(json.dumps(document, indent=2, ensure_ascii=False)
+                         + "\n", encoding="utf-8")
     return filled, complaints
 
 
 def sheets(target: Path) -> list[tuple[Path, dict]]:
     """워크시트를 파일 순서대로 읽는다."""
     out = []
-    for path in sorted(target.glob("*.json")):
+    for path in target.glob("*.json"):
         if path.name == "manifest.json":
             continue
         document = json.loads(path.read_text(encoding="utf-8"))
         if "entries" in document:
             out.append((path, document))
+    # 파일 이름이 아니라 **필드 번호** 순이다. 문자열로 정렬하면
+    # "1001-tiyane3" 이 "161-bccent_1" 앞에 와서 장면 순서가 깨진다.
+    out.sort(key=lambda row: row[1]["field"])
     return out
 
 
@@ -158,6 +182,117 @@ def refresh_prompts(target: Path) -> int:
     return 0
 
 
+HOW_TO = """# FF8 한국어화 초벌번역 — 꾸러미 {number} / {count}
+
+이 파일 하나가 한 번 넘길 분량이다. 메시지 {messages}건, 필드 {fields}개.
+
+**돌려줄 것은 번역뿐이다.** 아래와 똑같은 모양으로 답한다.
+
+```
+== 필드이름 ==
+0<탭>번역문
+1<탭>번역문
+```
+
+- `== 필드이름 ==` 줄을 그대로 두고 그 아래 `id<탭>번역문` 을 한 줄에 하나씩.
+- **원문을 다시 적지 않는다.** id 와 번역문만.
+- 번역문 안에 실제 개행이나 탭 문자를 넣지 않는다. 줄바꿈은 `{{02}}` 로 적는다.
+- 번역하지 않는 항목은 그 줄을 쓰지 않는다.
+- 설명·요약·머리말을 붙이지 않는다.
+
+받은 답을 파일로 저장해 `work/translate-reply/` 에 두면 되받아진다.
+
+---
+
+{spec}
+---
+
+{glossary}
+---
+
+# 원문
+
+"""
+
+
+def bundle(target: Path, out: Path, size: int) -> int:
+    """남은 원문을 다른 도구에 넘길 크기로 잘라 낸다.
+
+    번역을 밖에서 시킬 때는 **한 번에 붙여 넣을 분량**이 단위다. 필드 하나가
+    1건부터 216건까지라 파일 개수로 자르면 못 쓴다. 메시지 수로 자르되
+    **필드 번호 순서를 지켜** 자른다 — 번호가 가까운 필드는 게임에서도 붙어
+    있는 장면이라 앞뒤 문맥이 살아 있어야 번역이 나아진다.
+
+    지침과 용어집을 꾸러미마다 통째로 넣는다. 새 대화창에 이 파일 하나만
+    붙여 넣으면 바로 일이 되게 하려는 것이다.
+    """
+    # 지침의 "내는 형식" 절은 필드 하나짜리 시트를 전제로 쓰였다. 꾸러미는
+    # 머리말에서 형식을 따로 정하므로 그 절을 빼야 두 설명이 안 부딪힌다.
+    spec = (target / "README.md").read_text(encoding="utf-8")
+    head, marker, rest = spec.partition("## 제어 코드")
+    spec = head.split("## 내는 형식")[0] + marker + rest
+
+    glossary_path = Path("work/text/glossary.csv")
+    glossary = ("# 고유명사\n\n```\n"
+                + (glossary_path.read_text(encoding="utf-8")
+                   if glossary_path.exists() else "(없음)")
+                + "```\n")
+
+    # 디버그 필드는 개발용 메뉴라 플레이어가 볼 수 없다. 번역해도 쓰이지
+    # 않으면서 음절 칸만 먹으므로 뒤로 몰아 건너뛸 수 있게 한다.
+    real: list[tuple[str, list[dict]]] = []
+    debug: list[tuple[str, list[dict]]] = []
+    for path, document in sheets(target):
+        rows = [entry for entry in document["entries"]
+                if not entry.get("ko", "").strip()]
+        if rows:
+            (debug if document["debug"] else real).append((path.stem, rows))
+    if not real and not debug:
+        print("남은 것이 없다.")
+        return 0
+
+    def cut(items: list[tuple[str, list[dict]]]) -> list[list]:
+        groups: list[list] = []
+        load = 0
+        for item in items:                # sheets() 가 이미 필드 번호 순이다
+            if not groups or load + len(item[1]) > size:
+                groups.append([])
+                load = 0
+            groups[-1].append(item)
+            load += len(item[1])
+        return groups
+
+    groups = [(g, False) for g in cut(real)] + [(g, True) for g in cut(debug)]
+    out.mkdir(parents=True, exist_ok=True)
+    for old in out.glob("bundle-*.md"):
+        old.unlink()
+    for number, (group, is_debug) in enumerate(groups, 1):
+        messages = sum(len(rows) for _, rows in group)
+        body = "".join(
+            f"\n== {stem} ==\n"
+            + "".join(f"{entry['id']}\t{entry['ja']}\n" for entry in rows)
+            for stem, rows in group)
+        note = ("\n> **이 꾸러미는 개발용 디버그 필드다.** 플레이어가 볼 수 없는"
+                " 메뉴이므로 건너뛰어도 된다.\n" if is_debug else "")
+        text = HOW_TO.format(number=number, count=len(groups),
+                             messages=messages, fields=len(group),
+                             spec=spec, glossary=glossary)
+        (out / f"bundle-{number:02d}.md").write_text(
+            text.replace("\n---\n", note + "\n---\n", 1) + body,
+            encoding="utf-8")
+
+    live = sum(len(rows) for _, rows in real)
+    dead = sum(len(rows) for _, rows in debug)
+    print(f"꾸러미 {len(groups)}개 → {out}")
+    print(f"  실제 대사 {live:,}건 (꾸러미 1~{len(cut(real))})")
+    print(f"  디버그 필드 {dead:,}건 (나머지 꾸러미, 건너뛰어도 된다)")
+    print(f"  하나에 최대 {size}건. 지침과 용어집이 꾸러미마다 들어 있다.")
+    print("  받은 답은 아무 이름으로나 work/translate-reply/ 에 두고")
+    print(f"  python3 scripts/import_translation.py work/translate-reply"
+          f" {target}")
+    return 0
+
+
 def status(target: Path, batch_size: int) -> int:
     """아직 안 된 것을 센다. 도중에 끊겨도 이어서 하려면 필요하다.
 
@@ -198,19 +333,30 @@ def status(target: Path, batch_size: int) -> int:
 
 
 def run(source: Path, target: Path, dry_run: bool) -> int:
-    files = sorted(source.glob("*.tsv")) if source.is_dir() else [source]
+    if source.is_dir():
+        files = sorted(path for path in source.iterdir()
+                       if path.suffix in (".tsv", ".txt", ".md"))
+    else:
+        files = [source]
     if not files:
-        print(f"TSV 가 없다: {source}", file=sys.stderr)
+        print(f"번역 결과 파일이 없다: {source}", file=sys.stderr)
         return 2
 
-    total, merged, complaints = 0, 0, []
-    missing = []
-    for tsv in files:
-        sheet = target / f"{tsv.stem}.json"
+    collected: dict[str, dict[int, str]] = {}
+    complaints: list[str] = []
+    for path in files:
+        fields, said = read_reply(path)
+        complaints.extend(said)
+        for stem, rows in fields.items():
+            collected.setdefault(stem, {}).update(rows)
+
+    total, merged, missing = 0, 0, []
+    for stem, rows in sorted(collected.items()):
+        sheet = target / f"{stem}.json"
         if not sheet.exists():
-            missing.append(tsv.name)
+            missing.append(stem)
             continue
-        filled, said = merge_field(tsv, sheet, dry_run)
+        filled, said = merge_field(rows, sheet, stem, dry_run)
         total += filled
         merged += 1
         complaints.extend(said)
@@ -244,10 +390,16 @@ def main() -> int:
                         help="같은 원문에 같은 번역을 채운다")
     parser.add_argument("--refresh-prompts", action="store_true",
                         help="남은 항목만 남겨 프롬프트 시트를 다시 쓴다")
+    parser.add_argument("--bundle", type=Path,
+                        help="남은 원문을 밖에 넘길 꾸러미로 잘라 낸다")
+    parser.add_argument("--bundle-size", type=int, default=300,
+                        help="꾸러미 하나의 메시지 수 (기본 300)")
     args = parser.parse_args()
     if not args.target.is_dir():
         print(f"디렉터리가 아니다: {args.target}", file=sys.stderr)
         return 2
+    if args.bundle:
+        return bundle(args.target, args.bundle, args.bundle_size)
     if args.status:
         return status(args.target, args.batch_size)
     if args.propagate:
