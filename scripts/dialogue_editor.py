@@ -36,11 +36,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import extract_field_text as FT             # noqa: E402
 import preview_hangul_scene as PH           # noqa: E402
+import text_metrics as TM                   # noqa: E402
 
-# 원본 #293/#296/#299 의 줄 387개를 실측한 값이다. 최대 302px, 95% 217px.
-# 창 폭 자체는 아직 확정하지 못했으므로 실측 최대치를 상한으로 삼는다.
-DEFAULT_LINE_PIXELS = 302
-FALLBACK_WIDTH = 12                 # 폭 테이블에 없는 글리프의 진행폭
+# 상한은 `text_metrics` 가 정본이다. 전수 26,883줄 실측치다.
+DEFAULT_LINE_PIXELS = TM.LINE_PIXELS
+FALLBACK_WIDTH = TM.FALLBACK_WIDTH  # 폭 테이블에 없는 글리프의 진행폭
 PREVIEW_SCALE = 2
 PREVIEW_ROW_HEIGHT = 16             # 원본 행 진행 높이
 COLUMNS = ("id", "byte_budget", "glyph_count", "lines", "control_codes", "ko")

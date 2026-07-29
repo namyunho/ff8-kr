@@ -26,7 +26,6 @@ from __future__ import annotations
 import argparse
 import collections
 import json
-import re
 import sys
 from pathlib import Path
 
@@ -35,49 +34,75 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import dialogue_editor as DE                # noqa: E402
 import extract_field_text as FT             # noqa: E402
 import glyph_text as GT                     # noqa: E402
+import text_metrics as TM                   # noqa: E402
 
-TOKEN = re.compile(r"\{[^}]*\}")
-BREAK = "{02}"
-SINGLE_BYTE = 224
-DEFAULT_WIDTH = 12                          # 한글 한 칸. 우리가 정하는 값이다
-DEFAULT_LINE_PIXELS = DE.DEFAULT_LINE_PIXELS
+DEFAULT_LINE_PIXELS = TM.LINE_PIXELS
 
 
 def codes(text: str) -> list[str]:
     """제어 코드만 순서대로. `{b1:N}` 은 원문 글자라 코드가 아니다."""
-    return [token for token in TOKEN.findall(text)
-            if not token.startswith("{b1:")]
+    return TM.control_codes(text)
 
 
 def cost(text: str, widths: list[int], layout: list[str] | None,
          glyphs: GT.GlyphMap) -> tuple[int, list[int], set[str]]:
-    """번역문의 바이트, 줄별 픽셀, 넣을 수 없는 글자."""
-    cheap = set(layout[:SINGLE_BYTE]) if layout else set()
+    """번역문의 바이트, 줄별 픽셀, 넣을 수 없는 글자.
+
+    한글 글리프는 아직 만들지 않았으므로 폭을 한 칸(12px)으로 잡는다.
+    원본 폰트에 있는 글자는 실측 폭 테이블을 쓴다.
+    """
+    cheap = set(layout[:TM.SINGLE_BYTE]) if layout else set()
     known = set(layout) if layout else None
-    total = 0
-    pixels = []
+
+    def lookup(char: str) -> int | None:
+        index = glyphs.index.get(char)
+        if index is None and known is not None and char not in known:
+            unknown.add(char)
+        return index
+
     unknown: set[str] = set()
-    for token in codes(text):
-        total += 2 if ":" in token else 1
-    for line in text.split(BREAK):
-        plain = TOKEN.sub("", line)
-        width = 0
-        for char in plain:
-            index = glyphs.index.get(char)
-            if index is not None:
-                total += 1 if index < SINGLE_BYTE else 2
-                width += (widths[index] if index < len(widths)
-                          else DE.FALLBACK_WIDTH)
-                continue
-            if known is not None and char not in known:
-                unknown.add(char)
-            total += 1 if char in cheap else 2
-            width += DEFAULT_WIDTH
-        pixels.append(width)
+    total = TM.byte_cost(text, lookup, cheap)
+    pixels = TM.line_pixels(text, widths, lookup)
     return total, pixels, unknown
 
 
-def check(root: Path, layout_path: Path | None, line_limit: int) -> int:
+def inspect(entry: dict, used: int, pixels: list[int], unknown: set[str],
+            line_limit: int) -> list[tuple[str, str]]:
+    """메시지 한 건의 문제 목록. `(종류, 설명)` 으로 준다."""
+    text = entry["ko"]
+    found: list[tuple[str, str]] = []
+
+    want, got = codes(entry["ja"]), codes(text)
+    if collections.Counter(want) != collections.Counter(got):
+        found.append(("코드 누락·추가", f"원본 {want} → 번역 {got}"))
+    elif want != got:
+        found.append(("코드 순서", f"원본 {want} → 번역 {got}"))
+
+    # `{b1:N}` 은 아직 못 읽은 원문 글자다. 번역문에 남아 있으면 그 필드
+    # 전용 폰트의 엉뚱한 글리프가 그려진다.
+    if TM.BANK1 in text:
+        found.append(("구멍 남음", " ".join(TM.BANK1_TOKEN.findall(text))))
+
+    lines = TM.line_count(text)
+    if lines > max(entry["lines"], 1):
+        found.append(("줄 수 초과", f"{entry['lines']}줄 → {lines}줄"))
+    if used > entry["byte_budget"]:
+        found.append(("메시지 예산 초과(참고)",
+                      f"예산 {entry['byte_budget']}B → {used}B"))
+
+    # 원본이 이미 상한을 넘는 줄이 3건 있다. 원본이 그렇게 그려지는 이상
+    # 같은 폭까지는 번역도 안전하다고 본다.
+    allowed = max(line_limit, entry["line_pixels"])
+    over = [value for value in pixels if value > allowed]
+    if over:
+        found.append(("줄 폭 초과", f"{max(over)}px > {allowed}px"))
+    if unknown:
+        found.append(("없는 글자", "".join(sorted(unknown))))
+    return found
+
+
+def check(root: Path, layout_path: Path | None, line_limit: int,
+          report: Path | None = None) -> int:
     glyphs = GT.GlyphMap.load()
     widths = DE.glyph_widths(FT.SYSFNT.read_bytes())
     layout = None
@@ -87,6 +112,7 @@ def check(root: Path, layout_path: Path | None, line_limit: int) -> int:
     problems = collections.Counter()
     worst: dict[str, list[str]] = collections.defaultdict(list)
     budgets: list[tuple[str, int, int, int]] = []
+    findings: list[dict] = []
     checked = 0
     for path in sorted(root.glob("*.json")):
         if path.name == "manifest.json":
@@ -101,38 +127,30 @@ def check(root: Path, layout_path: Path | None, line_limit: int) -> int:
                 continue
             checked += 1
             where = f"{document['name']}#{entry['id']}"
-            want, got = codes(entry["ja"]), codes(text)
-            if collections.Counter(want) != collections.Counter(got):
-                problems["코드 누락·추가"] += 1
-                worst["코드 누락·추가"].append(
-                    f"{where} 원본 {want} → 번역 {got}")
-            elif want != got:
-                problems["코드 순서"] += 1
-                worst["코드 순서"].append(where)
-
             used, pixels, unknown = cost(text, widths, layout, glyphs)
-            if len(pixels) > max(entry["lines"], 1):
-                problems["줄 수 초과"] += 1
-                worst["줄 수 초과"].append(
-                    f"{where} {entry['lines']} → {len(pixels)}")
             field_used += used
             field_budget += entry["byte_budget"]
             field_done += 1
-            if used > entry["byte_budget"]:
-                problems["메시지 예산 초과(참고)"] += 1
-                worst["메시지 예산 초과(참고)"].append(
-                    f"{where} 예산 {entry['byte_budget']} → {used}")
-            over = [value for value in pixels if value > line_limit]
-            if over:
-                problems["줄 폭 초과"] += 1
-                worst["줄 폭 초과"].append(f"{where} {max(over)}px")
-            if unknown:
-                problems["없는 글자"] += 1
-                worst["없는 글자"].append(f"{where} {''.join(sorted(unknown))}")
+            for kind, detail in inspect(entry, used, pixels, unknown,
+                                        line_limit):
+                problems[kind] += 1
+                worst[kind].append(f"{where} {detail}")
+                findings.append({"file": path.name, "field": document["field"],
+                                 "name": document["name"], "id": entry["id"],
+                                 "kind": kind, "detail": detail,
+                                 "ja": entry["ja"], "ko": text})
 
         if field_done:
             budgets.append((document["name"], field_budget, field_used,
                             field_done))
+
+    if report:
+        report.parent.mkdir(parents=True, exist_ok=True)
+        report.write_text(json.dumps(
+            {"checked": checked, "problems": dict(problems.most_common()),
+             "findings": findings}, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8")
+        print(f"검사 보고서 {report}")
 
     print(f"번역된 항목 {checked:,}건 검사")
     if budgets:
@@ -169,11 +187,13 @@ def main() -> int:
     parser.add_argument("--layout", type=Path, help="한글 배치 JSON")
     parser.add_argument("--line-pixels", type=int, default=DEFAULT_LINE_PIXELS,
                         help=f"줄 폭 상한 (기본 {DEFAULT_LINE_PIXELS})")
+    parser.add_argument("--report", type=Path,
+                        help="문제를 건별로 적은 JSON. 고칠 자리를 기계로 돌린다")
     args = parser.parse_args()
     if not args.root.is_dir():
         print(f"디렉터리가 아니다: {args.root}", file=sys.stderr)
         return 2
-    return check(args.root, args.layout, args.line_pixels)
+    return check(args.root, args.layout, args.line_pixels, args.report)
 
 
 if __name__ == "__main__":
