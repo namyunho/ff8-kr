@@ -21,7 +21,10 @@ PlayStation용 《파이널 판타지 VIII》(일본판) Disc 1의 한국어 패
 | 필드 텍스트 전수 추출 | 완료 — DAT 302개 / 메시지 9,442건 |
 | 번역문 바이트 수용량 | 측정 완료 — 최악 시나리오도 302필드 전부 적합 |
 | LZSS 압축기 | 최적 파싱. DAT 304개 전부 원본보다 작다 |
-| 런타임(에뮬레이터) 검증 | **미착수** |
+| 번역 파이프라인 | 내보내기 → 초벌번역 → 되받기 → 검사 → 음절 계수. 도구 완비 |
+| 기계 초벌번역 | 진행 중 |
+| 번역문의 서로 다른 음절 수 | **미확정** — 전체 초벌번역이 나와야 판정한다 |
+| 런타임(에뮬레이터) 검증 | 오프닝 31건이 DuckStation 에서 한국어로 나온다. R7 미해결 |
 
 정적 분석 결과는 실행 검증과 연결되기 전까지 **추정**으로 남긴다. 자세한
 진행과 통과 조건은 [`docs/roadmap.md`](docs/roadmap.md) 가 정본이다.
@@ -197,6 +200,15 @@ python3 scripts/fill_japanese.py work/text/opening-scenes.json
 # 번역문 수용량 측정
 python3 scripts/analyze_text_budget.py
 
+# 번역 내보내기 → 되받기 → 검사 → 음절 계수
+python3 scripts/export_for_translation.py work/translate
+python3 scripts/import_translation.py work/translate-draft work/translate
+python3 scripts/import_translation.py work/translate-draft work/translate --propagate
+python3 scripts/import_translation.py work/translate-draft work/translate --status
+python3 scripts/check_translation.py work/translate --report work/translate-check.json
+python3 scripts/count_korean_syllables.py work/translate --layout work/hangul-layout.json
+python3 scripts/build_hangul_font.py --glyph-map work/hangul-layout.json --banks 1
+
 # 압축기 전수 검증 (무손실 · 섹터)
 python3 scripts/lzss.py --check
 
@@ -224,6 +236,41 @@ python3 scripts/verify_roundtrip.py --sample 20
 
 `decode` 한 문자열을 `encode` 하면 원본 바이트가 그대로 나온다. 필드 302개
 9,442 메시지에서 왕복 실패 0건이다.
+
+### 줄과 쪽을 재는 규칙
+
+**줄을 끊는 것은 `{02}` 하나가 아니다.** `{01}` 은 행 카운터를 1로 되돌리므로
+(`sub_8002E4A0` 확정) 폭과 줄 수를 잴 때 함께 나눠야 한다. 842건이 이 코드를
+쓰고, 나누지 않으면 쪽 경계를 넘는 글자가 한 줄로 합산돼 폭이 부풀었다.
+
+| 나누는 방식 | 최대 줄 폭 | 302px 초과 |
+|---|---|---|
+| `{02}` 만 | 659px | 303건 |
+| `{02}` + `{01}` | **448px** | **3건** |
+
+`{b1:N}` 은 제어 코드가 아니라 **화면에 그려지는 글자**다. 폭 계산에서 빼면 안
+된다. `scripts/text_metrics.py` 가 이 두 규칙의 정본이며 내보내기·검사기가 함께
+쓴다. 바이트 셈은 `ko` 에 `ja` 를 그대로 넣는 항등 시험으로 검증했다 — 9,160건
+전부 원본 바이트 수와 정확히 일치한다.
+
+### 번역 파이프라인
+
+```text
+build_text_db.py      필드 DAT → 전수 텍스트 DB
+export_for_translation.py   필드마다 워크시트(JSON)와 압축 프롬프트(TXT)
+  (번역기)            id<탭>번역문 TSV 를 work/translate-draft/ 에
+import_translation.py 되받기 · 같은 원문 전파 · 남은 것 배치 분할
+check_translation.py  넣을 수 있는지 여덟 가지로 검사
+count_korean_syllables.py   서로 다른 음절 수와 빈도순 배치 후보
+build_hangul_font.py  그 배치로 FF8 형식 뱅크 생성
+```
+
+되받기는 `ko` 말고 아무것도 받지 않는다. JSON 을 통째로 돌려받으면 번역기가
+원문이나 예산 칸을 조용히 바꿀 수 있다.
+
+**전체 메시지의 34.6%가 다른 곳에도 똑같이 있는 원문이다.** 고유 원문은
+6,667종뿐이고, 카드 규칙 안내문 하나가 60곳에 반복된다. `--propagate` 가 같은
+원문에 같은 번역을 채워 번역량을 줄이고 표기가 필드마다 갈리는 것을 막는다.
 
 ## 라이선스와 범위
 
