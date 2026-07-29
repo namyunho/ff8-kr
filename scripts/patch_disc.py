@@ -121,7 +121,7 @@ def rebuild_msd(msd: bytes, replacements: dict[int, bytes]) -> bytes:
     return header + b"".join(body + b"\x00" for body in bodies)
 
 
-def apply(path: Path) -> int:
+def apply(path: Path, layout: Path | None) -> int:
     """`{"필드": {"메시지 id": "번역문"}}` 을 받아 해당 필드를 다시 쓴다."""
     import json
 
@@ -130,6 +130,14 @@ def apply(path: Path) -> int:
 
     plan = json.loads(path.read_text(encoding="utf-8"))
     glyphs = GT.GlyphMap.load()
+    if layout and layout.exists():
+        # 한글을 써넣은 자리는 원래 한자였다. 그 구간의 대응을 갈아 끼운다.
+        placed = json.loads(layout.read_text(encoding="utf-8"))
+        base = placed["base"]
+        entries = {i: c for i, c in glyphs.char.items() if i < base}
+        entries.update({base + n: c for n, c in enumerate(placed["chars"])})
+        glyphs = GT.GlyphMap(entries)
+        print(f"배치 적용: {base} 이후 {len(placed['chars'])}자가 한글이다")
     failed = 0
     for raw_field, messages in plan.items():
         index = int(raw_field)
@@ -245,6 +253,9 @@ def main() -> int:
                         help="사본에서 되읽어 원본과 같은지 본다")
     parser.add_argument("--apply", type=Path, metavar="JSON",
                         help="{필드: {메시지 id: 문자열}} 을 적용한다")
+    parser.add_argument("--layout", type=Path,
+                        default=PATCH_DIR / "hangul-layout.json",
+                        help="한글 배치 JSON (inject_hangul_font.py 가 낸다)")
     parser.add_argument("--untouched", type=int, metavar="N",
                         help="사본이 원본과 같은지 표본 N섹터로 본다")
     args = parser.parse_args()
@@ -254,7 +265,7 @@ def main() -> int:
     if args.untouched:
         return untouched(args.untouched)
     if args.apply:
-        return apply(args.apply)
+        return apply(args.apply, args.layout)
     if args.rewrite is not None:
         return rewrite(args.rewrite)
     if args.check is not None:
