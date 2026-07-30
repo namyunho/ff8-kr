@@ -324,6 +324,15 @@ ISO 루트에 파일이 3개뿐이고 게임 데이터 전부가 `FF8DISC1.IMG` 
 
 **우회안**: MSD 를 원본과 같은 크기로 유지하면 뒤가 밀지 않는다. 번역문이
 짧으면 남는 자리를 종료 바이트로 채우면 된다. 길어지는 경우가 문제다.
+
+**막는 요소는 도구다.** 1·2 는 정적 분석으로 풀리지 않는다. xref 는 "이 코드가
+이 주소를 참조한다" 까지만 말하는데, 실제 질문은 실행 중에 어떤 포인터가 옛
+값을 들고 있었느냐다. 밀려난 주소에 쓰기 워치포인트를 걸고 콜스택을 보면
+끝난다. 조작 가능한 실행기가 필요하며 `docs/reverse-engineering-mcp.md` 의
+"런타임 게이트" 절이 정본이다.
+
+3 은 이미 갈랐다. 296 은 207바이트 늘었는데 멀쩡하고 350 은 93바이트 늘었는데
+깨졌으므로 **크기 증가량이 원인이 아니다.**
 | R2 | 뱅크 1 적재 경로 미확정 | 코드 패치 설계 불가 | 런타임 검증 대기 |
 | R3 | VRAM 빈 구간 판정이 정적 RECT 기반 | 확장안 ①이 무효화될 수 있다 | 런타임 검증 대기 |
 | R4 | 런타임 게이트 미개방 | 모든 정적 판정이 추정에 머문다 | 미착수 |
@@ -347,6 +356,7 @@ ISO 루트에 파일이 3개뿐이고 게임 데이터 전부가 `FF8DISC1.IMG` 
 | `docs/disc1-baseline.md` | 매체 식별, IMG 구조, 모듈 적재 경로 |
 | `docs/font-analysis.md` | 폰트, 인코딩, 메뉴·필드 메시지 형식 |
 | `docs/korean-font-feasibility.md` | 한글 폰트 수용량 판정 |
+| `docs/translation-pipeline.md` | 번역 경로, 번역 백엔드 선택, 검사 항목 |
 | `docs/external-sources.md` | 외부 자료 주장별 대조 결과 |
-| `docs/reverse-engineering-mcp.md` | IDA / Ghidra 운용, 도구 경계 |
+| `docs/reverse-engineering-mcp.md` | IDA / Ghidra 운용, 런타임 게이트, 도구 경계 |
 | `docs/git-workflow.md` | 브랜치·커밋 규칙 |

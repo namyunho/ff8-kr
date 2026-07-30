@@ -4,8 +4,9 @@
 만든다. **진행 단계와 다음 게이트는 `docs/roadmap.md`가 정본이다.** 현재 상태
 요약은 `README.md`, 매체·구조 기준선은 `docs/disc1-baseline.md`, 글꼴과 문자
 인코딩은 `docs/font-analysis.md`, 한글 폰트 판정은
-`docs/korean-font-feasibility.md`, 외부 자료 대조는 `docs/external-sources.md`,
-도구 운용은 `docs/reverse-engineering-mcp.md`, 브랜치와 커밋 규칙은
+`docs/korean-font-feasibility.md`, 번역 경로는 `docs/translation-pipeline.md`,
+외부 자료 대조는 `docs/external-sources.md`, 도구 운용은
+`docs/reverse-engineering-mcp.md`, 브랜치와 커밋 규칙은
 `docs/git-workflow.md`를 정본으로 삼는다.
 
 **외부 커뮤니티 자료를 판정 근거로 쓰지 않는다.** 탐색 방향을 좁히는 데만 쓰고,
@@ -55,10 +56,17 @@ python3 scripts/psx_disc.py toc
 - IDA Pro / `idalib-mcp`: 짧은 루틴, 바이트, xref, 함수 경계와 반복 질의의 주력.
 - Ghidra MCP / `analyzeHeadless`: 긴 제어 흐름이나 포인터 전달을 MIPS 디컴파일로
   교차검증할 때 사용.
-- DuckStation: runtime RAM·VRAM 확인. **현재 이 게이트는 열리지 않았다.**
+- DuckStation: 최종 육안 확인. **스크립팅 API 가 없어 자동화되지 않는다.**
+- PCSX-Redux: 런타임 조사(브레이크포인트·워치포인트·VRAM·세이브스테이트).
+  설치는 확인했고 **기능은 아직 검증하지 않았다.**
 - 저장 파일과 runtime 표현이 다르면 정적 결과를 실행 증거로 승격하지 않는다.
 - PS-X EXE는 직접 `idb_open` 하지 말고 `scripts/build_ida_db.py`로 올바른
   `TEXT`/entry가 있는 `.i64`를 만든 뒤 연다.
+
+도구를 새로 붙일 때 기준은 "MCP 가 있는가"가 아니라 **밖에서 명령을 받는가**다.
+CLI·HTTP·소켓이면 `Bash` 로 직접 몬다. 스크립팅 언어만 있으면 얇은 브리지를
+한 겹 두른다. GUI 만 있으면 자동화 대상이 아니다. **CLI 나 HTTP 로 닿는 것에
+MCP 를 새로 만들지 않는다.**
 
 MCP 설정과 import 규칙은 `docs/reverse-engineering-mcp.md`를 따른다. `.mcp.json`은
 클라이언트를 새로 시작해야 반영된다. GUI MCP는 해당 앱과 프로그램을 먼저 열어야

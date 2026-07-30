@@ -142,6 +142,7 @@ PSX BIOS 폰트 활용은 기각했다. `SCPH-1001` 을 역공학한 결과 16 �
 | [`docs/external-sources.md`](docs/external-sources.md) | 외부 커뮤니티 자료의 주장별 대조 결과 |
 | [`docs/font-analysis.md`](docs/font-analysis.md) | 폰트 파일 구조, VRAM 슬롯, 폭 테이블, 텍스트 인코딩 |
 | [`docs/korean-font-feasibility.md`](docs/korean-font-feasibility.md) | 갈무리 폰트 삽입 판정과 실현 경로 |
+| [`docs/translation-pipeline.md`](docs/translation-pipeline.md) | **번역 경로** — 내보내기·되받기·검사·음절 계수, 번역 백엔드 선택 |
 | [`docs/reverse-engineering-mcp.md`](docs/reverse-engineering-mcp.md) | IDA / Ghidra 병렬 운용, MCP, import 규칙 |
 | [`docs/git-workflow.md`](docs/git-workflow.md) | 브랜치 역할, 표준 흐름, 병합 전 확인 |
 | [`AGENTS.md`](AGENTS.md) | 하드 불변식과 확정 주소표 |
@@ -155,7 +156,9 @@ PSX BIOS 폰트 활용은 기각했다. `SCPH-1001` 을 역공학한 결과 16 �
 | armips | MIPS R3000 패치 조립 |
 | mkpsxiso / dumpsxiso | 디스크 구조 덤프·재구성 대조 |
 | xdelta3 | 배포용 차분 패치 |
-| DuckStation | 런타임 검증 (미착수) |
+| DuckStation | 최종 육안 확인. 스크립팅 API 가 없어 자동화되지 않는다 |
+| PCSX-Redux | 런타임 조사 — 브레이크포인트·워치포인트·VRAM·세이브스테이트 (기능 미검증) |
+| LM Studio / Ollama | 로컬 초벌번역 엔드포인트. OpenAI 호환 HTTP 라 MCP 불필요 |
 
 IDA와 Ghidra는 대체 관계가 아니라 **서로 다른 실패 형태를 잡는 상보 관계**로
 쓴다. 실제로 두 도구의 교차검증으로 "게임이 TIM header의 RECT 대신 하드코딩된
