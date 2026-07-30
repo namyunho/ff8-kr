@@ -310,6 +310,117 @@ HOW_TO = """# FF8 한국어화 초벌번역 — 꾸러미 {number} / {count}
 """
 
 
+FIX_HOW_TO = """# FF8 한국어화 — 고칠 자리 {number} / {count}
+
+검사기가 짚은 자리다. **번역을 새로 하는 것이 아니라 걸린 것만 고친다.**
+메시지 {messages}건.
+
+각 항목이 이렇게 온다.
+
+```
+== 필드이름 ==
+# 12  [문제] 설명
+#   원문: ...
+#   지금: ...
+12<탭>고친 번역문
+```
+
+`#` 로 시작하는 줄은 참고용이다. **`id<탭>고친 번역문` 줄만 돌려준다.**
+고칠 필요가 없다고 판단하면 그 줄을 쓰지 않는다.
+
+## 문제별로 할 일
+
+| 문제 | 할 일 |
+|---|---|
+| 코드 누락·추가 | 제어 코드 `{{...}}` 의 **종류·개수·순서를 원문과 똑같이** 맞춘다. 원문에 있는 화자 이름을 빠뜨렸으면 되살린다 |
+| 구멍 남음 | `{{b1:N}}` 은 아직 못 읽은 원문 글자다. 문맥으로 메워 옮기고 **번역문에 남기지 않는다** |
+| 줄 폭 초과 | 한 줄(=`{{02}}`/`{{01}}` 사이)이 **한글 25자**를 넘었다. 줄을 늘리지 말고 문장을 줄인다 |
+| 줄 수 초과 | `{{02}}` 개수가 원문보다 많다 |
+| 일본어 남음 | 옮기다 만 가나·한자가 있다 |
+| 없는 글자 | 그 음절이 폰트에 안 들어간다. **뜻이 같은 다른 말로 바꿔** 그 글자를 피한다 |
+
+번역문 안에 실제 개행이나 탭을 넣지 않는다. 줄바꿈은 `{{02}}` 로 적는다.
+
+---
+
+{spec}
+---
+
+{glossary}
+---
+
+# 고칠 자리
+
+"""
+
+
+def fix_bundle(target: Path, report: Path, out: Path, size: int) -> int:
+    """검사기가 짚은 자리만 모아 밖에 넘길 꾸러미로 낸다.
+
+    전수를 다시 돌릴 이유가 없다. 8,120건 중 걸린 것은 몇 백 건이고, 그
+    자리에는 **무엇이 왜 걸렸는지**가 붙어 있어야 고칠 수 있다. 원문과 현재
+    번역을 주석으로 같이 넣는다.
+    """
+    document = json.loads(report.read_text(encoding="utf-8"))
+    rows: dict[tuple[int, str, int], dict] = {}
+    for finding in document["findings"]:
+        if finding["kind"] == "메시지 예산 초과(참고)":
+            continue
+        key = (finding["field"], finding["name"], finding["id"])
+        row = rows.setdefault(key, {"ja": finding["ja"], "ko": finding["ko"],
+                                    "why": []})
+        row["why"].append(f"{finding['kind']}: {finding['detail']}")
+    if not rows:
+        print("고칠 자리가 없다.")
+        return 0
+
+    spec = (target / "README.md").read_text(encoding="utf-8")
+    head, marker, rest = spec.partition("## 제어 코드")
+    spec = head.split("## 내는 형식")[0] + marker + rest
+    glossary_path = Path("work/text/glossary.csv")
+    glossary = ("# 고유명사\n\n```\n"
+                + (glossary_path.read_text(encoding="utf-8")
+                   if glossary_path.exists() else "(없음)")
+                + "```\n")
+
+    groups: list[list] = []
+    load = 0
+    for key in sorted(rows):
+        if not groups or load >= size:
+            groups.append([])
+            load = 0
+        groups[-1].append((key, rows[key]))
+        load += 1
+
+    out.mkdir(parents=True, exist_ok=True)
+    for old in out.glob("fix-*.md"):
+        old.unlink()
+    for number, group in enumerate(groups, 1):
+        lines, seen = [], None
+        for (_, name, identifier), row in group:
+            if name != seen:
+                lines.append(f"\n== {name} ==")
+                seen = name
+            for why in row["why"]:
+                lines.append(f"# {identifier}  [{why}]")
+            lines.append(f"#   원문: {row['ja']}")
+            lines.append(f"#   지금: {row['ko']}")
+            lines.append(f"{identifier}\t{row['ko']}")
+        text = FIX_HOW_TO.format(number=number, count=len(groups),
+                                 messages=len(group), spec=spec,
+                                 glossary=glossary)
+        (out / f"fix-{number:02d}.md").write_text(
+            text + "\n".join(lines) + "\n", encoding="utf-8")
+
+    print(f"고칠 자리 {len(rows)}건 → 꾸러미 {len(groups)}개 → {out}")
+    kinds = collections.Counter(why.split(":")[0]
+                                for row in rows.values() for why in row["why"])
+    for kind, count in kinds.most_common():
+        print(f"    {kind}: {count}건")
+    print("  고친 답은 work/translate-reply/ 에 두고 되받는다.")
+    return 0
+
+
 def bundle(target: Path, out: Path, size: int) -> int:
     """남은 원문을 다른 도구에 넘길 크기로 잘라 낸다.
 
@@ -485,6 +596,11 @@ def main() -> int:
                         help="같은 원문에 같은 번역을 채운다")
     parser.add_argument("--refresh-prompts", action="store_true",
                         help="남은 항목만 남겨 프롬프트 시트를 다시 쓴다")
+    parser.add_argument("--fix-bundle", type=Path,
+                        help="검사 보고서(JSON)가 짚은 자리만 꾸러미로 낸다")
+    parser.add_argument("--report", type=Path,
+                        default=Path("work/translate-check.json"),
+                        help="check_translation.py --report 가 낸 JSON")
     parser.add_argument("--normalize", action="store_true",
                         help="폰트가 못 그리는 글자를 뱅크0 에 있는 것으로 바꾼다")
     parser.add_argument("--bundle", type=Path,
@@ -495,6 +611,9 @@ def main() -> int:
     if not args.target.is_dir():
         print(f"디렉터리가 아니다: {args.target}", file=sys.stderr)
         return 2
+    if args.fix_bundle:
+        return fix_bundle(args.target, args.report,
+                          args.fix_bundle, args.bundle_size)
     if args.normalize:
         return normalize(args.target, args.dry_run)
     if args.bundle:

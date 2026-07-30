@@ -46,9 +46,9 @@ import text_metrics as TM                   # noqa: E402
 DEFAULT_LINE_PIXELS = TM.LINE_PIXELS
 # 가나와 한자. 한국어 폰트에는 이 글자가 없다.
 #
-# \uac00\ud0c0\uce74\ub098 \ube14\ub85d \uc804\uccb4\ub97c \ud6d1\uc73c\uba74 \uc548 \ub41c\ub2e4. `\u30fb`(U+30FB)\uc640 `\u30fc`(U+30FC)\ub294 \uadf8 \uc548\uc5d0
-# \uc788\uc9c0\ub9cc **\ubc45\ud06c0 \uc5d0 \uc2e4\uc7ac\ud558\uace0 \uc9c0\uce68\uc774 \uc4f0\ub77c\uace0 \ud5c8\uc6a9\ud55c \ubd80\ud638**\ub2e4. \ube14\ub85d\uc9f8\ub85c \uc790\ub974\uba74
-# \uc774 \ub458\uc774 \uc624\ud0d0\uc73c\ub85c \uc7a1\ud600 \uc9c4\uc9dc \ubb38\uc81c\uac00 \uadf8 \uc18d\uc5d0 \ubb3b\ud78c\ub2e4.
+# 가타카나 블록 전체를 훑으면 안 된다. `・`(U+30FB)와 `ー`(U+30FC)는 그 안에
+# 있지만 **뱅크0 에 실재하고 지침이 쓰라고 허용한 부호**다. 블록째로 자르면
+# 이 둘이 오탐으로 잡혀 진짜 문제가 그 속에 묻힌다.
 JAPANESE = re.compile(r"[\u3041-\u309f\u30a1-\u30fa\u4e00-\u9fff]")
 
 
@@ -58,18 +58,24 @@ def codes(text: str) -> list[str]:
 
 
 def cost(text: str, widths: list[int], layout: list[str] | None,
-         glyphs: GT.GlyphMap) -> tuple[int, list[int], set[str]]:
+         glyphs: GT.GlyphMap, native: set[str] = frozenset()
+         ) -> tuple[int, list[int], set[str]]:
     """번역문의 바이트, 줄별 픽셀, 넣을 수 없는 글자.
 
     한글 글리프는 아직 만들지 않았으므로 폭을 한 칸(12px)으로 잡는다.
     원본 폰트에 있는 글자는 실측 폭 테이블을 쓴다.
+
+    `native` 는 **그 필드의 원문이 쓰는 글자**다. 배치에 없더라도 원문이
+    쓰던 것이면 필드 전용 폰트(뱅크1)에서 오므로 그릴 수 있다. 이걸 안 보면
+    `■ □ ◆ ◎ 【 】` 처럼 원문이 쓰는 도형이 전부 "없는 글자" 로 잡힌다.
     """
     cheap = set(layout[:TM.SINGLE_BYTE]) if layout else set()
     known = set(layout) if layout else None
 
     def lookup(char: str) -> int | None:
         index = glyphs.index.get(char)
-        if index is None and known is not None and char not in known:
+        if (index is None and known is not None
+                and char not in known and char not in native):
             unknown.add(char)
         return index
 
@@ -140,13 +146,15 @@ def check(root: Path, layout_path: Path | None, line_limit: int,
         if "entries" not in document:
             continue
         field_used = field_budget = field_done = 0
+        native = {char for entry in document["entries"]
+                  for char in TM.TOKEN.sub("", entry["ja"])}
         for entry in document["entries"]:
             text = entry.get("ko") or ""
             if not text.strip():
                 continue
             checked += 1
             where = f"{document['name']}#{entry['id']}"
-            used, pixels, unknown = cost(text, widths, layout, glyphs)
+            used, pixels, unknown = cost(text, widths, layout, glyphs, native)
             field_used += used
             field_budget += entry["byte_budget"]
             field_done += 1
