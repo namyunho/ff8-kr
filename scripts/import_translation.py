@@ -21,8 +21,16 @@ from __future__ import annotations
 import argparse
 import collections
 import json
+import re
 import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import glyph_text as GT                     # noqa: E402
+
+TOKEN = re.compile(r"\{[^}]*\}")
+HANGUL = re.compile(r"[가-힣]")
 
 
 SECTION = "=="
@@ -41,6 +49,7 @@ def read_reply(path: Path) -> tuple[dict[str, dict[int, str]], list[str]]:
     fields: dict[str, dict[int, str]] = {}
     complaints: list[str] = []
     stem = path.stem
+    last: int | None = None
     fenced = False
     for number, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
         line = raw.rstrip("\r").strip()
@@ -50,10 +59,18 @@ def read_reply(path: Path) -> tuple[dict[str, dict[int, str]], list[str]]:
         if fenced or not line or line.startswith("#"):
             continue
         if line.startswith(SECTION) and line.endswith(SECTION):
-            stem = line.strip(SECTION).strip()
+            stem, last = line.strip(SECTION).strip(), None
             continue
         if "\t" not in line:
-            complaints.append(f"{path.name}:{number} 탭이 없다: {line[:60]}")
+            # 파일로 주고받으면 긴 번역문이 실제 개행으로 쪼개져 온다. 탭이
+            # 없는 줄은 대개 **앞 줄의 뒷토막**이므로 이어 붙인다. 버리면
+            # 그 대사가 문장 중간에서 잘린 채 게임에 들어간다.
+            if last is not None and stem in fields:
+                fields[stem][last] += line
+                complaints.append(f"{path.name}:{number} 앞 줄에 이어 붙였다"
+                                  f" ({stem} id {last}): {line[:40]}")
+            else:
+                complaints.append(f"{path.name}:{number} 탭이 없다: {line[:60]}")
             continue
         head, _, text = line.partition("\t")
         try:
@@ -62,9 +79,11 @@ def read_reply(path: Path) -> tuple[dict[str, dict[int, str]], list[str]]:
             complaints.append(f"{path.name}:{number} id 가 숫자가 아니다: {head[:20]}")
             continue
         rows = fields.setdefault(stem, {})
-        if identifier in rows:
-            complaints.append(f"{path.name}:{number} {stem} id {identifier} 중복")
+        if identifier in rows and rows[identifier] != text.strip():
+            complaints.append(f"{path.name}:{number} {stem} id {identifier}"
+                              f" 가 다른 내용으로 중복 — 뒤엣것을 쓴다")
         rows[identifier] = text.strip()
+        last = identifier
     return fields, complaints
 
 
@@ -152,6 +171,82 @@ def propagate(target: Path, dry_run: bool) -> int:
         for ja, box in sorted(split.items(), key=lambda r: -sum(r[1].values()))[:5]:
             picks = " | ".join(f"{ko}({n})" for ko, n in box.most_common(3))
             print(f"    {ja[:40]} → {picks}")
+    return 0
+
+
+# 뱅크0 에도 그 필드 원문에도 없는 글자를 갈아 끼우는 표.
+# 대상은 전부 뱅크0 에 실재하고 모양이 같은 것만 골랐다.
+SWAP = {
+    "~": "～",          # ASCII 물결 → 전각. 같은 번역문이 이미 ～ 를 쓴다
+    "·": "・",          # 가운뎃점
+    "―": "-", "—": "-", "–": "-",
+    "‘": "", "’": "", "'": "", "“": "", "”": "", '"': "",
+}
+
+
+def normalize(target: Path, dry_run: bool) -> int:
+    """폰트가 못 그리는 글자를 뱅크0 에 있는 것으로 바꾼다.
+
+    판정 기준이 두 겹이다. **뱅크0 에 있으면** 그대로 두고, 없더라도 **그
+    필드의 원문이 쓰는 글자면** 필드 전용 폰트에서 오므로 그대로 둔다.
+    둘 다 아닌 것만 바꾼다.
+
+    라틴 소문자는 뱅크0 에 `e` 하나뿐이므로 대문자로 올린다. 표에 없는
+    글자는 손대지 않고 알린다 — 모르는 것을 조용히 지우면 대사가 샌다.
+    """
+    glyphs = GT.GlyphMap.load()
+    changed = collections.Counter()
+    stuck = collections.Counter()
+    touched = 0
+    for path, document in sheets(target):
+        native = {char for entry in document["entries"]
+                  for char in TOKEN.sub("", entry["ja"])}
+        def convert(run: str) -> str:
+            """제어 코드 **바깥**의 글자만 손본다."""
+            out = []
+            for char in run:
+                if (HANGUL.match(char) or char.isspace()
+                        or char in glyphs.index or char in native):
+                    out.append(char)
+                elif char in SWAP:
+                    changed[f"{char} → {SWAP[char] or '(지움)'}"] += 1
+                    out.append(SWAP[char])
+                elif char.isalpha() and char.upper() in glyphs.index:
+                    changed[f"{char} → {char.upper()}"] += 1
+                    out.append(char.upper())
+                else:
+                    stuck[char] += 1
+                    out.append(char)
+            return "".join(out)
+
+        dirty = False
+        for entry in document["entries"]:
+            text = entry.get("ko") or ""
+            if not text.strip():
+                continue
+            # `{b1:5}` 의 `b` 를 글자로 보면 `{B1:5}` 가 돼 코드가 깨진다.
+            pieces, position = [], 0
+            for token in TOKEN.finditer(text):
+                pieces.append(convert(text[position:token.start()]))
+                pieces.append(token.group())
+                position = token.end()
+            pieces.append(convert(text[position:]))
+            fixed = "".join(pieces)
+            if fixed != text:
+                entry["ko"] = fixed
+                touched += 1
+                dirty = True
+        if dirty and not dry_run:
+            path.write_text(json.dumps(document, indent=2, ensure_ascii=False)
+                            + "\n", encoding="utf-8")
+
+    print(f"글자를 바꾼 메시지 {touched:,}건"
+          + (" (시험 실행, 쓰지 않음)" if dry_run else ""))
+    for label, count in changed.most_common():
+        print(f"    {label}  {count:,}회")
+    if stuck:
+        head = " ".join(f"{c}({n})" for c, n in stuck.most_common(12))
+        print(f"  바꿀 짝이 없어 그대로 둔 글자: {head}")
     return 0
 
 
@@ -390,6 +485,8 @@ def main() -> int:
                         help="같은 원문에 같은 번역을 채운다")
     parser.add_argument("--refresh-prompts", action="store_true",
                         help="남은 항목만 남겨 프롬프트 시트를 다시 쓴다")
+    parser.add_argument("--normalize", action="store_true",
+                        help="폰트가 못 그리는 글자를 뱅크0 에 있는 것으로 바꾼다")
     parser.add_argument("--bundle", type=Path,
                         help="남은 원문을 밖에 넘길 꾸러미로 잘라 낸다")
     parser.add_argument("--bundle-size", type=int, default=300,
@@ -398,6 +495,8 @@ def main() -> int:
     if not args.target.is_dir():
         print(f"디렉터리가 아니다: {args.target}", file=sys.stderr)
         return 2
+    if args.normalize:
+        return normalize(args.target, args.dry_run)
     if args.bundle:
         return bundle(args.target, args.bundle, args.bundle_size)
     if args.status:

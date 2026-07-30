@@ -32,9 +32,20 @@ SINGLE_BYTE = 224
 
 
 def collect(root: Path) -> tuple[collections.Counter, dict]:
-    """번역된 `ko` 만 모은다. 제어 코드는 글자가 아니므로 뺀다."""
+    """번역된 `ko` 만 모은다. 제어 코드는 글자가 아니므로 뺀다.
+
+    한글이 아닌 글자는 두 갈래로 나눠 센다. **그 필드의 원문이 이미 쓰는
+    글자는 뱅크0 칸을 먹지 않는다.** 원문이 쓴다는 것은 그 필드의 폰트가
+    그 글리프를 가지고 있다는 뜻이고, 뱅크0 에 없다면 필드 전용 폰트
+    (뱅크1)에서 온 것이다. 뱅크1 은 우리가 건드리지 않으므로 한국어판에서도
+    그대로 그려진다.
+
+    이 구분을 안 하면 `■ □ ◆ ◎ 【 】` 처럼 원문이 쓰는 도형이 전부 새 칸을
+    요구하는 것으로 계산돼 판정이 과다 계상된다.
+    """
     syllables = collections.Counter()
     other = collections.Counter()
+    borrowed = collections.Counter()
     texts: list[str] = []
     stats = {"files": 0, "entries": 0, "translated": 0}
     for path in sorted(root.glob("*.json")):
@@ -44,6 +55,8 @@ def collect(root: Path) -> tuple[collections.Counter, dict]:
         if "entries" not in document:
             continue
         stats["files"] += 1
+        native = {char for entry in document["entries"]
+                  for char in TOKEN.sub("", entry["ja"])}
         for entry in document["entries"]:
             stats["entries"] += 1
             text = entry.get("ko") or ""
@@ -56,8 +69,9 @@ def collect(root: Path) -> tuple[collections.Counter, dict]:
                 if HANGUL.match(char):
                     syllables[char] += 1
                 elif not char.isspace():
-                    other[char] += 1
-    return syllables, {"stats": stats, "other": other, "texts": texts}
+                    (borrowed if char in native else other)[char] += 1
+    return syllables, {"stats": stats, "other": other, "texts": texts,
+                       "borrowed": borrowed}
 
 
 def report(root: Path, layout: Path | None) -> int:
@@ -76,6 +90,17 @@ def report(root: Path, layout: Path | None) -> int:
         print(f"  **{share:.1%} 만 번역된 중간 집계다.** 음절 수는 더 늘어난다.")
 
     glyphs = GT.GlyphMap.load()
+    borrowed = extra["borrowed"]
+
+    # 원문이 이미 쓰는 글자라도 **뱅크0 에 있으면 칸이 필요하다.** 우리가
+    # 뱅크0 을 한글로 갈아엎기 때문이다. 뱅크0 에 없으면서 원문이 쓰는
+    # 글자만 필드 전용 폰트에서 오므로 공짜다.
+    for char, count in borrowed.items():
+        if char in glyphs.index:
+            other[char] += count
+    field_font = {char: count for char, count in borrowed.items()
+                  if char not in glyphs.index}
+
     keep = {char for char in other if char in glyphs.index}
     unknown = {char: count for char, count in other.items()
                if char not in glyphs.index}
@@ -100,10 +125,14 @@ def report(root: Path, layout: Path | None) -> int:
         rare = [char for char, count in rows if count <= 2]
         if rare:
             print(f"  두 번 이하만 쓰인 글자 {len(rare)}종: {''.join(rare)}")
+    if field_font:
+        head = "".join(sorted(field_font))
+        print(f"  필드 전용 폰트에서 오는 글자 {len(field_font)}종: {head}")
+        print("    원문이 그 자리에 쓰던 것이라 칸을 새로 내주지 않아도 된다.")
     if unknown:
         head = "".join(sorted(unknown))[:40]
-        print(f"  **폰트에 없는 글자를 번역문이 쓴다**: {head}")
-        print("    뱅크0 에 넣으려면 그만큼 음절 칸을 내줘야 한다.")
+        print(f"  **어디에도 없는 글자를 번역문이 쓴다**: {head}")
+        print("    쓰려면 음절 칸을 내줘야 한다. 뱅크0 에 있는 것으로 바꾸는 편이 낫다.")
 
     ranked = [char for char, _ in syllables.most_common()]
     covered = sum(syllables[c] for c in ranked[:SINGLE_BYTE])
