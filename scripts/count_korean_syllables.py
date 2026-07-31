@@ -74,6 +74,45 @@ def collect(root: Path) -> tuple[collections.Counter, dict]:
                        "borrowed": borrowed}
 
 
+def choose(ranked: list[str], texts: list[str], room: int) -> set[str]:
+    """칸에 넣을 음절을 고른다. **빈도순이 최적이 아니다.**
+
+    목적은 빈도를 최대화하는 것이 아니라 **손봐야 할 메시지를 최소화**하는
+    것이다. 이 둘은 다르다 — 드문 음절 둘이 같은 메시지에 있으면 둘 다 버려도
+    깨지는 메시지는 하나뿐이다. 버릴 것을 고를 때 같은 메시지에 몰린 것부터
+    버리면 피해가 뭉친다.
+
+    그래서 욕심 알고리즘으로 하나씩 버린다. 버렸을 때 **새로 깨지는 메시지가
+    가장 적은** 음절을 고르고, 같으면 덜 쓰이는 쪽을 버린다.
+    """
+    if len(ranked) <= room:
+        return set(ranked)
+
+    where: dict[str, list[int]] = collections.defaultdict(list)
+    for index, text in enumerate(texts):
+        for char in set(text):
+            where[char].append(index)
+    rank = {char: index for index, char in enumerate(ranked)}
+
+    broken = [0] * len(texts)               # 메시지마다 버려진 음절이 몇 개인가
+    kept = set(ranked)
+    for _ in range(len(ranked) - room):
+        best, best_cost = None, None
+        # 덜 쓰이는 것부터 본다. 비용이 0 이면 더 볼 것도 없다.
+        for char in reversed(ranked):
+            if char not in kept:
+                continue
+            cost = sum(1 for index in where[char] if broken[index] == 0)
+            if best_cost is None or cost < best_cost:
+                best, best_cost = char, cost
+                if cost == 0:
+                    break
+        kept.discard(best)
+        for index in where[best]:
+            broken[index] += 1
+    return kept
+
+
 def report(root: Path, layout: Path | None) -> int:
     syllables, extra = collect(root)
     stats = extra["stats"]
@@ -145,21 +184,28 @@ def report(root: Path, layout: Path | None) -> int:
     # **실제로 손봐야 하는 메시지가 몇 건인지**가 판정의 근거가 된다.
     room = BANK0_SLOTS - len(keep) - len(unknown)
     if len(syllables) > room:
-        dropped = set(ranked[room:])
+        chosen = choose(ranked, texts, room)
+        dropped = set(ranked) - chosen
         touched = sum(1 for text in texts
                       if any(char in dropped for char in text))
-        share = sum(syllables[c] for c in ranked[:room]) / total
+        plain = sum(1 for text in texts
+                    if any(char in set(ranked[room:]) for char in text))
+        share = sum(syllables[c] for c in chosen) / total
         print()
         print(f"서브셋 판정 — 한글에 쓸 수 있는 칸 {room}")
-        print(f"  상위 {room}자가 본문의 {share:.3%} 를 덮는다")
+        print(f"  고른 {room}자가 본문의 {share:.3%} 를 덮는다")
         print(f"  잘리는 음절 {len(dropped):,}종을 쓰는 메시지 "
               f"{touched:,} / {len(texts):,} ({touched / max(len(texts), 1):.1%})")
+        print(f"  빈도순으로 자르면 {plain:,}건이다 — 같은 메시지에 몰린 것부터"
+              f" 버려 {plain - touched}건을 줄였다")
         print("  이만큼만 다시 쓰면 뱅크0 하나로 간다. 고칠 자리는"
               " check_translation.py --layout 의 '없는 글자' 가 짚는다.")
 
     if layout:
-        order = ranked[:SINGLE_BYTE] + sorted(keep | set(unknown)) + \
-            ranked[SINGLE_BYTE:]
+        chosen = choose(ranked, texts, room)
+        order = ([c for c in ranked if c in chosen][:SINGLE_BYTE]
+                 + sorted(keep | set(unknown))
+                 + [c for c in ranked if c in chosen][SINGLE_BYTE:])
         layout.parent.mkdir(parents=True, exist_ok=True)
         layout.write_text(json.dumps(
             {"note": "인덱스 순서대로 배치할 문자. 앞 224자는 1바이트로 실린다.",
