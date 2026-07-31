@@ -37,6 +37,47 @@ HANGUL = re.compile(r"[가-힣]")
 SECTION = "=="
 LONG = 100      # 이 길이부터 깨짐이 급증한다
 
+SINGLE_HOW_TO = """# FF8 한국어화 — 남은 일 전부
+
+두 부분이다. **1부는 새로 번역**하고 **2부는 걸린 것만 고친다.**
+새로 번역할 것 {new}건, 고칠 자리 {fixes}건.
+
+## 돌려줄 형식 — 두 부 모두 같다
+
+```
+== 필드이름 ==
+0<탭>번역문
+1<탭>번역문
+```
+
+- `== 필드이름 ==` 줄을 그대로 두고 그 아래 `id<탭>번역문` 을 한 줄에 하나씩
+- **원문을 다시 적지 않는다.** id 와 번역문만
+- 번역문 안에 실제 개행이나 탭 문자를 넣지 않는다. 줄바꿈은 `{{02}}` 로 적는다
+- 번역하지 않는 항목은 그 줄을 쓰지 않는다
+- 설명·요약·머리말을 붙이지 않는다
+- `#` 로 시작하는 줄은 참고용이다. 돌려주지 않는다
+
+## 2부에서 문제별로 할 일
+
+| 문제 | 할 일 |
+|---|---|
+| 코드 누락·추가 | 제어 코드 `{{...}}` 의 **종류·개수·순서를 원문과 똑같이** 맞춘다. 원문의 화자 이름을 빠뜨렸으면 되살린다 |
+| 구멍 남음 | `{{b1:N}}` 은 아직 못 읽은 원문 글자다. 문맥으로 메우고 **번역문에 남기지 않는다** |
+| 줄 폭 초과 | 한 줄(=`{{02}}`/`{{01}}` 사이)이 **한글 25자**를 넘었다. 줄을 늘리지 말고 문장을 줄인다 |
+| 줄 수 초과 | `{{02}}` 개수가 원문보다 많다 |
+| 없는 글자 | 그 음절이 폰트에 안 들어간다. **뜻이 같은 다른 말로 바꿔** 그 글자를 피한다 |
+| 폰트에 없는 음절 | 오타다. 맞는 글자로 고친다 |
+| 긴 메시지 | 걸리진 않았지만 길다. 원문과 한 줄씩 대조한다 |
+
+---
+
+{spec}
+---
+
+{glossary}
+---
+"""
+
 
 def read_reply(path: Path) -> tuple[dict[str, dict[int, str]], list[str]]:
     """번역 결과를 읽는다. 두 가지 모양을 다 받는다.
@@ -356,6 +397,76 @@ FIX_HOW_TO = """# FF8 한국어화 — 고칠 자리 {number} / {count}
 """
 
 
+def single(target: Path, report: Path, out: Path) -> int:
+    """남은 일을 **파일 하나**로 묶는다. 안 된 것과 고칠 것을 함께 담는다.
+
+    꾸러미를 여러 개로 나누면 새 대화창을 그만큼 열어야 하고, 그때마다 지침을
+    다시 읽혀야 한다. 남은 양이 한 번에 들어갈 만하면 하나로 주는 편이 낫다.
+    디버그 필드는 뺀다 — 플레이어가 볼 수 없는 개발용 메뉴다.
+    """
+    pending: list[tuple[str, list[dict]]] = []
+    for path, document in sheets(target):
+        if document["debug"]:
+            continue
+        rest = [entry for entry in document["entries"]
+                if not entry.get("ko", "").strip()]
+        if rest:
+            pending.append((path.stem, rest))
+
+    rows: dict[tuple[int, str, int], dict] = {}
+    if report.exists():
+        found = json.loads(report.read_text(encoding="utf-8"))["findings"]
+        for finding in found:
+            if finding["kind"] == "메시지 예산 초과(참고)":
+                continue
+            key = (finding["field"], Path(finding["file"]).stem,
+                   finding["id"])
+            row = rows.setdefault(key, {"ja": finding["ja"],
+                                        "ko": finding["ko"], "why": []})
+            row["why"].append(f"{finding['kind']}: {finding['detail']}")
+
+    spec = (target / "README.md").read_text(encoding="utf-8")
+    head, marker, rest = spec.partition("## 제어 코드")
+    spec = head.split("## 내는 형식")[0] + marker + rest
+    glossary_path = Path("work/text/glossary.csv")
+    glossary = ("# 고유명사\n\n```\n"
+                + (glossary_path.read_text(encoding="utf-8")
+                   if glossary_path.exists() else "(없음)")
+                + "```\n")
+
+    new = sum(len(items) for _, items in pending)
+    parts = [SINGLE_HOW_TO.format(new=new, fixes=len(rows),
+                                  spec=spec, glossary=glossary)]
+
+    parts.append("\n# 1부 — 아직 번역 안 된 것\n")
+    for stem, items in pending:
+        parts.append(f"\n== {stem} ==")
+        parts.extend(f"{entry['id']}\t{entry['ja']}" for entry in items)
+
+    parts.append("\n\n# 2부 — 고칠 자리\n")
+    seen = None
+    for key in sorted(rows):
+        _, name, identifier = key
+        row = rows[key]
+        if name != seen:
+            parts.append(f"\n== {name} ==")
+            seen = name
+        for why in row["why"]:
+            parts.append(f"# {identifier}  [{why}]")
+        parts.append(f"#   원문: {row['ja']}")
+        parts.append(f"#   지금: {row['ko']}")
+        parts.append(f"{identifier}\t{row['ko']}")
+
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text("\n".join(parts) + "\n", encoding="utf-8")
+    text = out.read_text(encoding="utf-8")
+    print(f"{out}  {len(text):,}자 / {out.stat().st_size:,}B")
+    print(f"  1부 새로 번역할 것 {new:,}건 (필드 {len(pending)}개)")
+    print(f"  2부 고칠 자리 {len(rows):,}건")
+    print("  디버그 필드는 뺐다. 답은 work/translate-reply/ 에 저장하면 된다.")
+    return 0
+
+
 def fix_bundle(target: Path, report: Path, out: Path, size: int) -> int:
     """검사기가 짚은 자리만 모아 밖에 넘길 꾸러미로 낸다.
 
@@ -368,7 +479,7 @@ def fix_bundle(target: Path, report: Path, out: Path, size: int) -> int:
     for finding in document["findings"]:
         if finding["kind"] == "메시지 예산 초과(참고)":
             continue
-        key = (finding["field"], finding["name"], finding["id"])
+        key = (finding["field"], Path(finding["file"]).stem, finding["id"])
         row = rows.setdefault(key, {"ja": finding["ja"], "ko": finding["ko"],
                                     "why": []})
         row["why"].append(f"{finding['kind']}: {finding['detail']}")
@@ -382,7 +493,7 @@ def fix_bundle(target: Path, report: Path, out: Path, size: int) -> int:
             text = entry.get("ko") or ""
             if len(TOKEN.sub("", text)) < LONG:
                 continue
-            key = (sheet["field"], sheet["name"], entry["id"])
+            key = (sheet["field"], path.stem, entry["id"])
             row = rows.setdefault(key, {"ja": entry["ja"], "ko": text,
                                         "why": []})
             row["why"].append(f"긴 메시지({len(TOKEN.sub('', text))}자): "
@@ -637,6 +748,8 @@ def main() -> int:
                         help="같은 원문에 같은 번역을 채운다")
     parser.add_argument("--refresh-prompts", action="store_true",
                         help="남은 항목만 남겨 프롬프트 시트를 다시 쓴다")
+    parser.add_argument("--single", type=Path, metavar="파일",
+                        help="남은 일을 파일 하나로 묶는다")
     parser.add_argument("--fix-bundle", type=Path,
                         help="검사 보고서(JSON)가 짚은 자리만 꾸러미로 낸다")
     parser.add_argument("--report", type=Path,
@@ -652,6 +765,8 @@ def main() -> int:
     if not args.target.is_dir():
         print(f"디렉터리가 아니다: {args.target}", file=sys.stderr)
         return 2
+    if args.single:
+        return single(args.target, args.report, args.single)
     if args.fix_bundle:
         return fix_bundle(args.target, args.report,
                           args.fix_bundle, args.bundle_size)
