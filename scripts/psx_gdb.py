@@ -32,6 +32,7 @@ class Gdb:
         self.sock = socket.create_connection((host, port), timeout=timeout)
         self.sock.settimeout(timeout)
         self.buffer = b""
+        self.log: list[str] = []
 
     def close(self) -> None:
         self.sock.close()
@@ -41,7 +42,11 @@ class Gdb:
         self.sock.sendall(f"${payload}#{total:02x}".encode())
 
     def read(self, timeout: float | None = None) -> str | None:
-        """다음 패킷 하나. 시간이 지나면 None."""
+        """다음 패킷 하나. 시간이 지나면 None.
+
+        `O…` 는 대상의 콘솔 출력이지 응답이 아니다. `PCSX Logs to GDB` 를 켜면
+        이게 섞여 들어와 레지스터 응답 자리에 앉는다. 걸러 낸다.
+        """
         if timeout is not None:
             self.sock.settimeout(timeout)
         while True:
@@ -51,6 +56,9 @@ class Gdb:
                 body = self.buffer[start + 1:end].decode("latin-1")
                 self.buffer = self.buffer[end + 3:]
                 self.sock.sendall(b"+")
+                if body.startswith("O") and len(body) > 1:
+                    self.log.append(body[1:])
+                    continue
                 return body
             try:
                 chunk = self.sock.recv(4096)
@@ -80,7 +88,10 @@ def registers(gdb: Gdb) -> list[int]:
     reply = gdb.ask("g")
     if not reply or reply.startswith("E"):
         return []
-    raw = bytes.fromhex(reply)
+    try:
+        raw = bytes.fromhex(reply)
+    except ValueError:
+        return []
     return [int.from_bytes(raw[i:i + 4], "little")
             for i in range(0, len(raw), 4)]
 
