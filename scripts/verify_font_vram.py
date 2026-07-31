@@ -28,9 +28,13 @@ from patch_font_bank1 import parse_font     # noqa: E402
 VRAM_W = 1024
 ROW_HALFWORDS = 64
 HEIGHT = 252
-BANKS = ((0, 960, Path("work/font/bank00.bin"), 0x800821F8),
-         (1, 832, Path("work/font/bank01.bin"), 0x800823BC))
 WIDTH_BYTES = 452
+
+# **설치한 산출물과 맞춘다.** 폰트 생성기의 출력 디렉터리를 기본값으로 두면
+# 그 뒤에 다른 배치로 다시 만들어 깔았을 때 조용히 엉뚱한 것과 비교하게 된다.
+# `work/patch/` 에 있는 것이 실제로 디스크에 들어간 바로 그 바이트다.
+BANKS = ((0, 960, Path("work/patch/font-head.bin"), 0x800821F8),
+         (1, 832, Path("work/patch/font-bank1.bin"), 0x800823BC))
 
 
 def vram_rows(blob: bytes, x: int, y: int) -> bytes:
