@@ -34,6 +34,7 @@ HANGUL = re.compile(r"[가-힣]")
 
 
 SECTION = "=="
+LONG = 100      # 이 길이부터 깨짐이 급증한다
 
 
 def read_reply(path: Path) -> tuple[dict[str, dict[int, str]], list[str]]:
@@ -370,6 +371,22 @@ def fix_bundle(target: Path, report: Path, out: Path, size: int) -> int:
         row = rows.setdefault(key, {"ja": finding["ja"], "ko": finding["ko"],
                                     "why": []})
         row["why"].append(f"{finding['kind']}: {finding['detail']}")
+
+    # 긴 메시지는 걸리지 않았어도 넣는다. 깨짐이 길이에 몰려 있는데
+    # (200자 이상 26%, 100~200자 4.7%, 그 아래 0.5%) 그 오류의 상당수는
+    # `녕석`·`무서다고` 처럼 **정상 음절**이라 검사기가 못 잡는다. 즉 검사기는
+    # 긴 메시지에서 과소 보고한다. 통과했다고 무사한 것이 아니다.
+    for path, sheet in sheets(target):
+        for entry in sheet["entries"]:
+            text = entry.get("ko") or ""
+            if len(TOKEN.sub("", text)) < LONG:
+                continue
+            key = (sheet["field"], sheet["name"], entry["id"])
+            row = rows.setdefault(key, {"ja": entry["ja"], "ko": text,
+                                        "why": []})
+            row["why"].append(f"긴 메시지({len(TOKEN.sub('', text))}자): "
+                              f"검사기가 못 잡는 오류가 섞였을 수 있다."
+                              f" 원문과 한 줄씩 대조한다")
     if not rows:
         print("고칠 자리가 없다.")
         return 0
@@ -413,8 +430,9 @@ def fix_bundle(target: Path, report: Path, out: Path, size: int) -> int:
             text + "\n".join(lines) + "\n", encoding="utf-8")
 
     print(f"고칠 자리 {len(rows)}건 → 꾸러미 {len(groups)}개 → {out}")
-    kinds = collections.Counter(why.split(":")[0]
-                                for row in rows.values() for why in row["why"])
+    kinds = collections.Counter(
+        why.split("(")[0].split(":")[0]
+        for row in rows.values() for why in row["why"])
     for kind, count in kinds.most_common():
         print(f"    {kind}: {count}건")
     print("  고친 답은 work/translate-reply/ 에 두고 되받는다.")
