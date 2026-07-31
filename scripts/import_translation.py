@@ -27,6 +27,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import build_hangul_font as BF              # noqa: E402
 import glyph_text as GT                     # noqa: E402
 
 TOKEN = re.compile(r"\{[^}]*\}")
@@ -568,9 +569,24 @@ def run(source: Path, target: Path, dry_run: bool) -> int:
 
     collected: dict[str, dict[int, str]] = {}
     complaints: list[str] = []
+    damaged: list[tuple[str, int, int]] = []
+    font = BF.covered()
     for path in files:
         fields, said = read_reply(path)
         complaints.extend(said)
+        # **파일 단위로 손상을 먼저 잰다.** 폰트가 못 담는 음절은 화면에서
+        # 빈칸이 되고 거의 예외 없이 출력 사고다. 한 번은 이걸 20단계 뒤에야
+        # 발견했다 — 18개 답장 중 4개에만 몰려 있었고 나머지는 완전히
+        # 깨끗했다. 들어올 때 걸러야 뒤에서 헤매지 않는다.
+        total = broken = 0
+        for rows in fields.values():
+            for text in rows.values():
+                for char in TOKEN.sub("", text):
+                    if HANGUL.match(char):
+                        total += 1
+                        broken += char not in font
+        if broken:
+            damaged.append((path.name, broken, total))
         for stem, rows in fields.items():
             collected.setdefault(stem, {}).update(rows)
 
@@ -585,6 +601,13 @@ def run(source: Path, target: Path, dry_run: bool) -> int:
         merged += 1
         complaints.extend(said)
 
+    if damaged:
+        print("**받은 파일에 폰트가 못 담는 음절이 있다 — 출력 사고를 의심한다**")
+        for name, broken, seen in damaged:
+            print(f"    {name}  깨진 음절 {broken}개 / 한글 {seen:,}자"
+                  f"  ({broken * 10000 // max(seen, 1)} / 만)")
+        print("    다시 받는 편이 낫다. 검사기가 못 잡는 오류가 더 있다 —"
+              " 깨진 음절은 정상 음절로 바뀐 것까지는 못 짚는다.")
     print(f"필드 {merged}개 / 메시지 {total:,}건 되받음"
           + (" (시험 실행, 쓰지 않음)" if dry_run else ""))
     if missing:
