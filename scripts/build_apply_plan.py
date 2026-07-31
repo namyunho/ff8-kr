@@ -15,9 +15,13 @@
 from __future__ import annotations
 
 import argparse
+import collections
 import json
+import re
 import sys
 from pathlib import Path
+
+HOLE = re.compile(r"\{b1:\d+\}")
 
 
 def collect(root: Path, keep_debug: bool) -> tuple[dict, dict]:
@@ -71,6 +75,22 @@ def main() -> int:
     for label, value in stats.items():
         print(f"  {label:<20} {value:>6,}")
     print(f"→ {args.output}  ({args.output.stat().st_size:,}바이트)")
+
+    # **`{b1:N}` 이 남아 있으면 조용히 넘어가면 안 된다.** 뱅크0 만 쓸 때는 그
+    # 자리에 원문 글리프가 그대로 남아 읽히기라도 했지만, 뱅크1 을 한글로
+    # 가져간 뒤로는 뜻 없는 음절이 나온다. 넣기 전에 알아야 하는 값이다.
+    holes = collections.Counter()
+    for field, messages in plan.items():
+        holes[field] = sum(1 for text in messages.values() if HOLE.search(text))
+    left = {field: n for field, n in holes.items() if n}
+    if left:
+        total = sum(left.values())
+        top = ", ".join(f"{f}({n})" for f, n in
+                        sorted(left.items(), key=lambda r: -r[1])[:8])
+        print(f"\n  **{{b1:N}} 이 남은 메시지 {total}건** — 필드 {len(left)}개")
+        print(f"    {top}")
+        print("    뱅크1 을 한글로 가져갔으므로 그 자리는 뜻 없는 음절이 된다.")
+        print("    번역을 마저 해야 사라진다.")
     return 0
 
 
