@@ -37,6 +37,9 @@ DEFAULT_TTF = (PROJECT_ROOT / "fonts" / "galmuri11_16x16_12pt"
                / "font-58c1637749eb0742.ttf")
 DEFAULT_MAP = (PROJECT_ROOT / "fonts" / "galmuri11_16x16_12pt"
                / "font-58c1637749eb0742_glyph_map.json")
+# 원본 폰트(IMG TOC #130). CLUT 을 여기서 그대로 베낀다.
+#   python3 scripts/psx_disc.py extract --index 130
+SOURCE_FONT = PROJECT_ROOT / "work" / "extracted" / "img_130_lba849.bin"
 
 CELL = 12               # FF8 글리프 셀
 COLS, ROWS = 21, 21     # 256x252 텍스처의 격자
@@ -189,33 +192,50 @@ def pack_widths(widths: list[int]) -> bytes:
     return bytes(table)
 
 
-def build_clut() -> bytes:
-    """원본과 같은 4색 x 4반복 구성. 하위 2비트만 색을 정한다."""
-    def bgr555(r: int, g: int, b: int) -> int:
-        return (b >> 3) << 10 | (g >> 3) << 5 | (r >> 3)
+def source_clut(path: Path = SOURCE_FONT) -> bytes:
+    """원본 폰트의 CLUT 청크를 **통째로** 가져온다. 머리까지 그대로다.
 
-    base = [bgr555(0, 0, 0), bgr555(0x52, 0x5A, 0x52),
-            bgr555(0x63, 0x63, 0x63), bgr555(0xA5, 0xA5, 0xA5)]
-    entries = (base * 4)                      # 16색 팔레트 1개
-    data = bytearray()
-    for _ in range(32):                       # 1024바이트 = 32팔레트분
-        for value in entries:
-            data += struct.pack("<H", value)
-    return bytes(data[:1024])
+    직접 만들지 않는 이유가 있다. 팔레트는 16개가 짝을 이루고 있고, **짝수
+    글리프용은 하위 2비트로, 홀수 글리프용은 상위 2비트로** 색을 정한다.
+    렌더러가 글리프 인덱스의 홀짝으로 둘 중 하나를 고른다(`0x8002f098`,
+    CLUT id `0x3812` / `0x3852`).
+
+        팔레트 0 (짝수)  0000 d294 b18c a96a | 반복
+        팔레트 1 (홀수)  0000 0000 0000 0000 | d294 x4 | b18c x4 | a96a x4
+
+    예전에는 한 종류를 32번 반복해 만들었다. 홀수용이 없으니 상위 2비트가
+    색을 못 얻고, 같은 니블에 든 짝수 글리프만 화면에 나왔다 — `카`(89)가
+    `안`(88)로, `스`(33)가 `의`(32)로 보이는 증상이다. 색 순서도 뒤집혀
+    있었고 반투명 비트(0x8000)도 빠져 있었다.
+
+    창 색 테마가 8가지라 우리가 지어낼 값이 아니다. **우리가 바꿀 것은
+    글리프뿐이다.**
+    """
+    if not path.exists():
+        raise FileNotFoundError(
+            f"원본 폰트가 없다: {path}\n"
+            "  python3 scripts/psx_disc.py extract --index 130")
+    data = path.read_bytes()
+    chunk = int.from_bytes(data[4:8], "little")     # 이미지 청크 오프셋
+    start = chunk + 8                               # 첫 청크 = CLUT
+    length = int.from_bytes(data[start:start + 4], "little")
+    if not 12 < length <= len(data) - start:
+        raise ValueError(f"CLUT 청크 길이가 이상하다: {length}")
+    return data[start:start + length]
 
 
 def build_bank(cells: list[list[list[int]]], widths: list[int],
-               vram_x: int, vram_y: int, level: int) -> bytes:
+               vram_x: int, vram_y: int, level: int,
+               clut_chunk: bytes | None = None) -> bytes:
     padded = cells + [[[0] * CELL for _ in range(CELL)]] * (PER_BANK - len(cells))
     pixels = pack_bank(padded[:PER_BANK], level)
-    clut = build_clut()
+    clut = clut_chunk if clut_chunk is not None else source_clut()
 
     out = bytearray()
     out += struct.pack("<II", 8, TIM_OFFSET)
     out += pack_widths(widths)
     out += struct.pack("<II", 0x10, 0x08)                       # TIM magic / flag
-    out += struct.pack("<IHHHH", 12 + len(clut), 896, 256, 16, 16)
-    out += clut
+    out += clut                                                 # 머리까지 원본 그대로
     out += struct.pack("<IHHHH", 12 + len(pixels), vram_x, vram_y, 64, TEX_H)
     out += pixels
     return bytes(out)
