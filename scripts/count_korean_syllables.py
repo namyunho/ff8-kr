@@ -149,12 +149,18 @@ def report(root: Path, layout: Path | None, banks: int = 1) -> int:
 
     # 원문이 이미 쓰는 글자라도 **뱅크0 에 있으면 칸이 필요하다.** 우리가
     # 뱅크0 을 한글로 갈아엎기 때문이다. 뱅크0 에 없으면서 원문이 쓰는
-    # 글자만 필드 전용 폰트에서 오므로 공짜다.
+    # 글자는 필드 전용 폰트(뱅크1)에서 온다.
+    #
+    # **뱅크1 을 우리가 가져가면 그것도 공짜가 아니다.** `patch_font_bank1.py`
+    # 가 필드 한자표 적재를 막으므로 그 글리프는 아예 존재하지 않게 된다.
+    # 뱅크 수에 따라 판정이 갈리는 자리다 — 놓치면 인코딩 단계에서야
+    # `ost■□◆◎【】` 같은 글자로 터진다.
     for char, count in borrowed.items():
-        if char in glyphs.index:
+        if char in glyphs.index or banks >= 2:
             other[char] += count
-    field_font = {char: count for char, count in borrowed.items()
-                  if char not in glyphs.index}
+    field_font = ({} if banks >= 2 else
+                  {char: count for char, count in borrowed.items()
+                   if char not in glyphs.index})
 
     keep = {char for char in other if char in glyphs.index}
     unknown = {char: count for char, count in other.items()

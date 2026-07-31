@@ -34,6 +34,11 @@ PATCH_DIR = PROJECT_ROOT / "work" / "patched"
 PATCH_BIN = PATCH_DIR / FT.BIN_PATH.name
 SECTOR_USER = PS.USER_SIZE
 
+# DAT 304개의 섹션 오프셋 3,648개가 예외 없이 4정렬이고 MSD 길이도 전부 4의
+# 배수다(8·16 정렬은 아니다). 섹션을 밀 때 이 값을 어기면 게임이 죽는다.
+SECTION_ALIGN = 4
+PER_BANK = 882              # 441셀 x 2 — 셀 하나에 글리프 둘이 인터리브된다
+
 
 def init(force: bool) -> int:
     if PATCH_BIN.exists() and not force:
@@ -114,12 +119,17 @@ def rebuild_msd(msd: bytes, replacements: dict[int, bytes],
     발생하지 않는다. 메시지 수는 `offset[0] / 4` 로 정해지므로 마지막 메시지
     뒤의 남는 바이트는 읽히지 않는다.
 
-    **커지면 채울 방법이 없으므로 멈춘다.** 예전에는 `keep_size` 가 작아질
-    때만 채우고 커질 때는 아무 말 없이 통과시켰다. 그러면 R7 을 막는다고
-    적어 놓고 실제로는 그대로 일어난다 — 뒤 섹션이 밀리고, 밀린 오프셋이
-    4의 배수를 벗어나면 정렬을 확인하지 않는 고속 memcpy(`0x800394FC`)가
-    첫 `lw` 에서 예외를 낸다. 게임이 죽는 자리와 원인이 멀어 추적이 어렵다.
-    지금 실패하는 편이 낫다.
+    **길이는 언제나 4의 배수로 맞춘다.** DAT 304개의 섹션 오프셋 3,648개가
+    예외 없이 4정렬이고 MSD 길이도 304개 전부 4의 배수다. 이건 우연이 아니라
+    지켜야 하는 불변식이다 — 어긋나면 정렬을 확인하지 않는 고속
+    memcpy(`0x800394FC`)가 첫 `lw` 에서 예외를 낸다.
+
+    실제로 그렇게 죽은 적이 있다. MSD 가 207바이트 커졌고 뒤 섹션이 전부
+    207씩 제대로 밀렸는데, 207 이 4의 배수가 아니라 정렬이 통째로 깨졌다.
+    **표를 안 고쳐서가 아니라 밀린 양이 안 맞아서** 생긴 일이다.
+
+    `keep_size` 면 커질 때 채울 방법이 없으므로 멈춘다. 게임이 죽는 자리와
+    원인이 멀어 추적이 어려우니 지금 실패하는 편이 낫다.
     """
     bodies = []
     for index, offset in enumerate(FT.message_offsets(msd)):
@@ -134,33 +144,48 @@ def rebuild_msd(msd: bytes, replacements: dict[int, bytes],
         cursor += len(body) + 1
     header = b"".join(struct.pack("<I", value) for value in offsets)
     out = header + b"".join(body + b"\x00" for body in bodies)
+    out += b"\x00" * (-len(out) % SECTION_ALIGN)
     if keep_size:
         if len(out) > len(msd):
             raise ValueError(
                 f"MSD 가 {len(out) - len(msd):,}바이트 커졌다 "
-                f"({len(msd):,} -> {len(out):,}). 그대로 쓰면 뒤 섹션이 밀려 "
-                "R7 이 일어난다. 번역문을 줄이거나 섹션 표를 고쳐야 한다.")
+                f"({len(msd):,} -> {len(out):,}). 크기를 지키려면 번역문을 "
+                "줄이거나, keep_size=False 로 섹션을 밀어야 한다.")
         out += b"\x00" * (len(msd) - len(out))
     return out
 
 
 def korean_map(layout: Path):
-    """배치 후보를 글리프 대응표로 바꾼다.
+    """배치 후보를 글리프 대응표로 바꾼다. `(뱅크0, 뱅크1, base)` 를 돌려준다.
 
-    두 형식을 받는다. `base` 가 있으면 그 인덱스부터 한글이고 앞은 원본 그대로
-    다(수직 관통 시험이 쓰던 방식). 없으면 **뱅크0 전체가 우리 것**이다.
+    세 형식을 받는다.
+
+    - `base` 가 있으면 그 인덱스부터 한글이고 앞은 원본 그대로다(수직 관통
+      시험이 쓰던 방식). 뱅크1 은 필드 것을 그대로 쓴다
+    - `banks` 가 2 면 앞 882자가 뱅크0, 나머지가 **우리 뱅크1** 이다.
+      필드 한자표는 적재되지 않으므로(`patch_font_bank1.py`) 그 자리를 우리가
+      쓴다. 이때 필드의 뱅크1 대응표를 쓰면 안 된다 — 화면에 없는 글리프를
+      가리키게 된다
+    - 둘 다 없으면 뱅크0 전체가 우리 것이고 뱅크1 은 필드 것이다
     """
     import glyph_text as GT
 
     document = json.loads(layout.read_text(encoding="utf-8"))
     chars = document["chars"]
     base = document.get("base")
-    if base is None:
-        return GT.GlyphMap({index: char for index, char in enumerate(chars)}), 0
-    glyphs = GT.GlyphMap.load()
-    entries = {i: c for i, c in glyphs.char.items() if i < base}
-    entries.update({base + n: c for n, c in enumerate(chars)})
-    return GT.GlyphMap(entries), base
+    if base is not None:
+        glyphs = GT.GlyphMap.load()
+        entries = {i: c for i, c in glyphs.char.items() if i < base}
+        entries.update({base + n: c for n, c in enumerate(chars)})
+        return GT.GlyphMap(entries), None, base
+
+    banks = document.get("banks", 1)
+    head = chars[:PER_BANK]
+    bank0 = GT.GlyphMap({index: char for index, char in enumerate(head)})
+    if banks < 2:
+        return bank0, None, 0
+    tail = chars[PER_BANK:banks * PER_BANK]
+    return bank0, GT.Bank1Map({index: char for index, char in enumerate(tail)}), 0
 
 
 def fit(layout: Path, root: Path) -> int:
@@ -175,8 +200,10 @@ def fit(layout: Path, root: Path) -> int:
     import build_text_db as DB
     import glyph_text as GT
 
-    glyphs, base = korean_map(layout)
-    print(f"배치 {len(glyphs.char)}자" + (f", {base} 이후가 한글" if base else ""))
+    glyphs, ours, base = korean_map(layout)
+    print(f"배치 뱅크0 {len(glyphs.char)}자"
+          + (f" + 뱅크1 {len(ours.char)}자" if ours else "")
+          + (f", {base} 이후가 한글" if base else ""))
 
     safe = tight = over = broken = 0
     worst: list[tuple[int, str, int, int]] = []
@@ -195,7 +222,7 @@ def fit(layout: Path, root: Path) -> int:
             msd = FT.msd_section(dat)
         except Exception:
             continue
-        bank1 = DB.bank1_for(document["field"], msd, glyphs)
+        bank1 = ours or DB.bank1_for(document["field"], msd, glyphs)
         replacements, failed = {}, []
         for identifier, text in messages.items():
             try:
@@ -237,22 +264,21 @@ def apply(path: Path, layout: Path | None) -> int:
     import build_text_db as DB
     import glyph_text as GT
 
+    import analyze_text_budget as AB
+
     plan = json.loads(path.read_text(encoding="utf-8"))
-    glyphs = GT.GlyphMap.load()
+    glyphs, ours = GT.GlyphMap.load(), None
     if layout and layout.exists():
-        # 한글을 써넣은 자리는 원래 한자였다. 그 구간의 대응을 갈아 끼운다.
-        placed = json.loads(layout.read_text(encoding="utf-8"))
-        base = placed["base"]
-        entries = {i: c for i, c in glyphs.char.items() if i < base}
-        entries.update({base + n: c for n, c in enumerate(placed["chars"])})
-        glyphs = GT.GlyphMap(entries)
-        print(f"배치 적용: {base} 이후 {len(placed['chars'])}자가 한글이다")
-    failed = 0
+        glyphs, ours, base = korean_map(layout)
+        print(f"배치 적용: 뱅크0 {len(glyphs.char)}자"
+              + (f" + 뱅크1 {len(ours.char)}자" if ours else "")
+              + (f", {base} 이후가 한글" if base else ""))
+    failed = grown = 0
     for raw_field, messages in plan.items():
         index = int(raw_field)
         dat = FT.load_entry(index)
         msd = FT.msd_section(dat)
-        bank1 = DB.bank1_for(index, msd, glyphs)
+        bank1 = ours or DB.bank1_for(index, msd, glyphs)
         replacements = {}
         for raw_id, text in messages.items():
             try:
@@ -262,13 +288,23 @@ def apply(path: Path, layout: Path | None) -> int:
                 failed += 1
         if not replacements:
             continue
-        import analyze_text_budget as AB
-
-        new_dat = AB.splice_msd(dat, rebuild_msd(msd, replacements))
+        # **원본 크기를 지키는 쪽을 먼저 시도한다.** 그러면 뒤 섹션이 한
+        # 바이트도 안 움직여 R7 자체가 일어나지 않는다. 안 되는 필드만
+        # 섹션을 민다 — 미는 양은 rebuild_msd 가 4의 배수로 맞춰 준다.
+        try:
+            new_msd = rebuild_msd(msd, replacements)
+            note = ""
+        except ValueError:
+            new_msd = rebuild_msd(msd, replacements, keep_size=False)
+            grown += 1
+            note = f"  섹션 {len(new_msd) - len(msd):+,}B 밈"
+        new_dat = AB.splice_msd(dat, new_msd)
         print(f"필드 {index}: 메시지 {len(replacements)}건 교체, "
-              f"DAT {len(dat):,} → {len(new_dat):,}B")
+              f"DAT {len(dat):,} → {len(new_dat):,}B{note}")
         if rewrite(index, new_dat):
             failed += 1
+    if grown:
+        print(f"\n원본 크기를 못 지켜 섹션을 민 필드 {grown}개")
     return 1 if failed else 0
 
 

@@ -84,12 +84,22 @@ def widen(msd: bytes, keep: set[int] | None = None) -> bytes:
 
 
 def splice_msd(dat: bytes, msd: bytes) -> bytes:
-    """DAT 안의 MSD 섹션을 갈아 끼우고 뒤 섹션 포인터를 민다."""
+    """DAT 안의 MSD 섹션을 갈아 끼우고 뒤 섹션 포인터를 민다.
+
+    **미는 양은 4의 배수여야 한다.** 원본 DAT 304개의 섹션 오프셋 3,648개가
+    예외 없이 4정렬인데, 어긋난 오프셋을 넘겨받은 고속 memcpy(`0x800394FC`)는
+    정렬을 확인하지 않고 `lw` 를 써서 그 자리에서 예외를 낸다. 한 번
+    207바이트를 밀어 그렇게 죽은 적이 있다.
+    """
     pointers = list(struct.unpack_from(f"<{FT.DAT_POINTERS}I", dat, 0))
     base = pointers[0]
     start = pointers[FT.MSD_POINTER] - base + FT.DAT_FIRST_SECTION
     end = pointers[FT.MSD_POINTER + 1] - base + FT.DAT_FIRST_SECTION
     delta = len(msd) - (end - start)
+    if delta % 4:
+        raise ValueError(
+            f"섹션을 {delta:+,}바이트 밀려 한다. 4의 배수가 아니라 뒤 섹션의 "
+            "정렬이 깨진다 — MSD 를 4의 배수 길이로 맞춰야 한다.")
     for i in range(FT.MSD_POINTER + 1, FT.DAT_POINTERS):
         pointers[i] += delta
     head = b"".join(struct.pack("<I", value) for value in pointers)
