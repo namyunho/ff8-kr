@@ -113,6 +113,10 @@ def main() -> int:
                         help="워치포인트를 기다릴 초 (기본 30)")
     parser.add_argument("--probe", action="store_true",
                         help="붙어서 무엇을 지원하는지 본다")
+    parser.add_argument("--break", dest="stop_at", metavar="주소",
+                        help="그 주소에 멈춰 서서 인자와 호출자를 본다")
+    parser.add_argument("--hits", type=int, default=1,
+                        help="몇 번 잡을 것인가 (기본 1)")
     args = parser.parse_args()
 
     try:
@@ -139,6 +143,34 @@ def main() -> int:
             print(f"  {addr + offset:#010x}  {row.hex(' ')}")
         if data:
             print(f"  0 아닌 바이트 {sum(1 for b in data if b)}개")
+
+    if args.stop_at:
+        addr = int(args.stop_at, 0)
+        reply = gdb.ask(f"Z1,{addr:x},4") or ""
+        if reply != "OK":
+            reply = gdb.ask(f"Z0,{addr:x},4") or ""
+        if reply != "OK":
+            print(f"브레이크포인트를 못 걸었다: {reply!r}", file=sys.stderr)
+            return 1
+        print(f"{addr:#x} 에 멈춰 서기로 했다. 기다린다.")
+        for hit in range(args.hits):
+            gdb.send("c")
+            stop = gdb.read(timeout=args.wait)
+            if stop is None:
+                print(f"  {args.wait:.0f}초 동안 안 걸렸다.")
+                break
+            values = registers(gdb)
+            # MIPS o32: a0..a3 은 4..7, ra 는 31, pc 는 목록 끝
+            caller = values[31] if len(values) > 31 else 0
+            print(f"  {hit + 1}회 — 호출자 $ra = {caller:#010x}"
+                  f"  (호출 지점 {caller - 8:#010x})")
+            for index, name in ((4, "a0 파일"), (5, "a1 뱅크"),
+                                (6, "a2"), (7, "a3")):
+                if len(values) > index:
+                    print(f"      {name:<8} {values[index]:#010x}")
+        gdb.ask(f"z1,{addr:x},4")
+        gdb.ask(f"z0,{addr:x},4")
+        gdb.send("c")
 
     if args.watch:
         addr, length = int(args.watch[0], 0), int(args.watch[1], 0)
