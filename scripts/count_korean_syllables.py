@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
 """번역문이 요구하는 한글 음절 수를 센다. M5 의 마지막 전제를 판정한다.
 
-뱅크0 은 882칸이다. 그중 숫자·라틴·부호에 내줘야 하는 자리를 빼면 한글이 쓸 수
-있는 칸이 나오고, 번역문이 쓰는 **서로 다른 음절 수**가 그 안에 들어가야 한다.
-이 판정은 번역이 있어야만 할 수 있다. 번역이 진행되는 중에도 돌려 추세를 본다.
+뱅크 하나는 882칸이다. 그중 숫자·라틴·부호에 내줘야 하는 자리를 빼면 한글이 쓸
+수 있는 칸이 나오고, 번역문이 쓰는 **서로 다른 음절 수**가 그 안에 들어가야
+한다. 이 판정은 번역이 있어야만 할 수 있다. 번역 도중에도 돌려 추세를 본다.
+
+뱅크1 을 되찾으면 1,764칸이 된다(`docs/font-analysis.md` 의 "뱅크1 재활용").
+`--banks 2` 로 그 배치를 낸다. 뱅크0 하나로 가면 서브셋이 되어 몇 건을 다시
+써야 하는지가 함께 나온다.
 
 인덱스 `0..223` 은 1바이트, `224` 이상은 2바이트로 실린다. 빈도 상위 음절을
 앞자리에 놓으면 본문이 작아지므로 배치 후보도 함께 낸다.
 
     python3 scripts/count_korean_syllables.py work/translate
-    python3 scripts/count_korean_syllables.py work/translate --layout work/hangul-layout.json
+    python3 scripts/count_korean_syllables.py work/translate --layout work/hangul-layout.json --banks 2
 """
 
 from __future__ import annotations
@@ -28,7 +32,7 @@ import glyph_text as GT                     # noqa: E402
 
 TOKEN = re.compile(r"\{[^}]*\}")
 HANGUL = re.compile(r"[가-힣]")
-BANK0_SLOTS = 882
+PER_BANK = 882              # 441셀 x 2 — 셀 하나에 글리프 둘이 인터리브된다
 SINGLE_BYTE = 224
 
 
@@ -116,7 +120,7 @@ def choose(ranked: list[str], texts: list[str], room: int) -> set[str]:
     return kept
 
 
-def report(root: Path, layout: Path | None) -> int:
+def report(root: Path, layout: Path | None, banks: int = 1) -> int:
     syllables, extra = collect(root)
     stats = extra["stats"]
     other = extra["other"]
@@ -158,13 +162,14 @@ def report(root: Path, layout: Path | None) -> int:
 
     total = sum(syllables.values())
     need = len(syllables) + len(keep) + len(unknown)
+    slots = banks * PER_BANK
     print()
     print(f"서로 다른 한글 음절 : {len(syllables):,}")
     print(f"한글이 아닌 글자     : {len(keep)}종(원본 폰트에 있음) "
           f"+ {len(unknown)}종(없음)")
-    print(f"필요한 칸 합계       : {need:,} / {BANK0_SLOTS}")
-    print("  →", "들어간다" if need <= BANK0_SLOTS
-          else f"모자란다. {need - BANK0_SLOTS}칸 초과")
+    print(f"필요한 칸 합계       : {need:,} / {slots:,} (뱅크 {banks}개)")
+    print("  →", "들어간다" if need <= slots
+          else f"모자란다. {need - slots}칸 초과")
 
     # 한글이 아닌 글자도 칸을 먹는다. 칸이 모자랄 때 무엇을 버릴지 정하려면
     # 어떤 글자를 몇 번 쓰는지가 보여야 한다. 한 번만 쓰인 부호는 버리는 값이
@@ -202,7 +207,10 @@ def report(root: Path, layout: Path | None) -> int:
     # 칸이 모자라도 곧바로 실패는 아니다. 한국어 음절 빈도는 극단적으로
     # 쏠려 있어서 잘려 나가는 것은 거의 안 쓰이는 음절이다. 서브셋으로 갈 때
     # **실제로 손봐야 하는 메시지가 몇 건인지**가 판정의 근거가 된다.
-    room = BANK0_SLOTS - len(keep) - len(unknown)
+    room = banks * PER_BANK - len(keep) - len(unknown)
+    print(f"쓸 수 있는 칸 {banks * PER_BANK:,} (뱅크 {banks}개) — "
+          f"부호·숫자·라틴에 {len(keep) + len(unknown)}칸을 내주고 "
+          f"한글 몫 {room:,}")
     if len(syllables) > room:
         chosen = choose(ranked, texts, room)
         dropped = set(ranked) - chosen
@@ -231,11 +239,18 @@ def report(root: Path, layout: Path | None) -> int:
         order = sorted(chosen | keep | set(unknown),
                        key=lambda char: -weight[char])
         layout.parent.mkdir(parents=True, exist_ok=True)
+        chars = order[:banks * PER_BANK]
         layout.write_text(json.dumps(
-            {"note": "인덱스 순서대로 배치할 문자. 앞 224자는 1바이트로 실린다.",
-             "chars": order[:BANK0_SLOTS]},
+            {"note": f"인덱스 순서대로 배치할 문자. 앞 {SINGLE_BYTE}자는 1바이트로"
+                     f" 실린다. 뱅크 {banks}개 x {PER_BANK}칸.",
+             "banks": banks,
+             "chars": chars},
             indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-        print(f"\n배치 후보 {layout}")
+        for bank in range(banks):
+            part = chars[bank * PER_BANK:(bank + 1) * PER_BANK]
+            if part:
+                print(f"  뱅크{bank}  {len(part):>3}자  {''.join(part[:14])}…")
+        print(f"배치 후보 {layout}")
     return 0
 
 
@@ -245,11 +260,13 @@ def main() -> int:
     parser.add_argument("root", type=Path, help="번역 내보내기 디렉터리")
     parser.add_argument("--layout", type=Path,
                         help="빈도순 배치 후보를 낸다")
+    parser.add_argument("--banks", type=int, default=1,
+                        help="쓸 수 있는 폰트 뱅크 수 (기본 1). 뱅크1 을 되찾으면 2")
     args = parser.parse_args()
     if not args.root.is_dir():
         print(f"디렉터리가 아니다: {args.root}", file=sys.stderr)
         return 2
-    return report(args.root, args.layout)
+    return report(args.root, args.layout, args.banks)
 
 
 if __name__ == "__main__":
