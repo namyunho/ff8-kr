@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import shutil
 import struct
 import sys
@@ -104,8 +105,15 @@ def rewrite(index: int, dat: bytes | None = None) -> int:
     return 0
 
 
-def rebuild_msd(msd: bytes, replacements: dict[int, bytes]) -> bytes:
-    """메시지 몇 개를 갈아 끼운 MSD 를 만든다. 오프셋 배열을 다시 쓴다."""
+def rebuild_msd(msd: bytes, replacements: dict[int, bytes],
+                keep_size: bool = True) -> bytes:
+    """메시지 몇 개를 갈아 끼운 MSD 를 만든다. 오프셋 배열을 다시 쓴다.
+
+    작아지면 **원본 크기까지 채운다.** R7 은 MSD 가 커져 뒤 섹션이 밀릴 때
+    생기는데, 크기를 그대로 두면 섹션 오프셋이 한 바이트도 안 움직여 애초에
+    발생하지 않는다. 메시지 수는 `offset[0] / 4` 로 정해지므로 마지막 메시지
+    뒤의 남는 바이트는 읽히지 않는다.
+    """
     bodies = []
     for index, offset in enumerate(FT.message_offsets(msd)):
         end = msd.find(b"\x00", offset)
@@ -118,7 +126,96 @@ def rebuild_msd(msd: bytes, replacements: dict[int, bytes]) -> bytes:
         offsets.append(cursor)
         cursor += len(body) + 1
     header = b"".join(struct.pack("<I", value) for value in offsets)
-    return header + b"".join(body + b"\x00" for body in bodies)
+    out = header + b"".join(body + b"\x00" for body in bodies)
+    if keep_size and len(out) < len(msd):
+        out += b"\x00" * (len(msd) - len(out))
+    return out
+
+
+def korean_map(layout: Path):
+    """배치 후보를 글리프 대응표로 바꾼다.
+
+    두 형식을 받는다. `base` 가 있으면 그 인덱스부터 한글이고 앞은 원본 그대로
+    다(수직 관통 시험이 쓰던 방식). 없으면 **뱅크0 전체가 우리 것**이다.
+    """
+    import glyph_text as GT
+
+    document = json.loads(layout.read_text(encoding="utf-8"))
+    chars = document["chars"]
+    base = document.get("base")
+    if base is None:
+        return GT.GlyphMap({index: char for index, char in enumerate(chars)}), 0
+    glyphs = GT.GlyphMap.load()
+    entries = {i: c for i, c in glyphs.char.items() if i < base}
+    entries.update({base + n: c for n, c in enumerate(chars)})
+    return GT.GlyphMap(entries), base
+
+
+def fit(layout: Path, root: Path) -> int:
+    """번역문을 넣은 MSD 가 **원본 크기 안에 들어가는지** 필드마다 잰다.
+
+    R7 은 MSD 를 갈아 끼우면 뒤 섹션이 밀려 깨지는 문제다. 우회안은 "원본과
+    같은 크기를 유지" 인데, 그게 몇 필드에서 가능한지 잰 적이 없다. 남으면
+    종료 바이트로 채우면 되므로 **작거나 같으면 안전**하고 커지면 R7 에 걸린다.
+
+    인코딩도 여기서 함께 검증된다. 배치에 없는 글자가 있으면 실패로 잡힌다.
+    """
+    import build_text_db as DB
+    import glyph_text as GT
+
+    glyphs, base = korean_map(layout)
+    print(f"배치 {len(glyphs.char)}자" + (f", {base} 이후가 한글" if base else ""))
+
+    safe = tight = over = broken = 0
+    worst: list[tuple[int, str, int, int]] = []
+    for path in sorted(root.glob("*.json")):
+        if path.name == "manifest.json":
+            continue
+        document = json.loads(path.read_text(encoding="utf-8"))
+        if "entries" not in document:
+            continue
+        messages = {entry["id"]: entry["ko"] for entry in document["entries"]
+                    if entry.get("ko", "").strip()}
+        if not messages:
+            continue
+        try:
+            dat = FT.load_entry(document["field"])
+            msd = FT.msd_section(dat)
+        except Exception:
+            continue
+        bank1 = DB.bank1_for(document["field"], msd, glyphs)
+        replacements, failed = {}, []
+        for identifier, text in messages.items():
+            try:
+                replacements[identifier] = GT.encode(text, glyphs, bank1)
+            except ValueError as error:
+                failed.append(f"{document['name']}#{identifier} {error}")
+        if failed:
+            broken += 1
+            if len(worst) < 6:
+                worst.append((0, failed[0], 0, 0))
+            continue
+        grown = len(rebuild_msd(msd, replacements, keep_size=False)) - len(msd)
+        if grown <= 0:
+            safe += 1
+        elif grown <= 32:
+            tight += 1
+        else:
+            over += 1
+        worst.append((grown, document["name"], len(msd), grown))
+
+    worst.sort(reverse=True)
+    total = safe + tight + over
+    print(f"\n필드 {total}개 — MSD 를 원본 크기 안에 넣을 수 있는가")
+    print(f"  안전 (같거나 작다)   {safe:>3}개  ({safe / max(total, 1):.1%})")
+    print(f"  근소 초과 (≤32B)     {tight:>3}개")
+    print(f"  초과                 {over:>3}개")
+    if broken:
+        print(f"  인코딩 실패          {broken:>3}개")
+    print("\n가장 많이 늘어난 필드")
+    for grown, name, size, _ in worst[:8]:
+        print(f"    {name:<12} 원본 {size:>6,}B  {grown:+,}B")
+    return 0
 
 
 def apply(path: Path, layout: Path | None) -> int:
@@ -256,12 +353,16 @@ def main() -> int:
     parser.add_argument("--layout", type=Path,
                         default=PATCH_DIR / "hangul-layout.json",
                         help="한글 배치 JSON (inject_hangul_font.py 가 낸다)")
+    parser.add_argument("--fit", type=Path, metavar="워크시트",
+                        help="번역문이 원본 MSD 크기에 들어가는지 잰다")
     parser.add_argument("--untouched", type=int, metavar="N",
                         help="사본이 원본과 같은지 표본 N섹터로 본다")
     args = parser.parse_args()
 
     if args.init:
         return init(args.force)
+    if args.fit:
+        return fit(args.layout, args.fit)
     if args.untouched:
         return untouched(args.untouched)
     if args.apply:

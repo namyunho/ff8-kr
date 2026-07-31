@@ -68,7 +68,9 @@ def collect(root: Path) -> tuple[collections.Counter, dict]:
             for char in plain:
                 if HANGUL.match(char):
                     syllables[char] += 1
-                elif not char.isspace():
+                elif char != "\n":
+                    # 공백도 글리프다(뱅크0 인덱스 63). 세지 않으면 배치에서
+                    # 빠지고, 어절마다 쓰이므로 인코딩이 전부 깨진다.
                     (borrowed if char in native else other)[char] += 1
     return syllables, {"stats": stats, "other": other, "texts": texts,
                        "borrowed": borrowed}
@@ -203,9 +205,13 @@ def report(root: Path, layout: Path | None) -> int:
 
     if layout:
         chosen = choose(ranked, texts, room)
-        order = ([c for c in ranked if c in chosen][:SINGLE_BYTE]
-                 + sorted(keep | set(unknown))
-                 + [c for c in ranked if c in chosen][SINGLE_BYTE:])
+        # 1바이트 자리(0..223)는 "상위 224 **음절**" 이 아니라 **상위 224
+        # 글자**여야 한다. 부호를 뒤로 몰면 공백(45,655회)과 「」(13,736회)가
+        # 2바이트로 실려 본문이 수십 KB 늘어난다.
+        weight = collections.Counter(syllables)
+        weight.update(other)
+        order = sorted(chosen | keep | set(unknown),
+                       key=lambda char: -weight[char])
         layout.parent.mkdir(parents=True, exist_ok=True)
         layout.write_text(json.dumps(
             {"note": "인덱스 순서대로 배치할 문자. 앞 224자는 1바이트로 실린다.",
