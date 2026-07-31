@@ -260,8 +260,14 @@ def main() -> int:
             assignment[char] = (bank, slot)
         bank_cells = [cells[c] for c in chunk]
         widths = [ink_width(cell) + GAP for cell in bank_cells]
-        # 원본 뱅크 0/1 은 (832,256) / (960,256). 뱅크 2 이상은 빈 VRAM 을 쓴다.
-        vram_x = (832, 960, 320, 384, 448)[bank] if bank < 5 else 320
+        # 원본 뱅크 0/1 은 (960,256) / (832,256) 이다. `sub_8002C358` 의
+        # 뱅크 분기(0x8002c3b8)가 `bne t0,zero` 라 **떨어지는 쪽이 뱅크0** 이고
+        # 거기서 x=0x3c0(960)을 쓴다. 의사코드를 그대로 읽으면 뒤집힌다.
+        #
+        # 재적재 경로(sub_8002C358)는 이 값을 상수로 덮어쓰므로 스톡에서는
+        # 파일의 x 가 무시된다. 그러나 뱅크1 을 우리 훅이 직접 올릴 때는
+        # 파일 값이 그대로 쓰인다 — 여기서 틀리면 글리프가 엉뚱한 데 박힌다.
+        vram_x = (960, 832, 448, 512, 576)[bank] if bank < 5 else 448
         data = build_bank(bank_cells, widths, vram_x, 256, args.level)
         path = args.output / f"bank{bank:02d}.bin"
         path.write_bytes(data)
