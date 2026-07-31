@@ -23,6 +23,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import build_hangul_font as BF              # noqa: E402
 import glyph_text as GT                     # noqa: E402
 
 TOKEN = re.compile(r"\{[^}]*\}")
@@ -133,6 +134,15 @@ def report(root: Path, layout: Path | None) -> int:
     glyphs = GT.GlyphMap.load()
     borrowed = extra["borrowed"]
 
+    # **폰트가 못 담는 음절에는 칸을 주지 않는다.** 배치를 "번역문이 쓰는
+    # 음절" 로만 만들면 기계 번역의 오타까지 칸을 받아 스스로를 정당화한다.
+    # 그런 음절은 화면에서 어차피 빈칸이 되므로 고쳐야 할 자리이지 담을
+    # 대상이 아니다. 정본은 번역문이 아니라 폰트다.
+    unwritable = {char: count for char, count in syllables.items()
+                  if char not in BF.covered()}
+    for char in unwritable:
+        del syllables[char]
+
     # 원문이 이미 쓰는 글자라도 **뱅크0 에 있으면 칸이 필요하다.** 우리가
     # 뱅크0 을 한글로 갈아엎기 때문이다. 뱅크0 에 없으면서 원문이 쓰는
     # 글자만 필드 전용 폰트에서 오므로 공짜다.
@@ -174,6 +184,14 @@ def report(root: Path, layout: Path | None) -> int:
         head = "".join(sorted(unknown))[:40]
         print(f"  **어디에도 없는 글자를 번역문이 쓴다**: {head}")
         print("    쓰려면 음절 칸을 내줘야 한다. 뱅크0 에 있는 것으로 바꾸는 편이 낫다.")
+
+    if unwritable:
+        head = "".join(sorted(unwritable))
+        print()
+        print(f"  **폰트에 없는 음절 {len(unwritable)}종** (연 "
+              f"{sum(unwritable.values())}회) — 칸을 주지 않았다")
+        print(f"    {head}")
+        print("    기계 번역의 오타다. 화면에서 빈칸이 되므로 고쳐야 한다.")
 
     ranked = [char for char, _ in syllables.most_common()]
     covered = sum(syllables[c] for c in ranked[:SINGLE_BYTE])

@@ -70,6 +70,19 @@ GAP = 1                 # 글리프 오른쪽 여백 -> 진행폭 = 잉크폭 + 
 # in-place 교체가 된다.
 
 
+def covered(path: Path = DEFAULT_MAP) -> set[str]:
+    """폰트가 실제로 담은 글자. **오타 판정의 정본이다.**
+
+    갈무리는 KS X 1001 완성형 2,350자만 담는다. 그 밖의 음절은 그릴 수 없으므로
+    번역문에 나오면 화면에서 빈칸이 된다. 그리고 그런 음절은 거의 예외 없이
+    기계 번역의 오타다 — 정상적인 한국어 낱말에 안 쓰이는 글자이기 때문이다.
+
+    배치를 "번역문이 쓰는 음절" 로 만들면 오타까지 칸을 받아 스스로를
+    정당화한다. 정본은 번역문이 아니라 폰트다.
+    """
+    return set(json.loads(path.read_text(encoding="utf-8")))
+
+
 def rasterize(ttf: Path, size: int, chars: list[str]) -> dict[str, list[list[int]]]:
     """TTF 를 지정 픽셀 크기로 래스터라이즈해 12x12 셀 비트맵을 만든다.
 

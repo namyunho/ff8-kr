@@ -41,6 +41,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import dialogue_editor as DE                # noqa: E402
 import extract_field_text as FT             # noqa: E402
 import glyph_text as GT                     # noqa: E402
+import build_hangul_font as BF              # noqa: E402
 import text_metrics as TM                   # noqa: E402
 
 DEFAULT_LINE_PIXELS = TM.LINE_PIXELS
@@ -50,6 +51,8 @@ DEFAULT_LINE_PIXELS = TM.LINE_PIXELS
 # 있지만 **뱅크0 에 실재하고 지침이 쓰라고 허용한 부호**다. 블록째로 자르면
 # 이 둘이 오탐으로 잡혀 진짜 문제가 그 속에 묻힌다.
 JAPANESE = re.compile(r"[\u3041-\u309f\u30a1-\u30fa\u4e00-\u9fff]")
+HANGUL = re.compile(r"[\uac00-\ud7a3]")
+FONT = BF.covered()
 
 
 def codes(text: str) -> list[str]:
@@ -107,6 +110,13 @@ def inspect(entry: dict, used: int, pixels: list[int], unknown: set[str],
     left = JAPANESE.findall(TM.TOKEN.sub("", text))
     if left:
         found.append(("일본어 남음", "".join(sorted(set(left)))))
+
+    # 한글 폰트가 담지 않은 음절. 화면에서 빈칸이 되고, 거의 예외 없이
+    # 기계 번역의 오타다 — 정상적인 낱말에 안 쓰이는 글자이기 때문이다.
+    unwritable = {char for char in TM.TOKEN.sub("", text)
+                  if HANGUL.match(char) and char not in FONT}
+    if unwritable:
+        found.append(("폰트에 없는 음절", "".join(sorted(unwritable))))
 
     lines = TM.line_count(text)
     if lines > max(entry["lines"], 1):
