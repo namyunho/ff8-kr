@@ -113,6 +113,13 @@ def rebuild_msd(msd: bytes, replacements: dict[int, bytes],
     생기는데, 크기를 그대로 두면 섹션 오프셋이 한 바이트도 안 움직여 애초에
     발생하지 않는다. 메시지 수는 `offset[0] / 4` 로 정해지므로 마지막 메시지
     뒤의 남는 바이트는 읽히지 않는다.
+
+    **커지면 채울 방법이 없으므로 멈춘다.** 예전에는 `keep_size` 가 작아질
+    때만 채우고 커질 때는 아무 말 없이 통과시켰다. 그러면 R7 을 막는다고
+    적어 놓고 실제로는 그대로 일어난다 — 뒤 섹션이 밀리고, 밀린 오프셋이
+    4의 배수를 벗어나면 정렬을 확인하지 않는 고속 memcpy(`0x800394FC`)가
+    첫 `lw` 에서 예외를 낸다. 게임이 죽는 자리와 원인이 멀어 추적이 어렵다.
+    지금 실패하는 편이 낫다.
     """
     bodies = []
     for index, offset in enumerate(FT.message_offsets(msd)):
@@ -127,7 +134,12 @@ def rebuild_msd(msd: bytes, replacements: dict[int, bytes],
         cursor += len(body) + 1
     header = b"".join(struct.pack("<I", value) for value in offsets)
     out = header + b"".join(body + b"\x00" for body in bodies)
-    if keep_size and len(out) < len(msd):
+    if keep_size:
+        if len(out) > len(msd):
+            raise ValueError(
+                f"MSD 가 {len(out) - len(msd):,}바이트 커졌다 "
+                f"({len(msd):,} -> {len(out):,}). 그대로 쓰면 뒤 섹션이 밀려 "
+                "R7 이 일어난다. 번역문을 줄이거나 섹션 표를 고쳐야 한다.")
         out += b"\x00" * (len(msd) - len(out))
     return out
 
