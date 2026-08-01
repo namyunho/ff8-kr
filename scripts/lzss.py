@@ -39,6 +39,12 @@ import extract_field_text as FT             # noqa: E402
 
 RING_SIZE = 4096
 RING_START = 0xFEE
+# **거리 4096 은 쓸 수 없다.** 해제기에는 진짜 링버퍼가 없다 — 출력 버퍼를
+# `t1 - back` 으로 직접 되짚는다(0x8003946C). back 은 `& 0xFFF` 로 만들어지므로
+# 거리 4096 은 back = 0 이 되어 **아직 쓰지 않은 자리**를 읽는다. 링버퍼를
+# 가정한 압축기는 그것을 "4096바이트 전"으로 여겨 정상으로 취급하지만, 게임은
+# 재현하지 못한다. 우리 해제기끼리는 규칙이 같아 왕복 검사를 통과한다.
+MAX_DISTANCE = RING_SIZE - 1
 MIN_MATCH = 3
 MAX_MATCH = 18                              # (hi & 0x0F) + 3 의 상한
 LITERAL_COST = 9                            # 1바이트 + 제어 1비트
@@ -68,7 +74,7 @@ def _longest_matches(src: bytes, candidates: int) -> list[int]:
         key = src[i:i + MIN_MATCH]
         bucket = buckets.get(key)
         if bucket:
-            window = i - RING_SIZE
+            window = i - MAX_DISTANCE
             limit = min(MAX_MATCH, size - i)
             longest = 0
             for position in reversed(bucket[-candidates:]):
@@ -126,7 +132,7 @@ def _emit(src: bytes, step: list[int]) -> bytes:
     while i < size:
         take = step[i]
         if take >= MIN_MATCH:
-            window = i - RING_SIZE
+            window = i - MAX_DISTANCE
             found = -1
             for position in reversed(buckets[src[i:i + MIN_MATCH]]):
                 if position < window:
@@ -156,6 +162,72 @@ def _emit(src: bytes, step: list[int]) -> bytes:
 
     flush()
     return bytes(out)
+
+
+def decode_like_game(payload: bytes, limit: int = 1 << 22) -> tuple[bytes, str]:
+    """**게임의 해제기를 그대로 옮긴 것.** 0x800393A4 ~ 0x800394F8.
+
+    `payload` 는 선두 u32(압축 스트림 길이)를 포함한다. (출력, 끝난 이유) 를
+    돌려준다.
+
+    우리 압축기를 우리 해제기로만 검산하면 규칙이 같이 틀려도 통과한다.
+    실제로 그렇게 통과하고 실기에서 깨졌다 — 거리 4096 매치를 정상으로 여긴
+    것이다. **정본은 우리 코드가 아니라 게임이다.**
+
+    옮길 때 중요한 두 자리.
+
+        t2 = 선두 u32. **입력**을 소비할 때마다 줄인다(플래그 1, 리터럴 1,
+             매치 2). 출력이 아니다.
+        0x8003946C  a3 = t1 - back   출력 버퍼를 직접 되짚는다. 링버퍼가 없다.
+        0x8003947C  a3 < t4 이면 0 을 쓴다. 출력 시작보다 앞을 가리킬 때다.
+    """
+    remaining = int.from_bytes(payload[:4], "little")
+    src, out = 4, bytearray()
+
+    def take() -> int | None:
+        nonlocal src
+        if src >= len(payload):
+            return None
+        value = payload[src]
+        src += 1
+        return value
+
+    while True:
+        flags = take()
+        if flags is None:
+            return bytes(out), "입력이 먼저 떨어졌다 (플래그)"
+        remaining -= 1
+        if remaining == 0:
+            return bytes(out), "정상 종료"
+        for _ in range(8):
+            if flags & 1:
+                value = take()
+                if value is None:
+                    return bytes(out), "입력이 먼저 떨어졌다 (리터럴)"
+                out.append(value)
+                remaining -= 1
+            else:
+                low, high = take(), take()
+                if low is None or high is None:
+                    return bytes(out), "입력이 먼저 떨어졌다 (매치)"
+                offset = low | ((high & 0xF0) << 4)
+                target = len(out) + (high & 0x0F) + MIN_MATCH
+                back = (len(out) - (offset - RING_START)) & (RING_SIZE - 1)
+                source = len(out) - back
+                if back == 0:
+                    return bytes(out), f"거리 0 매치 (출력 {len(out)}번째)"
+                while source < 0:
+                    out.append(0)
+                    source += 1
+                while len(out) < target:
+                    out.append(out[source])
+                    source += 1
+                remaining -= 2
+            if remaining <= 0:
+                return bytes(out), "정상 종료"
+            flags >>= 1
+            if len(out) > limit:
+                return bytes(out), "출력이 한계를 넘었다"
 
 
 def compress(src: bytes, candidates: int = 256) -> bytes:
