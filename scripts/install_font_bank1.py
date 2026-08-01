@@ -100,6 +100,41 @@ def set_toc_entry(path: Path, index: int, lba: int, size: int) -> None:
     PD.write_user(path, TOC_LBA, bytes(table))
 
 
+ORIGINAL_FONT = (Path("work") / "extracted" / "img_130_lba849.bin")
+ORIGINAL_EXE = (Path("work") / "disc1" / "SLPS_018.80")
+
+
+def revert() -> int:
+    """폰트 패치만 물린다. 꼬리에 쓴 것은 아무도 안 보므로 그냥 둔다.
+
+    원본 폰트는 LBA 849 에 그대로 있다 — 우리는 TOC 가 가리키는 곳만 옮겼지
+    그 자리를 덮은 적이 없다. 그래서 되돌리는 데 필요한 것은 TOC 한 항목과
+    EXE 뿐이다.
+    """
+    if not ORIGINAL_EXE.exists():
+        print(f"원본 EXE 가 없다: {ORIGINAL_EXE}", file=sys.stderr)
+        return 2
+    lba, size = toc_entry(PD.PATCH_BIN, FONT_ENTRY)
+    print(f"TOC #{FONT_ENTRY}  {lba:,} / {size:,} -> 849 / 33,764")
+    set_toc_entry(PD.PATCH_BIN, FONT_ENTRY, 849, 33764)
+
+    exe = ORIGINAL_EXE.read_bytes()
+    print(f"EXE {PD.write_user(PD.PATCH_BIN, EXE_LBA, exe)}섹터를 원본으로 되썼다")
+
+    if toc_entry(PD.PATCH_BIN, FONT_ENTRY) != (849, 33764):
+        print("TOC 가 되돌아가지 않았다", file=sys.stderr)
+        return 1
+    if PD.read_user(PD.PATCH_BIN, EXE_LBA, len(exe)) != exe:
+        print("EXE 가 되돌아가지 않았다", file=sys.stderr)
+        return 1
+    if ORIGINAL_FONT.exists():
+        on_disc = PD.read_user(PD.PATCH_BIN, 849, 33764)
+        print(f"LBA 849 의 원본 폰트: "
+              f"{'그대로다' if on_disc == ORIGINAL_FONT.read_bytes() else '**다르다**'}")
+    print("\n폰트 패치를 물렸다. 필드 데이터는 그대로다.")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -108,7 +143,14 @@ def main() -> int:
                         help="쓰지 않고 무엇을 할지만 말한다")
     parser.add_argument("--force", action="store_true",
                         help="꼬리에 이미 데이터가 있어도 덮어쓴다 (다시 설치할 때)")
+    parser.add_argument("--revert", action="store_true",
+                        help="폰트 패치만 되돌린다. TOC #130 을 원래 자리(LBA 849)로 "
+                             "돌리고 EXE 를 원본으로 되쓴다. 필드 데이터는 건드리지 "
+                             "않는다 — 원인이 폰트 쪽인지 대사 쪽인지 가를 때 쓴다")
     args = parser.parse_args()
+
+    if args.revert:
+        return revert()
 
     plan_path = args.patch / "bank1-plan.json"
     if not plan_path.exists():

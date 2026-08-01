@@ -218,6 +218,10 @@ def main() -> int:
                         help="두 파일을 놓을 첫 섹터 (설치기와 같아야 한다)")
     parser.add_argument("--show", action="store_true",
                         help="조립한 훅을 도로 해체해 보여 준다")
+    parser.add_argument("--no-block", action="store_true",
+                        help="필드 한자표 적재를 막지 않는다(패치 B 생략). "
+                             "한글 뱅크1 은 덮이지만 게임 코드는 스톡 그대로다 — "
+                             "무엇이 원인인지 가를 때 쓴다")
     args = parser.parse_args()
 
     for path in (args.bank0, args.bank1, args.exe):
@@ -265,8 +269,11 @@ def main() -> int:
     hook_addr = BUFFER + HOOK_AT
     exe.put_word(HOOK_SITE, int.from_bytes(
         assemble(f"jal {hook_addr:#x}", HOOK_SITE), "little"))
-    exe.put_word(BANK_BRANCH, int.from_bytes(
-        assemble(f"bne t0, zero, {LOADER_RETURN:#x}", BANK_BRANCH), "little"))
+    # 패치 B 를 빼면 필드 한자표가 우리 한글 뱅크1 을 덮어쓴다. 글자는 깨지지만
+    # 게임 코드는 스톡 그대로 돈다 — 무엇이 원인인지 가를 때 쓴다.
+    if not args.no_block:
+        exe.put_word(BANK_BRANCH, int.from_bytes(
+            assemble(f"bne t0, zero, {LOADER_RETURN:#x}", BANK_BRANCH), "little"))
 
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output / "font-head.bin").write_bytes(bytes(head))
@@ -274,6 +281,7 @@ def main() -> int:
     (args.output / args.exe.name).write_bytes(bytes(exe.data))
 
     plan = {
+        "block_field_tdw": not args.no_block,
         "buffer": BUFFER,
         "head_lba": args.lba,
         "head_bytes": len(head),
@@ -285,7 +293,9 @@ def main() -> int:
         "hook_bytes": len(hook),
         "exe_patches": {
             f"{HOOK_SITE:#010x}": f"jal {hook_addr:#010x}",
-            f"{BANK_BRANCH:#010x}": f"bne t0, zero, {LOADER_RETURN:#010x}",
+            **({} if args.no_block else
+               {f"{BANK_BRANCH:#010x}":
+                f"bne t0, zero, {LOADER_RETURN:#010x}"}),
         },
     }
     (args.output / "bank1-plan.json").write_text(

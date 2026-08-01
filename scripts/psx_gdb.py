@@ -144,6 +144,10 @@ def main() -> int:
         print(f"레지스터  : {len(values)}개")
         if values:
             show_registers(values)
+        # **붙는 것만으로 대상이 멈춘다.** 이어 주지 않으면 게임이 그대로
+        # 서 버리고, 그 멈춤을 크래시로 잘못 읽게 된다. 실제로 한 번 그랬다.
+        gdb.send("c")
+        print("실행을 이어 두었다.")
 
     if args.read:
         addr, length = int(args.read[0], 0), int(args.read[1], 0)

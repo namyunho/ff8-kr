@@ -84,8 +84,24 @@ def write_user(path: Path, lba: int, data: bytes) -> int:
 
 
 def field_bytes(dat: bytes) -> bytes:
-    """필드 파일 한 벌. 선두 u32 는 해제 크기다."""
-    return struct.pack("<I", len(dat)) + lzss.compress(dat)
+    """필드 파일 한 벌. **선두 u32 는 압축된 스트림의 길이다.**
+
+    해제 크기가 아니다. 원본 필드 613개 전부에서 이 값이 `디스크 크기 - 4` 와
+    같다 — 즉 뒤따르는 스트림의 바이트 수다.
+
+    해제기(`0x800393A4`)를 읽으면 그렇게 쓴다. 그 값을 `t2` 에 받아 **입력을
+    소비할 때마다** 줄인다(플래그 1, 리터럴 1, 매치 2). 출력이 아니라 입력을
+    센다.
+
+    여기에 해제 크기를 쓰면 값이 서너 배 커진다. 그러면 해제기가 스트림이
+    끝난 뒤에도 계속 읽어 뒤에 있는 아무 데이터나 압축 데이터로 해석하고,
+    쓰레기를 한참 더 뱉으며 이웃 메모리를 덮는다. 대사는 멀쩡해 보인다 —
+    MSD 가 파일 앞쪽이라 덮이기 전에 제대로 풀리기 때문이다. 대신 그 뒤에
+    적재되는 것이 깨진다. 실기에서 동영상이 재생되지 않는 것으로 나타났고,
+    정렬 안 된 포인터로 인한 예외와 정의되지 않은 명령 예외도 같은 원인이다.
+    """
+    stream = lzss.compress(dat)
+    return struct.pack("<I", len(stream)) + stream
 
 
 def rewrite(index: int, dat: bytes | None = None) -> int:

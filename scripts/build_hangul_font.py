@@ -66,6 +66,7 @@ TIM_OFFSET = 452        # 원본 #130 과 동일
 WIDTH_TABLE_BYTES = TIM_OFFSET - 8      # 파일상 444바이트
 COPY_BYTES = 452        # sub_8002C358 이 실제로 복사하는 길이
 GAP = 1                 # 글리프 오른쪽 여백 -> 진행폭 = 잉크폭 + GAP
+BLANK_WIDTH = 8         # 잉크가 없는 글리프(공백). 원본 인덱스 63 과 같다
 
 # 적재기는 오프셋 8부터 452바이트를 복사하므로 마지막 8바이트는 TIM 헤더를
 # 덮어 읽는다. 그 8바이트는 인덱스 888..903 에 해당하고 뱅크당 441칸만 쓰므로
@@ -147,6 +148,17 @@ def rasterize(ttf: Path, size: int, chars: list[str]) -> dict[str, list[list[int
 def ink_width(cell: list[list[int]]) -> int:
     columns = [x for y in range(CELL) for x in range(CELL) if cell[y][x]]
     return (max(columns) + 1) if columns else 0
+
+
+def advance(cell: list[list[int]]) -> int:
+    """진행폭. **잉크가 없는 글리프는 공백이므로 따로 준다.**
+
+    잉크폭 + GAP 으로만 계산하면 공백이 1픽셀이 되어 어절이 붙어 버린다.
+    화면에서는 글자 둘이 겹친 것처럼 보인다. 원본은 공백(인덱스 63)에 8 을
+    준다. 표는 니블이라 15 를 넘을 수 없다.
+    """
+    ink = ink_width(cell)
+    return min(ink + GAP if ink else BLANK_WIDTH, 15)
 
 
 def pack_bank(cells: list[list[list[int]]], level: int) -> bytes:
@@ -279,7 +291,7 @@ def main() -> int:
         for slot, char in enumerate(chunk):
             assignment[char] = (bank, slot)
         bank_cells = [cells[c] for c in chunk]
-        widths = [ink_width(cell) + GAP for cell in bank_cells]
+        widths = [advance(cell) for cell in bank_cells]
         # 원본 뱅크 0/1 은 (960,256) / (832,256) 이다. `sub_8002C358` 의
         # 뱅크 분기(0x8002c3b8)가 `bne t0,zero` 라 **떨어지는 쪽이 뱅크0** 이고
         # 거기서 x=0x3c0(960)을 쓴다. 의사코드를 그대로 읽으면 뒤집힌다.
