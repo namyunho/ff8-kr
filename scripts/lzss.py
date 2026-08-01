@@ -30,6 +30,7 @@ Okumura 계열이다. 링버퍼 4096, 초기 위치 `0xFEE`, 제어 바이트 LS
 from __future__ import annotations
 
 import argparse
+import struct
 import sys
 from pathlib import Path
 
@@ -238,7 +239,12 @@ def compress(src: bytes, candidates: int = 256) -> bytes:
 
 
 def check(limit: int | None) -> int:
-    """필드 DAT 를 전수로 압축해 무손실과 크기를 본다."""
+    """필드 DAT 를 전수로 압축해 무손실과 크기를 본다.
+
+    **되푸는 쪽은 `decode_like_game` 이다.** 우리 해제기로 검산하면 압축기와
+    해제기가 같은 잘못된 규칙을 공유할 때 늘 통과한다. 실제로 그렇게 통과하고
+    실기에서 두 번 깨졌다 — 선두 u32 의 뜻과 거리 4096 매치.
+    """
     import build_text_db as DB               # 순환을 피해 여기서 들여온다
 
     sector = 2048
@@ -253,10 +259,13 @@ def check(limit: int | None) -> int:
         if DB.dat_pointers(dat) is None:
             continue
         packed = compress(dat)
-        if FT.lzss_decode(packed) != dat:
+        payload = struct.pack("<I", len(packed)) + packed
+        back, why = decode_like_game(payload)
+        if why != "정상 종료" or back != dat:
             lossy += 1
-            print(f"  무손실 실패: 필드 {index}")
-        nbytes = len(packed) + 4             # 선두 u32 원본 크기
+            print(f"  무손실 실패: 필드 {index} — {why}, "
+                  f"{len(back):,}B (기준 {len(dat):,}B)")
+        nbytes = len(payload)                # 선두 u32 + 스트림
         total_original += size
         total_packed += nbytes
         smaller += nbytes < size
