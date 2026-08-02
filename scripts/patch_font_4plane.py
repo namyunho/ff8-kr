@@ -227,6 +227,82 @@ SHADOW_SITES = (
 )
 
 
+# ----------------------------------------------------------------------
+# 오버레이(menumain.ovl)용 세 번째 변형
+#
+# 메뉴 글자는 `menumain.ovl`(TOC #4, 0x801f0000 적재)이 자기 루프로 그린다.
+# **프리미티브가 20바이트**라 앞의 둘(24바이트)과 모양이 다르다.
+#
+#     0x00 태그   0x04 색/코드   0x08 화면 x,y   0x0c u,v   0x0e CLUT   0x10 12x12
+#
+# 오버레이 안에는 코드를 놓을 자리가 없다 — 0 구간 둘 다 뛰어드는 곳이 있다.
+# 그래서 루틴은 EXE 쪽 여유에 두고 **`j` 로 오간다.** `b` 는 상대 16비트라
+# 1.9MB 를 못 넘지만 `j` 는 26비트 절대라 닿는다. 오버레이 적재 주소가
+# 고정이므로 되돌아올 목적지도 고정이다.
+OVL_BASE = 0x801F0000           # menumain.ovl 적재 주소
+OVL_HOOK = 6424                 # 파일 오프셋. `j 0x801f1804` (루프 꼬리)
+OVL_LOOP = 0x801F1804           # 루프 머리
+OVL_STRIDE = 0x14
+OVL_SHADOW_AT = 0        # apply() 가 채운다
+
+OVL_SHADOW_ASM = """
+    lui   at, 0x8008
+    lw    at, {ctx_lo:#x}(at)
+    addiu v1, s1, 0x14
+    lw    v0, 0x4(at)
+    nop
+    sltu  v0, v0, v1
+    bne   v0, zero, {back:#x}
+    nop
+
+    lw    v0, -0x14(s1)
+    lw    v1, -0x10(s1)
+    lw    a0, -0xc(s1)
+    lw    a1, -0x8(s1)
+    lw    a2, -0x4(s1)
+    sw    v0, 0x0(s1)
+    sw    v1, 0x4(s1)
+    sw    a0, 0x8(s1)
+    sw    a1, 0xc(s1)
+    sw    a2, 0x10(s1)
+
+    lhu   v0, 0x8(s1)
+    lhu   v1, 0xa(s1)
+    addiu v0, v0, 0x1
+    addiu v1, v1, 0x1
+    sh    v0, 0x8(s1)
+    sh    v1, 0xa(s1)
+
+    lhu   v0, 0xe(s1)
+    nop
+    andi  v1, v0, 0x40
+    andi  v0, v0, 0x400
+    srl   v0, v0, 3
+    addu  v1, v1, v0
+    addiu v1, v1, {clut:#x}
+    sh    v1, 0xe(s1)
+
+    lw    v0, 0x0(s1)
+    srl   v1, s2, 8
+    lui   a0, 0xff00
+    and   v0, v0, a0
+    sll   v1, v1, 8
+    srl   v1, v1, 8
+    or    v0, v0, v1
+    sw    v0, 0x0(s1)
+
+    sll   s2, s1, 8
+    addiu s1, s1, 0x14
+    nop
+    nop
+"""
+
+
+def jump(target: int) -> int:
+    """`j target` 을 손으로 짠다. 어셈블러에 없다."""
+    return (2 << 26) | ((target >> 2) & 0x03FFFFFF)
+
+
 def shadow_free(exe: Exe, where: int, size: int) -> None:
     """코드를 놓을 자리가 정말 비었는지 본다. **0 이라고 빈 자리가 아니다.**
 
@@ -299,6 +375,20 @@ def _install_shadow(exe: Exe, done: list) -> None:
         done.append((cursor, f"그림자 루틴 [{name}] {len(code) // 4}명령"))
         done.append((hook, f"[{name}] 루프 꼬리 -> 그림자"))
         cursor += len(code)
+
+    # 오버레이용. 훅은 EXE 가 아니라 menumain.ovl 에 걸리므로
+    # `patch_overlay_clut.py` 가 이 주소를 받아 간다.
+    fields = dict(ctx_lo=PRIM_CTX & 0xFFFF, clut=SHADOW_CLUT)
+    code = bytearray(assemble(OVL_SHADOW_ASM.format(back=cursor, **fields), cursor))
+    back = cursor + len(code) - 8
+    code = bytearray(assemble(OVL_SHADOW_ASM.format(back=back, **fields), cursor))
+    code[-8:-4] = jump(OVL_LOOP).to_bytes(4, "little")     # 마지막 nop -> j
+    shadow_free(exe, cursor, len(code) + 16)
+    for i in range(0, len(code), 4):
+        exe.put_word(cursor + i, int.from_bytes(code[i:i + 4], "little"))
+    global OVL_SHADOW_AT
+    OVL_SHADOW_AT = cursor
+    done.append((cursor, f"그림자 루틴 [메뉴 오버레이] {len(code) // 4}명령"))
 
 
 

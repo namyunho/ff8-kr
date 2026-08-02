@@ -44,6 +44,7 @@ import patch_font_4plane as PF              # noqa: E402
 from mips_dis import decode                 # noqa: E402
 
 TOC_LBA = 826
+EXE_PATCHED = Path("work/patch-4plane/SLPS_018.80")
 EVEN, ODD = 0x3812, 0x3852
 ADDIU = 9
 
@@ -73,6 +74,22 @@ def pairs(data: bytes) -> list[int]:
             continue
         out.append(off)
     return out
+
+
+SIGNATURE = (0x3C018008, 0x8C2121E0, 0x26230014)     # lui/lw at, addiu v1,s1,0x14
+
+
+def find_shadow(exe: "Exe") -> int:
+    """패치된 EXE 에서 오버레이용 그림자 루틴을 찾는다.
+
+    주소를 상수로 박지 않는다 — 앞의 두 루틴 길이에 따라 밀린다. 서명 세 워드로
+    찾는다. `addiu v1, s1, 0x14` 는 오버레이 변형에만 있다(보폭이 20바이트).
+    """
+    for off in range(exe.HEADER, exe.HEADER + exe.size, 4):
+        addr = exe.load + off - exe.HEADER
+        if all(exe.word(addr + i * 4) == w for i, w in enumerate(SIGNATURE)):
+            return addr
+    raise ValueError("EXE 에 오버레이용 그림자 루틴이 없다 — --no-shadow 로 만들었나")
 
 
 def main() -> int:
@@ -110,6 +127,35 @@ def main() -> int:
             print("    쓴 대로 안 읽힌다", file=sys.stderr)
             return 1
         print("    썼다. 되읽기 일치")
+
+    # 메뉴 오버레이의 그림자 훅
+    from mips_dis import Exe
+
+    try:
+        exe = Exe(str(EXE_PATCHED))
+        where = find_shadow(exe)
+    except (ValueError, FileNotFoundError) as error:
+        print(f"\n그림자 훅 건너뜀 — {error}")
+        where = 0
+    if where:
+        lba, size = next((l, s) for i, l, s in entries() if i == 4)
+        data = bytearray(PD.read_user(PD.PATCH_BIN, lba, size))
+        was = int.from_bytes(data[PF.OVL_HOOK:PF.OVL_HOOK + 4], "little")
+        want = PF.jump(PF.OVL_LOOP)
+        if was != want:
+            print(f"\n**menumain.ovl +{PF.OVL_HOOK:,} 가 {was:08x} 다. "
+                  f"{want:08x} 여야 한다**", file=sys.stderr)
+            return 1
+        struct.pack_into("<I", data, PF.OVL_HOOK, PF.jump(where))
+        print(f"\nmenumain.ovl  +{PF.OVL_HOOK:,}  "
+              f"j {PF.OVL_LOOP:#x} -> j {where:#x}  (그림자)")
+        if not args.dry_run:
+            PD.write_user(PD.PATCH_BIN, lba, bytes(data))
+            back = PD.read_user(PD.PATCH_BIN, lba, size)
+            if back[:len(data)] != bytes(data):
+                print("    쓴 대로 안 읽힌다", file=sys.stderr)
+                return 1
+            print("    썼다. 되읽기 일치")
 
     print(f"\n고친 짝 {total}곳")
     if args.dry_run:
