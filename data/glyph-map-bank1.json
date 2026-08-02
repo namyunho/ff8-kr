@@ -213,6 +213,366 @@
     "1c6dbaff1933": {
       "char": "純",
       "source": "original"
+    },
+    "87a55a09d586": {
+      "char": "読",
+      "source": "read"
+    },
+    "316ece956d46": {
+      "char": "酒",
+      "source": "read"
+    },
+    "fc64c93aaa9d": {
+      "char": "母",
+      "source": "read"
+    },
+    "b019a47a3528": {
+      "char": "起",
+      "source": "read"
+    },
+    "33bb3f662d6e": {
+      "char": "夜",
+      "source": "read"
+    },
+    "99755a1cc97f": {
+      "char": "付",
+      "source": "read"
+    },
+    "aa59da926e79": {
+      "char": "遊",
+      "source": "read"
+    },
+    "72fd9806629b": {
+      "char": "盛",
+      "source": "read"
+    },
+    "1fe4787e04e3": {
+      "char": "屈",
+      "source": "read"
+    },
+    "b6a81bce4e3a": {
+      "char": "昔",
+      "source": "read"
+    },
+    "1b3cf2a3cd60": {
+      "char": "案",
+      "source": "read"
+    },
+    "7d365e4d182c": {
+      "char": "親",
+      "source": "read"
+    },
+    "05ba12e9242d": {
+      "char": "色",
+      "source": "read"
+    },
+    "ae7b46b8bd14": {
+      "char": "娘",
+      "source": "read"
+    },
+    "b27a84f46a7d": {
+      "char": "勉",
+      "source": "read"
+    },
+    "7222f0687778": {
+      "char": "嫌",
+      "source": "read"
+    },
+    "768ec84021f2": {
+      "char": "従",
+      "source": "read"
+    },
+    "fc1baadeda54": {
+      "char": "絵",
+      "source": "read"
+    },
+    "1f2a5b80db2f": {
+      "char": "腹",
+      "source": "read"
+    },
+    "2cc261c5474c": {
+      "char": "達",
+      "source": "read"
+    },
+    "5b978b1e65a3": {
+      "char": "危",
+      "source": "read"
+    },
+    "bde57e618e35": {
+      "char": "困",
+      "source": "read"
+    },
+    "c851731170b1": {
+      "char": "描",
+      "source": "read"
+    },
+    "8c6b88a0b96b": {
+      "char": "険",
+      "source": "read"
+    },
+    "54fccc7a3e25": {
+      "char": "勢",
+      "source": "read"
+    },
+    "2f4c782e6f53": {
+      "char": "噂",
+      "source": "read"
+    },
+    "c999b7ca1598": {
+      "char": "和",
+      "source": "read"
+    },
+    "d9e1012eef84": {
+      "char": "払",
+      "source": "read"
+    },
+    "1e68c6c73265": {
+      "char": "途",
+      "source": "read"
+    },
+    "7eb32b651603": {
+      "char": "答",
+      "source": "read"
+    },
+    "aa2e1ab5b953": {
+      "char": "納",
+      "source": "read"
+    },
+    "dddc0cd499cf": {
+      "char": "担",
+      "source": "read"
+    },
+    "4aa84b49a60b": {
+      "char": "熱",
+      "source": "read"
+    },
+    "63b52f1b49d2": {
+      "char": "朝",
+      "source": "read"
+    },
+    "bab011f78d09": {
+      "char": "拾",
+      "source": "read"
+    },
+    "722889265c8d": {
+      "char": "悲",
+      "source": "read"
+    },
+    "8514116e30e4": {
+      "char": "遅",
+      "source": "read"
+    },
+    "9b4fb9e1fb38": {
+      "char": "慮",
+      "source": "read"
+    },
+    "f1c6ae3af254": {
+      "char": "頂",
+      "source": "read"
+    },
+    "5f418fd4436b": {
+      "char": "汚",
+      "source": "read"
+    },
+    "72ffaeed2a1a": {
+      "char": "酔",
+      "source": "read"
+    },
+    "9fedb08c4697": {
+      "char": "病",
+      "source": "read"
+    },
+    "a430579b45ff": {
+      "char": "夏",
+      "source": "read"
+    },
+    "d6cf46563959": {
+      "char": "省",
+      "source": "read"
+    },
+    "d6ff3b87cfcc": {
+      "char": "冒",
+      "source": "read"
+    },
+    "dae31b9198f7": {
+      "char": "雇",
+      "source": "read"
+    },
+    "deba871dc5e8": {
+      "char": "嬢",
+      "source": "read"
+    },
+    "fc759cd3eadb": {
+      "char": "央",
+      "source": "read"
+    },
+    "25a47b4591a8": {
+      "char": "監",
+      "source": "read"
+    },
+    "512f579acefd": {
+      "char": "趣",
+      "source": "read"
+    },
+    "51e4102fe254": {
+      "char": "域",
+      "source": "read"
+    },
+    "84c086020b46": {
+      "char": "杯",
+      "source": "read"
+    },
+    "98c930d6b6a2": {
+      "char": "謝",
+      "source": "read"
+    },
+    "b51fb8d06eeb": {
+      "char": "品",
+      "source": "read"
+    },
+    "cff8ac4f37e4": {
+      "char": "為",
+      "source": "read"
+    },
+    "e3d1c0378d3c": {
+      "char": "魅",
+      "source": "read"
+    },
+    "f31791901b92": {
+      "char": "勇",
+      "source": "read"
+    },
+    "30aea12173d2": {
+      "char": "脇",
+      "source": "read"
+    },
+    "3e1152fc8797": {
+      "char": "怯",
+      "source": "read"
+    },
+    "4c895b749a6a": {
+      "char": "週",
+      "source": "read"
+    },
+    "7491744e5dd7": {
+      "char": "採",
+      "source": "read"
+    },
+    "dbfda857357d": {
+      "char": "慢",
+      "source": "read"
+    },
+    "fad075929b9e": {
+      "char": "春",
+      "source": "read"
+    },
+    "0a7fa846017d": {
+      "char": "卑",
+      "source": "read"
+    },
+    "836de7173bb7": {
+      "char": "惜",
+      "source": "read"
+    },
+    "ceb6b23c10fb": {
+      "char": "泳",
+      "source": "read"
+    },
+    "fa02c3b03900": {
+      "char": "産",
+      "source": "read"
+    },
+    "19e183b82bf3": {
+      "char": "臆",
+      "source": "read"
+    },
+    "1af5c39d3a79": {
+      "char": "妻",
+      "source": "read"
+    },
+    "1cb25c9f2d16": {
+      "char": "券",
+      "source": "read"
+    },
+    "28c5724ae53c": {
+      "char": "孝",
+      "source": "read"
+    },
+    "9a9afd82c491": {
+      "char": "秋",
+      "source": "read"
+    },
+    "ca0f43559e4d": {
+      "char": "崖",
+      "source": "read"
+    },
+    "dd7751f8b607": {
+      "char": "暖",
+      "source": "read"
+    },
+    "de39289a539b": {
+      "char": "晩",
+      "source": "read"
+    },
+    "17d43b0b6886": {
+      "char": "涯",
+      "source": "read"
+    },
+    "27dd535c13bb": {
+      "char": "貯",
+      "source": "read"
+    },
+    "2fbddb3e8c01": {
+      "char": "溺",
+      "source": "read"
+    },
+    "447e3672517e": {
+      "char": "冊",
+      "source": "read"
+    },
+    "5f99a59f154d": {
+      "char": "旨",
+      "source": "read"
+    },
+    "60db0dcbacad": {
+      "char": "孫",
+      "source": "read"
+    },
+    "7437cd44f800": {
+      "char": "尻",
+      "source": "read"
+    },
+    "82a01e079167": {
+      "char": "漬",
+      "source": "read"
+    },
+    "87151b65270d": {
+      "char": "財",
+      "source": "read"
+    },
+    "b15053e2cb07": {
+      "char": "貰",
+      "source": "read"
+    },
+    "0e3369063001": {
+      "char": "標",
+      "source": "read"
+    },
+    "bf388b7532c9": {
+      "char": "勘",
+      "source": "read"
+    },
+    "5aa1b4ff1c21": {
+      "char": "静",
+      "source": "read"
+    },
+    "a7e93e39cd4e": {
+      "char": "狩",
+      "source": "read"
+    },
+    "b9c9aef0e4f3": {
+      "char": "似",
+      "source": "read"
     }
   }
 }

@@ -39,11 +39,34 @@ import build_hangul_font as BF              # noqa: E402
 VRAM_W = 1024
 DEFAULT_HOST = "127.0.0.1:8080"
 
+# **먼저 우리 EXE 가 돌고 있는지 본다.** 이걸 안 보면 엉뚱한 진단이 나간다.
+# 스톡 EXE 를 돌리는 채로 검사했더니 "팔레트가 덮였다" 라고 보고했다 —
+# 덮인 게 아니라 애초에 올라간 적이 없었다. 세이브 스테이트는 RAM·VRAM 을
+# 통째로 복원하므로 **어떤 디스크를 꽂았는지와 무관하게** 스테이트 안의
+# EXE 가 돈다. 빌드를 바꿨으면 스테이트가 아니라 재부팅해야 한다.
+EXE_MARKS = (
+    (0x8002C408, 0x240203C0, "CLUT 적재 x = 960"),
+    (0x8002C410, 0x240201D8, "CLUT 적재 y = 472"),
+    (0x8002C420, 0x28420021, "CLUT 높이 32 허용"),
+    (0x8002E834, 0x2404763C, "CLUT id 기준 0x763c"),
+)
 
-def fetch(host: str) -> bytes:
-    url = f"http://{host}/api/v1/gpu/vram/raw"
-    with urllib.request.urlopen(url, timeout=30) as reply:
+
+def fetch(host: str, what: str = "gpu/vram") -> bytes:
+    url = f"http://{host}/api/v1/{what}/raw"
+    with urllib.request.urlopen(url, timeout=60) as reply:
         return reply.read()
+
+
+def exe_check(ram: bytes) -> list[tuple[int, int, int, str]]:
+    """패치 표식을 확인한다. 어긋난 것만 돌려준다."""
+    bad = []
+    for addr, want, what in EXE_MARKS:
+        off = addr & 0x1FFFFF
+        got = int.from_bytes(ram[off:off + 4], "little")
+        if got != want:
+            bad.append((addr, want, got, what))
+    return bad
 
 
 def chunks(font: bytes) -> tuple[bytes, tuple, bytes, tuple]:
@@ -81,7 +104,8 @@ def main() -> int:
         print(f"폰트 파일이 없다: {args.font}", file=sys.stderr)
         return 2
     try:
-        vram = fetch(args.host)
+        ram = fetch(args.host, "cpu/ram")
+        vram = fetch(args.host, "gpu/vram")
     except (urllib.error.URLError, OSError) as error:
         print(f"에뮬레이터에 붙지 못했다: {error}\n"
               f"  http://{args.host}\n"
@@ -90,6 +114,20 @@ def main() -> int:
     if len(vram) != VRAM_W * 512 * 2:
         print(f"VRAM 크기가 이상하다: {len(vram):,}B", file=sys.stderr)
         return 1
+
+    bad = exe_check(ram)
+    if bad:
+        print(f"**우리 EXE 가 아니다.** 패치 표식 {len(bad)}/{len(EXE_MARKS)}곳이 어긋난다.")
+        for addr, want, got, what in bad:
+            print(f"  {addr:#010x}  {got:08x}  기대 {want:08x}   {what}")
+        print("\nVRAM 을 봐도 뜻이 없다. 둘 중 하나다.\n"
+              "  1. 사본이 아니라 다른 디스크 이미지를 물고 있다\n"
+              "  2. **다른 빌드에서 뜬 세이브 스테이트**를 올렸다 — 스테이트는\n"
+              "     RAM·VRAM 을 통째로 복원하므로 디스크를 바꿔도 소용없다.\n"
+              "     빌드를 바꿨으면 스테이트가 아니라 재부팅해야 한다.",
+              file=sys.stderr)
+        return 1
+    print(f"EXE 패치 표식 {len(EXE_MARKS)}/{len(EXE_MARKS)}곳 확인\n")
 
     clut, (cx, cy, cw, ch), tex, (tx, ty, tw, th) = chunks(args.font.read_bytes())
     fail = 0

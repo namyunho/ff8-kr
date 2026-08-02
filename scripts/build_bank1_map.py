@@ -157,10 +157,51 @@ def ordered(cache: dict) -> list[tuple[str, dict]]:
                   key=lambda item: (-item[1]["count"], item[0]))
 
 
-def render_sheets(cache: dict, known: dict, out: Path) -> None:
+def hole_keys(root: Path) -> set[str]:
+    """번역문에 `{b1:N}` 으로 남은 자리의 **도형 키**를 모은다.
+
+    820개를 다 읽을 필요는 없다. 실제로 화면에 구멍을 내는 것만 읽으면 된다.
+    번역문의 `{b1:N}` 은 그 필드의 뱅크1 인덱스 N 이므로, 필드 폰트에서 그
+    셀을 꺼내 해시하면 판독 대상이 곧바로 나온다.
+    """
+    import re
+
+    token = re.compile(r"\{b1:(\d+)\}")
+    wanted: set[str] = set()
+    fonts: dict[int, object] = {}
+    for path in sorted(root.glob("*.json")):
+        if path.name == "manifest.json":
+            continue
+        document = json.loads(path.read_text(encoding="utf-8"))
+        if "entries" not in document:
+            continue
+        field = document["field"]
+        slots = {int(n) for entry in document["entries"]
+                 for n in token.findall(entry.get("ko", ""))}
+        if not slots:
+            continue
+        if field not in fonts:
+            try:
+                fonts[field] = FT.field_font(FT.load_entry(field - 1))
+            except Exception:
+                fonts[field] = None
+        font = fonts[field]
+        if font is None:
+            continue
+        for slot in slots:
+            try:
+                wanted.add(shape_key(font.glyph(slot)))
+            except Exception:
+                continue
+    return wanted
+
+
+def render_sheets(cache: dict, known: dict, out: Path,
+                  only: set[str] | None = None) -> None:
     from PIL import Image, ImageDraw
 
-    todo = [(key, entry) for key, entry in ordered(cache) if key not in known]
+    todo = [(key, entry) for key, entry in ordered(cache) if key not in known
+            and (only is None or key in only)]
     cell = FT.CELL * ZOOM
     step_x, step_y = cell + PAD, cell + LABEL * 2 + PAD
     per_page = SHEET_COLUMNS * SHEET_ROWS
@@ -232,6 +273,9 @@ def main() -> int:
     parser.add_argument("--scan", action="store_true",
                         help="필드를 훑어 뱅크1 도형을 모은다")
     parser.add_argument("--sheets", type=Path, help="판독용 시트를 낸다")
+    parser.add_argument("--holes", type=Path, metavar="워크시트",
+                        help="번역문에 {b1:N} 으로 남은 자리의 도형만 낸다. "
+                             "820개를 다 읽을 필요는 없다")
     parser.add_argument("--ingest", type=Path, nargs="*",
                         help="`키<탭>문자` 파일을 합친다")
     parser.add_argument("--identify", nargs="*", metavar="필드:슬롯=문자",
@@ -278,7 +322,10 @@ def main() -> int:
         print(f"원문 대조로 {added}건을 등록했다")
 
     if args.sheets:
-        render_sheets(cache, document["entries"], args.sheets)
+        only = hole_keys(args.holes) if args.holes else None
+        if only is not None:
+            print(f"구멍을 내는 도형 {len(only)}개로 좁힌다")
+        render_sheets(cache, document["entries"], args.sheets, only)
     if args.ingest:
         total = 0
         for path in args.ingest:
