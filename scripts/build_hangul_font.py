@@ -191,10 +191,10 @@ def pack_bank(cells: list[list[list[int]]], level: int) -> bytes:
     return bytes(texture)
 
 
-def pack_widths(widths: list[int]) -> bytes:
+def pack_widths(widths: list[int], nbytes: int = WIDTH_TABLE_BYTES) -> bytes:
     """니블 팩. sub_8002E3EC 규칙: table[i >> 1] 의 하위/상위 니블."""
-    table = bytearray(WIDTH_TABLE_BYTES)
-    for index, value in enumerate(widths[:WIDTH_TABLE_BYTES * 2]):
+    table = bytearray(nbytes)
+    for index, value in enumerate(widths[:nbytes * 2]):
         value &= 0xF
         position = index >> 1
         if index & 1:
@@ -234,6 +234,104 @@ def source_clut(path: Path = SOURCE_FONT) -> bytes:
     if not 12 < length <= len(data) - start:
         raise ValueError(f"CLUT 청크 길이가 이상하다: {length}")
     return data[start:start + length]
+
+
+# 4중 인터리브
+# ----------------------------------------------------------------------
+# 4bpp 픽셀에 글리프를 **1비트씩 4개** 넣는다. 갈무리는 원래 1비트 픽셀 폰트라
+# 화질 손실이 0 이다. 441칸 x 4 = 1,764칸.
+#
+#   평면 = (뱅크비트 ? 2 : 0) | (인덱스 & 1)
+#   셀   = (인덱스 & 0x3FF) >> 1
+#
+# 팔레트는 32벌이다. 렌더러가 `기존계산 + (s0 & 0x400)` 로 고르게 되어 있어
+# 16줄(= 16 x 0x40 = 0x400) 아래에 평면2,3 용을 두면 뱅크 비트가 이미 제자리에
+# 있다. 시프트가 필요 없다.
+#
+#   y=224~239   테마8 x 짝/홀   -> 평면 0, 1
+#   y=240~255   테마8 x 짝/홀   -> 평면 2, 3
+PLANES = 4
+PER_TEXTURE = CELLS_PER_BANK * PLANES       # 1,764
+UNIFIED_WIDTH_BYTES = 884       # 적재기가 복사할 길이. 16의 배수 + 4
+THEMES = 8
+
+
+def pack_planes(cells: list[list[list[int]]]) -> bytes:
+    """1,764개 글리프를 441칸 텍스처에 1비트씩 4중으로 넣는다."""
+    texture = bytearray(TEX_W * TEX_H // 2)
+    for index, cell in enumerate(cells):
+        bank, local = divmod(index, PER_BANK)
+        slot = local >> 1
+        plane = (bank << 1) | (local & 1)
+        base_x = (slot % COLS) * CELL
+        base_y = (slot // COLS) * CELL
+        for y in range(CELL):
+            row = base_y + y
+            for x in range(CELL):
+                if not cell[y][x]:
+                    continue
+                column = base_x + x
+                offset = row * (TEX_W // 2) + column // 2
+                bit = 1 << plane
+                if column & 1:
+                    texture[offset] |= bit << 4
+                else:
+                    texture[offset] |= bit
+    return bytes(texture)
+
+
+def clut32(path: Path = SOURCE_FONT) -> bytes:
+    """32팔레트를 만든다. 색은 **원본 테마에서 그대로 가져온다.**
+
+    평면 p 의 팔레트는 픽셀값의 비트 p 만 본다.
+
+        entry[v] = 테마색  (v >> p) & 1 이면
+                   0x0000  아니면 (투명)
+
+    원본은 테마마다 3단계 농도를 쓰지만 1비트 평면은 한 색뿐이다. 지금 한글이
+    쓰는 농도(값 3)에 해당하는 색을 고른다 — 화면에서 이미 확인된 색이다.
+    """
+    chunk = source_clut(path)
+    data = chunk[12:]
+    colors = []
+    for theme in range(THEMES):
+        entries = [int.from_bytes(data[theme * 64 + i * 2:theme * 64 + i * 2 + 2],
+                                  "little") for i in range(16)]
+        colors.append(entries[3])           # 짝수 팔레트의 값 3 = 획 색
+    out = bytearray()
+    for row in range(32):
+        theme = (row % 16) // 2
+        plane = (row // 16) * 2 + (row % 2)
+        for value in range(16):
+            out += struct.pack("<H", colors[theme] if (value >> plane) & 1 else 0)
+    assert len(out) == 1024, len(out)
+    # 청크 머리의 RECT 높이를 32 로 올린다. 적재기가 x,y 는 상수로 덮어쓰지만
+    # w,h 는 파일 값을 쓴다(0x8002c418). 다만 h 가 17 이상이면 16 으로 자르는
+    # 검사가 있어(`slti v0, v0, 0x11`) 그 상수도 함께 고쳐야 한다.
+    head = bytearray(chunk[:12])
+    struct.pack_into("<H", head, 10, 32)
+    return bytes(head) + bytes(out)
+
+
+def build_texture(cells: list[list[list[int]]], widths: list[int],
+                  vram_x: int, vram_y: int, clut_chunk: bytes) -> bytes:
+    """4중 인터리브 폰트 파일 한 벌. 폭 테이블이 1,764칸짜리 통합표다."""
+    padded = cells + [[[0] * CELL for _ in range(CELL)]] * (PER_TEXTURE - len(cells))
+    pixels = pack_planes(padded[:PER_TEXTURE])
+    table = pack_widths(widths, UNIFIED_WIDTH_BYTES)
+    tim_offset = 8 + len(table)
+    if tim_offset % 4:
+        table += bytes(4 - tim_offset % 4)
+        tim_offset = 8 + len(table)
+
+    out = bytearray()
+    out += struct.pack("<II", 8, tim_offset)
+    out += table
+    out += struct.pack("<II", 0x10, 0x08)
+    out += clut_chunk
+    out += struct.pack("<IHHHH", 12 + len(pixels), vram_x, vram_y, 64, TEX_H)
+    out += pixels
+    return bytes(out)
 
 
 def build_bank(cells: list[list[list[int]]], widths: list[int],
