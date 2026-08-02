@@ -447,6 +447,21 @@ python3 scripts/mips_dis.py --find-word 0x8002c358
 
 `work/` 는 추적하지 않는다. 위 명령으로 언제든 다시 만든다.
 
+> **번역문만은 예외다.** 디스크에서 뽑은 것이 아니라 바깥에서 만든 것이라
+> **재생성되지 않는다.** 그렇다고 저장소에 올릴 것도 아니다 — 원작 대사에서
+> 파생된 내용이기 때문이다.
+>
+> 그래서 저장소 **바깥**에 두고 `work/` 에는 심링크만 남긴다.
+>
+> ```text
+> ~/Developer/ff8-kr-translation/
+>   translate/          워크시트 288파일 · 번역 8,120건
+>   translate-reply/    바깥에서 받은 답 원본
+>   translate-draft/  translate-fix/  translate-slice/  translate-bundle/
+> ```
+>
+> 이러면 스크립트를 고칠 필요가 없고, `rm -rf work/` 를 해도 심링크만 지워진다.
+
 ### 텍스트 표기 규칙
 
 `ja` 칸은 **제어 코드를 하나도 버리지 않는다.** 대사 사이의 코드를 지우면 창
