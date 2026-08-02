@@ -57,7 +57,9 @@ SYSTEM = """당신은 게임 대사 번역가다. 파이널 판타지 8(PS1)의 
 - 설명이나 따옴표를 덧붙이지 않는다. 번역문만 낸다.
 - 고유명사: スコール=스콜, リノア=리노아, キスティス=키스티스, ゼル=젤,
   セルフィ=셀피, アーヴァイン=어바인, サイファー=사이퍼, ガーデン=가든,
-  バラム=발람, ドール=돌레트, SeeD=SeeD."""
+  バラム=발람, ドール=돌레트, ティンバー=팀버, マニアックス=매니악스,
+  ヘッジヴァイパー=헤지바이퍼, SeeD=SeeD.
+- 가타카나 의성어도 한글로 옮긴다. きゃ～=꺄～ 처럼 소리를 그대로 옮기면 된다."""
 
 
 def metrics() -> tuple[list[int], dict[str, int]]:
@@ -71,6 +73,19 @@ def metrics() -> tuple[list[int], dict[str, int]]:
         byte = data[off + (i >> 1)]
         widths.append((byte >> 4) if (i & 1) else (byte & 0xF))
     return widths, {char: i for i, char in enumerate(chars)}
+
+
+THINK = re.compile(r"<think>.*?</think>|</?think>", re.S)
+
+
+def clean(answer: str) -> str:
+    """모델이 흘린 것을 걷어낸다.
+
+    추론 모델은 `<think>…</think>` 를 답변에 섞어 낸다. 그대로 두면 제어 코드
+    개수가 안 맞아 검사에 걸리는데, 번역이 나빠서가 아니라 껍데기 때문이다.
+    """
+    answer = THINK.sub("", answer)
+    return answer.strip().strip("`").strip()
 
 
 def ask(prompt: str, model: str, timeout: float) -> str:
@@ -97,16 +112,23 @@ def check(ja: str, ko: str, widths, lookup, covered: set[str]) -> str | None:
         return f"제어 코드가 다르다 {TM.control_codes(ja)} -> {TM.control_codes(ko)}"
     if TM.line_count(ja) != TM.line_count(ko):
         return f"줄 수가 다르다 {TM.line_count(ja)} -> {TM.line_count(ko)}"
-    left = KANA.findall(TM.TOKEN.sub("", ko))
-    if left:
-        return f"일본어가 남았다 {''.join(sorted(set(left)))[:10]}"
+    # **어디가 걸렸는지 짚어 준다.** "일본어가 남았다 かさま" 만 주면 모델이
+    # 어느 낱말인지 못 찾는다. "줄 폭 321px" 만 주면 엉뚱한 줄을 줄여 오히려
+    # 늘어난 적이 있다(321 -> 329). 걸린 자리를 통째로 보여 준다.
+    if KANA.search(TM.TOKEN.sub("", ko)):
+        spots = [line for line in TM.split_lines(ko)
+                 if KANA.search(TM.TOKEN.sub("", line))]
+        return f"일본어가 남았다 — 이 줄이다: {' / '.join(spots)[:120]}"
     missing = sorted({c for c in TM.TOKEN.sub("", ko)
                       if "가" <= c <= "힣" and c not in covered})
     if missing:
         return f"폰트에 없는 음절 {''.join(missing)}"
-    over = max(TM.line_pixels(ko, widths, lookup.get) or [0])
-    if over > TM.LINE_PIXELS:
-        return f"줄 폭 {over}px > {TM.LINE_PIXELS}px"
+    lines = TM.split_lines(ko)
+    pixels = TM.line_pixels(ko, widths, lookup.get)
+    for line, width in zip(lines, pixels):
+        if width > TM.LINE_PIXELS:
+            return (f"줄 폭 {width}px > {TM.LINE_PIXELS}px — 이 줄을 줄인다: "
+                    f"{line[:80]}")
     return None
 
 
@@ -163,13 +185,23 @@ def main() -> int:
     problems: list[tuple[int, int, str, str]] = []
     touched: dict[Path, dict] = {}
     for path, document, number, fresh in jobs:
-        try:
-            answer = ask(fresh, args.model, args.timeout)
-        except (urllib.error.URLError, OSError, KeyError) as error:
-            print(f"\n로컬 모델에 붙지 못했다: {error}", file=sys.stderr)
-            break
-        answer = answer.strip().strip("`")
-        why = check(fresh, answer, widths, lookup, covered)
+        # **한 번 걸리면 이유를 알려 주고 다시 시킨다.** 실패의 대부분은
+        # 번역이 나빠서가 아니라 가타카나 의성어를 안 옮겼거나 줄이 길거나
+        # 껍데기가 섞인 것이다 — 무엇이 걸렸는지 말해 주면 대개 고쳐 낸다.
+        prompt, why, answer = fresh, None, ""
+        for attempt in range(2):
+            try:
+                answer = clean(ask(prompt, args.model, args.timeout))
+            except (urllib.error.URLError, OSError, KeyError) as error:
+                print(f"\n로컬 모델에 붙지 못했다: {error}", file=sys.stderr)
+                return 1
+            why = check(fresh, answer, widths, lookup, covered)
+            if not why:
+                break
+            prompt = (f"{fresh}\n\n"
+                      f"# 방금 낸 번역이 검사에 걸렸다: {why}\n"
+                      f"# 같은 원문을 다시 옮긴다. 이번에는 그 문제가 없어야 한다.\n"
+                      f"# 가타카나 의성어·고유명사도 한글로 옮긴다.")
         if why:
             bad += 1
             problems.append((document["field"], number, answer[:50], why))
