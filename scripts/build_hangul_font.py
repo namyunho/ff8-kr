@@ -271,6 +271,10 @@ TEX_H_USED = ROWS_USED * CELL               # 216
 SLOTS_PER_BANK = CELLS_USED * 2             # 756 — 셀 하나에 글리프 둘
 PER_TEXTURE = CELLS_USED * PLANES           # 1,512
 CLUT_VRAM = (960, 472)
+CLUT_ROWS = 32 + PLANES         # 테마 32벌 + 그림자 4줄
+# 그림자 색. 원본 팔레트는 밝은 쪽부터 (20,20,20) (12,12,12) (10,11,10) 이고
+# 우리 글자는 가장 어두운 것을 쓴다. 그림자는 그보다 더 어두워야 한다.
+SHADOW = 0x8000 | (5 << 10) | (5 << 5) | 5      # R5 G5 B5, 불투명
 UNIFIED_WIDTH_BYTES = 884       # 적재기가 복사할 길이. 16의 배수 + 4
 THEMES = 8
 
@@ -331,7 +335,17 @@ def clut32(path: Path = SOURCE_FONT) -> bytes:
         plane = (row // 16) * 2 + (row % 2)
         for value in range(16):
             out += struct.pack("<H", colors[theme] if (value >> plane) & 1 else 0)
-    assert len(out) == 1024, len(out)
+    # **그림자 팔레트 4줄.** 평면마다 하나씩이고 테마와 무관하다 — 그림자는
+    # 어느 창 색에서도 같은 어두운 회색이면 된다. 그래서 32벌이 아니라 4줄로
+    # 끝난다. 텍스처가 y471 에서 끝나고 팔레트 32줄이 503 까지이므로 504~507 에
+    # 놓는다(뒤로 511 까지 더 남는다).
+    #
+    #   그림자 줄 = 504 + 2 x 뱅크 + 짝홀
+    #   CLUT id   = 0x7e3c + (글리프CLUT & 0x40) + ((글리프CLUT & 0x400) >> 3)
+    for plane in range(PLANES):
+        for value in range(16):
+            out += struct.pack("<H", SHADOW if (value >> plane) & 1 else 0)
+    assert len(out) == (32 + PLANES) * 32, len(out)
     # 청크 머리의 RECT 를 고친다. **x,y 는 적재기가 상수로 덮어쓰므로** 파일
     # 값은 참고용이고, 실제로 어디에 올라갈지는 `patch_font_4plane.py` 가
     # 0x8002c408 / 0x8002c410 을 고쳐서 정한다. 여기 값을 맞춰 두는 것은
@@ -340,8 +354,12 @@ def clut32(path: Path = SOURCE_FONT) -> bytes:
     # h 는 파일 값을 쓴다(0x8002c418). 17 이상이면 16 으로 자르는 검사가
     # 있어(`slti v0, v0, 0x11`) 그 상수도 함께 고쳐야 한다.
     head = bytearray(chunk[:12])
+    # **청크 길이를 같이 고쳐야 한다.** 적재기가 `s2 = 청크시작 + 길이` 로
+    # 다음(텍스처) 청크를 찾는다. 줄 수만 늘리고 길이를 두면 픽셀 시작이 밀려
+    # 글리프가 통째로 어긋난다.
+    struct.pack_into("<I", head, 0, 12 + len(out))
     struct.pack_into("<HH", head, 4, *CLUT_VRAM)
-    struct.pack_into("<H", head, 10, 32)
+    struct.pack_into("<H", head, 10, CLUT_ROWS)
     return bytes(head) + bytes(out)
 
 

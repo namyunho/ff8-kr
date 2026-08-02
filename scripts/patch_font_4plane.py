@@ -115,6 +115,116 @@ def expect(exe: Exe, addr: int, want: int, what: str) -> None:
                          f"({want:08x}) — 다른 판본이거나 이미 패치됐다")
 
 
+# ----------------------------------------------------------------------
+# 그림자 — 글리프마다 프리미티브를 하나 더 만든다
+#
+# 4중 인터리브는 글리프당 1비트라 한 글자가 색 하나뿐이다. 원본처럼 그림자를
+# 넣으려면 **같은 글리프를 한 번 더, 1픽셀 밀어, 어두운 팔레트로** 그리는 수밖에
+# 없다(2비트로 바꾸면 칸이 756 으로 줄어 한글이 안 들어간다).
+#
+# 사슬이 거꾸로 엮인다는 점이 도움이 된다. `swl s4, 0x2(s2)` 가 **앞** 프리미티브
+# 주소를 태그에 적으므로 나중에 만든 것이 먼저 그려진다. 글리프 뒤에 그림자를
+# 만들면 그림자가 밑에 깔린다 — 순서 뒤집기가 저절로 맞는다.
+#
+# 거는 자리는 루프 꼬리의 `j 0x8002f000` 이다. **`jal` 이 아니라 `j`** 라
+# `ra` 를 건드리지 않아 함수 안에서 안전하다. 지연 슬롯(`addu s3, s3, v0`)은
+# 그대로 두고 루틴이 끝에서 되돌아온다.
+#
+# 프리미티브 풀에는 경계 검사가 있다(0x8002a878). 넘치면 오류 경로로 빠지므로
+# **루틴이 직접 한계를 보고 넘칠 것 같으면 그림자를 건너뛴다.** 넘쳐서 깨지는
+# 대신 그림자만 사라진다.
+# **여백이 아니라 빈 함수였다.** `0x80011ac0` 이 `jal 0x8001f5a4` 로 부른다.
+# 그 안은 nop 4,096바이트이고 `0x800205a4` 의 `jr ra` 로 끝난다 — 아무것도 안
+# 하지만 실제로 불리는 코드다. 여기에 루틴을 얹었으면 그 호출이 글리프 루프로
+# 뛰어들었을 것이다. 검사가 이걸 잡았다.
+#
+# 앞머리를 `jr ra` 로 바꿔 즉시 돌아가게 하고(하던 일이 nop 1,024개였으니
+# 동작은 같다) 그 뒤부터 쓴다.
+SHADOW_STUB = 0x8001F5A4        # jal 로 불리는 빈 함수
+SHADOW_CODE = 0x8001F5AC        # 그 뒤 — 여기부터 우리 것
+SHADOW_HOOK = 0x8002F1A4        # j 0x8002f000  (루프 꼬리)
+SHADOW_LOOP = 0x8002F000
+PRIM_CTX = 0x800821E0           # [여기] -> {현재 포인터, 한계, …}
+SHADOW_CLUT = 0x7E3C            # (504 << 6) | (960 >> 4)
+
+SHADOW_ASM = """
+    lui   at, 0x8008
+    lw    at, {ctx_lo:#x}(at)
+    addiu a0, s2, 0x18
+    lw    v0, 0x4(at)
+    nop
+    sltu  v0, v0, a0
+    bne   v0, zero, {back:#x}
+    nop
+
+    lw    v0, -0x18(s2)
+    lw    v1, -0x14(s2)
+    lw    a1, -0x10(s2)
+    lw    a2, -0xc(s2)
+    lw    a3, -0x8(s2)
+    lw    t0, -0x4(s2)
+    sw    v0, 0x0(s2)
+    sw    v1, 0x4(s2)
+    sw    a1, 0x8(s2)
+    sw    a2, 0xc(s2)
+    sw    a3, 0x10(s2)
+    sw    t0, 0x14(s2)
+
+    lhu   v0, 0xc(s2)
+    lhu   v1, 0xe(s2)
+    addiu v0, v0, 0x1
+    addiu v1, v1, 0x1
+    sh    v0, 0xc(s2)
+    sh    v1, 0xe(s2)
+
+    lhu   v0, 0x12(s2)
+    nop
+    andi  v1, v0, 0x40
+    andi  v0, v0, 0x400
+    srl   v0, v0, 3
+    addu  v1, v1, v0
+    addiu v1, v1, {clut:#x}
+    sh    v1, 0x12(s2)
+
+    lw    v0, 0x0(s2)
+    srl   v1, s4, 8
+    lui   a0, 0xff00
+    and   v0, v0, a0
+    sll   v1, v1, 8
+    srl   v1, v1, 8
+    or    v0, v0, v1
+    sw    v0, 0x0(s2)
+
+    sll   s4, s2, 8
+    addiu s2, s2, 0x18
+    beq   zero, zero, {loop:#x}
+    nop
+"""
+
+def shadow_free(exe: Exe, size: int) -> None:
+    """코드를 놓을 자리가 정말 비었는지 본다. **0 이라고 빈 자리가 아니다.**
+
+    실행 중 RAM 에서도 0 인 것을 따로 확인했고, 여기서는 그 구간이 함수 사이
+    여백인지(앞이 `jr ra`, 뒤가 프롤로그) 그리고 아무도 가리키지 않는지를 본다.
+    """
+    for offset in range(0, size, 4):
+        if exe.word(SHADOW_CODE + offset) != 0:
+            raise ValueError(f"{SHADOW_CODE + offset:#x} 가 0 이 아니다")
+    lo, hi = SHADOW_CODE, SHADOW_CODE + size
+    for off in range(exe.HEADER, exe.HEADER + exe.size, 4):
+        word = int.from_bytes(exe.data[off:off + 4], "little")
+        here = exe.load + off - exe.HEADER
+        op = word >> 26
+        if op in (2, 3):                                    # j / jal
+            target = (here & 0xF0000000) | ((word & 0x3FFFFFF) << 2)
+        elif op in (4, 5, 6, 7) or (op == 1):               # 조건 분기
+            target = here + 4 + (((word & 0xFFFF) ^ 0x8000) - 0x8000) * 4
+        else:
+            continue
+        if lo <= target < hi:
+            raise ValueError(f"{here:#x} 가 {target:#x} 로 뛴다 — 빈 자리가 아니다")
+
+
 def clut_id_sites(exe: Exe, old: int) -> list[int]:
     """CLUT id 기준값을 즉치로 쓰는 곳을 전부 찾는다.
 
@@ -145,8 +255,8 @@ def apply(exe: Exe, show: bool) -> list[tuple[int, str]]:
 
     expect(exe, CLUT_LIMIT, 0x28420011, "slti v0, v0, 0x11")
     exe.put_word(CLUT_LIMIT, int.from_bytes(
-        assemble("slti v0, v0, 0x21", CLUT_LIMIT), "little"))
-    done.append((CLUT_LIMIT, "CLUT 높이 제한 16 -> 32"))
+        assemble("slti v0, v0, 0x25", CLUT_LIMIT), "little"))
+    done.append((CLUT_LIMIT, "CLUT 높이 제한 16 -> 36 (테마 32 + 그림자 4)"))
 
     expect(exe, WIDTH_COPY, 0x24C801C0, "addiu t0, a2, 0x1c0")
     exe.put_word(WIDTH_COPY, int.from_bytes(
@@ -185,6 +295,29 @@ def apply(exe: Exe, show: bool) -> list[tuple[int, str]]:
         word = exe.word(addr)
         exe.put_word(addr, (word & ~0xFFFF) | BANK1_TABLE_NEW)
     done.append((sites[0], f"뱅크1 폭표 {len(sites)}곳 -> 통합표 +441"))
+
+    code = assemble(SHADOW_ASM.format(
+        ctx_lo=PRIM_CTX & 0xFFFF, back=SHADOW_CODE, clut=SHADOW_CLUT,
+        loop=SHADOW_LOOP),
+        SHADOW_CODE)
+    back = SHADOW_CODE + len(code) - 8            # 마지막 `j` 자리
+    code = assemble(SHADOW_ASM.format(
+        ctx_lo=PRIM_CTX & 0xFFFF, back=back, clut=SHADOW_CLUT, loop=SHADOW_LOOP),
+        SHADOW_CODE)
+    shadow_free(exe, len(code) + 16)
+    for i, line in enumerate(("jr ra", "nop")):
+        exe.put_word(SHADOW_STUB + i * 4,
+                     int.from_bytes(assemble(line, SHADOW_STUB + i * 4), "little"))
+    done.append((SHADOW_STUB, "빈 함수를 즉시 반환으로 — 뒤를 쓴다"))
+    for i in range(0, len(code), 4):
+        exe.put_word(SHADOW_CODE + i,
+                     int.from_bytes(code[i:i + 4], "little"))
+    expect(exe, SHADOW_HOOK, 0x0800BC00, "j 0x8002f000")
+    exe.put_word(SHADOW_HOOK, int.from_bytes(
+        assemble(f"beq zero, zero, {SHADOW_CODE:#x}", SHADOW_HOOK),
+        "little"))
+    done.append((SHADOW_CODE, f"그림자 루틴 {len(code) // 4}명령"))
+    done.append((SHADOW_HOOK, "루프 꼬리 -> 그림자 루틴"))
 
     for branch, tp, idx, off, prim in DRAW_SITES:
         code = assemble(DRAW_PATCH.format(tp=tp, idx=idx, off=off, prim=prim),

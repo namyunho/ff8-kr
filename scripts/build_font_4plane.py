@@ -98,7 +98,8 @@ def main() -> int:
     for key, value in stats.items():
         print(f"  {key:<4} {value:>8,}")
     print(f"  텍스처  VRAM{TEXTURE_VRAM}  {BF.TEX_W}x{BF.TEX_H_USED}")
-    print(f"  CLUT    VRAM{BF.CLUT_VRAM}  16x32")
+    print(f"  CLUT    VRAM{BF.CLUT_VRAM}  16x{BF.CLUT_ROWS}"
+          f"  (테마 32 + 그림자 {BF.PLANES})")
     print(f"→ {args.output}")
     return 0
 
