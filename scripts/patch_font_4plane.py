@@ -98,10 +98,19 @@ DRAW_SITES = (
     (0x8002F0DC, "a3", "a2", 0x12, "s2"),
 )
 
+# **적재를 먼저 하고 그 사이에 tpage 를 만든다.** R3000 은 적재 지연 슬롯이
+# 있어서 `lhu` 바로 다음 명령은 **아직 옛 값을 읽는다**. 처음에는 이렇게 짰다가
+# 실기에서 크래시했다.
+#
+#     lhu   at, off(prim)
+#     addu  at, at, v0      <- 실기에서는 at 이 옛 값이다
+#
+# 에뮬레이터는 봐주고 실기는 안 봐주는 대표적인 자리다. 슬롯을 더 쓰지 않고
+# 순서만 바꿔 적재와 사용 사이에 두 명령을 끼웠다.
 DRAW_PATCH = """
+    lhu   at, {off:#x}({prim})
     lui   {tp}, 0xe100
     ori   {tp}, {tp}, 0x41f
-    lhu   at, {off:#x}({prim})
     addu  at, at, v0
     sh    at, {off:#x}({prim})
     andi  {idx}, {idx}, 0x3ff
