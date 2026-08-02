@@ -42,6 +42,24 @@ import build_hangul_font as BF              # noqa: E402
 import text_metrics as TM                   # noqa: E402
 
 SOURCE = Path("work/text/menu-messages.json")
+
+# **번역하면 안 되는 자리.** 서브1 그룹1 의 id 54 부터 끝까지는 이름 입력
+# 화면의 **글자판**이다. `あいうえお` `カキクケコ` 처럼 가나 배열 그 자체이므로
+# 옮기면 이름 입력이 통째로 망가진다. 한국어판에서는 한글 자모 배열로 다시
+# 짜야 하는 자리이지 번역 대상이 아니다.
+KEYBOARD = (1, 1, 54)           # (서브, 그룹, 이 id 부터)
+
+# 고유명사는 모델이 자기 식으로 음역한다. 고정한다.
+NAMES = {
+    "スコール": "스콜", "リノア": "리노아", "アンジェロ": "안젤로",
+    "ケツァクウァトル": "케찰코아틀", "シヴァ": "시바", "イフリート": "이프리트",
+    "セイレーン": "세이렌", "ブラザーズ": "브라더스", "ディアボロス": "디아볼로스",
+    "カーバンクル": "카벙클", "リヴァイアサン": "리바이어던",
+    "パンデモニウム": "판데모니움", "ケルベロス": "케르베로스",
+    "アレクサンダー": "알렉산더", "グラシャラボラス": "글라샤라볼라스",
+    "バハムート": "바하무트", "サボテンダー": "사보텐더", "トンベリ": "톤베리",
+    "エデン": "에덴", "ボコ": "보코",
+}
 ENDPOINT = "http://127.0.0.1:1234/v1/chat/completions"
 TOKEN = re.compile(r"\{[^}]*\}")
 
@@ -65,10 +83,36 @@ def load() -> list[dict]:
     return json.loads(SOURCE.read_text(encoding="utf-8"))
 
 
+LAYOUT = Path("work/hangul-layout-4plane.json")
+FONT = Path("work/font-4plane/font.bin")
+_METRICS: tuple[list[int], dict[str, int]] | None = None
+
+
+def metrics() -> tuple[list[int], dict[str, int]]:
+    """**진짜 폭 테이블**을 쓴다. 글자마다 진행폭이 다르다.
+
+    모든 글자를 12px 로 잡으면 라틴·숫자가 섞인 문구를 과대평가한다. 실제
+    폰트에서 `F` 는 8px, `I` 는 5px 다. `FINAL FANTASY VIII` 를 216px 로
+    계산해 원문보다 넓다고 거절한 적이 있는데 실제로는 그보다 좁았다.
+    """
+    global _METRICS
+    if _METRICS is None:
+        chars = json.loads(LAYOUT.read_text(encoding="utf-8"))["chars"]
+        index = {char: i for i, char in enumerate(chars)}
+        data = FONT.read_bytes()
+        off = int.from_bytes(data[:4], "little")
+        widths = []
+        for i in range(len(chars)):
+            byte = data[off + (i >> 1)]
+            widths.append((byte >> 4) if (i & 1) else (byte & 0xF))
+        _METRICS = (widths, index)
+    return _METRICS
+
+
 def budget(text: str) -> int:
-    """원문의 최대 줄 폭. 메뉴는 이 값을 넘으면 안 된다."""
-    widths = [TM.FALLBACK_WIDTH] * 1764
-    return max(TM.line_pixels(text, widths, lambda c: None) or [0])
+    """줄 폭의 최댓값. 메뉴는 원문의 이 값을 넘으면 안 된다."""
+    widths, index = metrics()
+    return max(TM.line_pixels(text, widths, index.get) or [0])
 
 
 def ask(prompt: str, model: str, timeout: float) -> str:
@@ -137,15 +181,27 @@ def main() -> int:
     args = parser.parse_args()
 
     rows = load()
-    done = {TOKEN.sub("", r["ja"]): r["ko"] for r in rows
-            if r.get("ko", "").strip()}
+    sub, group, start = KEYBOARD
+    skipped = 0
+    for row in rows:
+        if row["sub"] == sub and row["group"] == group and row["id"] >= start:
+            row["ko"] = ""          # 글자판은 번역하지 않는다
+            skipped += 1
+        elif row["ja"] in NAMES:
+            row["ko"] = NAMES[row["ja"]]
+
+    done = {r["ja"] for r in rows if r.get("ko", "").strip()}
     unique: dict[str, str] = {}
     for row in rows:
+        if row["sub"] == sub and row["group"] == group and row["id"] >= start:
+            continue
         unique.setdefault(row["ja"], "")
     todo = [ja for ja in unique if ja not in done or args.retry_failed]
 
     if args.status:
-        print(f"메뉴 텍스트 {len(rows):,}건, 고유 원문 {len(unique):,}종")
+        print(f"메뉴 텍스트 {len(rows):,}건")
+        print(f"  글자판(번역 대상 아님)  {skipped:>5}건")
+        print(f"  고유 원문             {len(unique):>5}종")
         print(f"  번역됨   {len(unique) - len(todo):>5}종")
         print(f"  남음     {len(todo):>5}종")
         return 0
