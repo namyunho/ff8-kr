@@ -88,12 +88,23 @@ def counts(field_root: Path, menu: Path) -> collections.Counter:
     return tally
 
 
+BANK0 = 756                     # 슬롯 756 부터는 뱅크1 이다
+
+
 def build(tally: collections.Counter, pins: dict[int, str],
-          keyboard: list[str]) -> list[str]:
-    """배치를 만든다. 못 박은 자리는 비켜 가고, 이름 음절을 1바이트에 넣는다."""
+          keyboard: list[str], menu_chars: set[str]) -> list[str]:
+    """배치를 만든다. 세 가지를 지킨다.
+
+    1. 못 박은 자리는 비켜 간다
+    2. 이름 음절은 **1바이트 구간**에 — 글자판 한 줄이 5바이트 고정이다
+    3. 메뉴가 쓰는 글자는 **뱅크0** 에 — 메뉴를 그리는 오버레이가 뱅크 비트를
+       안 더한다. 뱅크1 글자를 쓰면 그 글자만 엉뚱한 평면으로 나온다
+       (「기본값」의 `값` 이 깨져 보이던 것이 이것이다)
+    """
     taken = set(pins.values())
     ordered = [c for c, _ in tally.most_common() if c not in taken]
     need = [c for c in keyboard if c not in taken]
+    menu_only = [c for c in ordered if c in menu_chars and c not in need]
 
     free_single = [i for i in range(SINGLE) if i not in pins]
     if len(need) > len(free_single):
@@ -102,23 +113,26 @@ def build(tally: collections.Counter, pins: dict[int, str],
 
     chars: dict[int, str] = dict(pins)
     placed = set(taken)
-    queue = need + [c for c in ordered if c not in need]
-    for index in free_single:
-        while queue and queue[0] in placed:
-            queue.pop(0)
-        if not queue:
-            break
-        chars[index] = queue.pop(0)
-        placed.add(chars[index])
 
-    index = SINGLE
-    while queue and index < SLOTS:
-        char = queue.pop(0)
-        if char in placed:
-            continue
-        chars[index] = char
-        placed.add(char)
-        index += 1
+    def fill(slots, queue):
+        for index in slots:
+            while queue and queue[0] in placed:
+                queue.pop(0)
+            if not queue:
+                return
+            chars[index] = queue.pop(0)
+            placed.add(chars[index])
+
+    rest = [c for c in ordered if c not in need and c not in menu_only]
+    fill(free_single, need + menu_only + rest[:])
+    # 뱅크0 의 남은 자리: 아직 안 놓인 메뉴 글자를 먼저 넣는다
+    free_bank0 = [i for i in range(SINGLE, BANK0) if i not in pins]
+    queue = ([c for c in menu_only if c not in placed]
+             + [c for c in ordered if c not in placed])
+    fill(free_bank0, queue)
+    left = [c for c in ordered if c not in placed]
+    if left:
+        fill(range(BANK0, SLOTS), left)
 
     top = max(chars) + 1
     return [chars.get(i, " ") for i in range(top)]
@@ -158,13 +172,19 @@ def main() -> int:
     pins = pinned(japanese)
     names = json.loads(args.names.read_text(encoding="utf-8"))
     keyboard: list[str] = []
-    for name in names["order"]:
-        for char in names["korean"][name]:
+    words = ([names["korean"][n] for n in names["order"]]
+             + list(names.get("extra", {}).get("items", [])))
+    for word in words:
+        for char in word:
             if char not in keyboard:
                 keyboard.append(char)
 
     tally = counts(args.fields, args.menu)
-    chars = build(tally, pins, keyboard)
+    menu_chars: set[str] = set()
+    if args.menu.exists():
+        for row in json.loads(args.menu.read_text(encoding="utf-8")):
+            menu_chars.update(TOKEN.sub("", row.get("ko", "")))
+    chars = build(tally, pins, keyboard, menu_chars)
 
     print(f"못 박은 자리 {len(pins)}칸  이름 음절 {len(keyboard)}자")
     print(f"배치 {len(chars)}자 / {SLOTS}칸")
@@ -189,6 +209,12 @@ def main() -> int:
         print(f"**이름 음절이 2바이트 구간에 있다**: {''.join(late)}",
               file=sys.stderr)
         return 1
+    stray = [c for c in sorted(menu_chars)
+             if c in chars and chars.index(c) >= BANK0]
+    if stray:
+        print(f"**메뉴 글자가 뱅크1 에 있다**: {''.join(stray)}", file=sys.stderr)
+        return 1
+    print(f"메뉴가 쓰는 {len(menu_chars)}종이 모두 뱅크0 안에 있다")
 
     if args.measure:
         print("\n--measure 라 쓰지 않았다")

@@ -47,9 +47,9 @@ MENU = Path("work/text/menu-messages.json")
 NAMES = Path("data/nameable-entities.json")
 FIELDS = Path("work/translate")
 
-ROW = 5                                     # 한 줄에 5칸, 5바이트
-PAGES = (range(54, 90, 2), range(92, 128, 2))   # 히라가나면 / 가타카나면
-TABS = {0: "한글", 2: "한글"}                # 두 면이 같으므로 이름도 같다
+CELL = 5                                    # 한 칸에 5바이트
+COLS, ROWS = 3, 6                           # 화면은 3열 x 6행 = 18칸
+PAGE_IDS = {0: range(92, 128, 2), 2: range(54, 90, 2)}   # 탭 -> 그 면의 항목 id
 
 # 옛 표기 -> 정본. 이미 번역된 곳을 맞춘다.
 RESPELL = {
@@ -70,12 +70,24 @@ def syllables(document: dict) -> list[str]:
     return out
 
 
-def rows(chars: list[str], count: int) -> list[str]:
-    """5칸씩 끊는다. 남는 줄은 공백으로 채운다 — 원본도 그렇게 한다."""
+def by_column(cells: list[str]) -> list[str]:
+    """열 우선으로 적은 18칸을 **행 우선** 데이터 차례로 옮긴다.
+
+    화면은 3열 x 6행이고 데이터는 행 우선이다 — `id54, 56, 58` 이 첫 행의 세
+    열이다. 원본 히라가나면을 그렇게 놓으면 첫 열이 세로로 `あ か さ た な は`
+    가 되어 오십음순과 맞는다. 이것이 행 우선의 근거다.
+
+    이름은 세로로 읽혀야 하므로 열 우선으로 적고 여기서 뒤집는다.
+
+        적은 차례  0 1 2 3 4 5 | 6 7 8 …      (열을 따라 내려간다)
+        데이터     0 6 12 | 1 7 13 | …        (행을 따라 간다)
+    """
     out = []
-    for i in range(count):
-        piece = chars[i * ROW:(i + 1) * ROW]
-        out.append("".join(piece).ljust(ROW))
+    for row in range(ROWS):
+        for col in range(COLS):
+            index = col * ROWS + row
+            text = cells[index] if index < len(cells) else ""
+            out.append(text.ljust(CELL))
     return out
 
 
@@ -89,13 +101,7 @@ def main() -> int:
     menu = json.loads(MENU.read_text(encoding="utf-8"))
     index = {(r["sub"], r["group"], r["id"]): r for r in menu}
 
-    chars = syllables(document)
-    per_page = len(PAGES[0]) * ROW
-    if len(chars) > per_page:
-        print(f"음절 {len(chars)}자가 한 면 {per_page}칸을 넘는다", file=sys.stderr)
-        return 1
-    lines = rows(chars, len(PAGES[0]))
-
+    pages = document["pages"]
     changed = 0
     # 기본 이름
     for slot, japanese in document["menu_slots"].items():
@@ -112,8 +118,20 @@ def main() -> int:
             row["ko"] = korean
             changed += 1
     # 글자판 두 면
-    for page in PAGES:
-        for line, slot in zip(lines, page):
+    for key in ("character", "gf"):
+        page = pages[key]
+        cells = page["cells"]
+        long = [c for c in cells if len(c) > CELL]
+        if long:
+            print(f"{key}: 한 칸 {CELL}자를 넘는다 {long}", file=sys.stderr)
+            return 1
+        lines = by_column(cells)
+        ids = list(PAGE_IDS[page["tab"]])
+        print(f"\n{key}  탭 id{page['tab']}  항목 {ids[0]}~{ids[-1]}")
+        for r in range(ROWS):
+            print("    " + "  ".join(f"{lines[r * COLS + c]!r}"
+                                     for c in range(COLS)))
+        for line, slot in zip(lines, ids):
             row = index.get((1, 1, slot))
             if row is None:
                 continue
@@ -121,18 +139,13 @@ def main() -> int:
                 row["ko"] = line
                 changed += 1
     # 탭 이름
-    for slot, label in TABS.items():
-        row = index.get((1, 1, slot))
+    for slot, label in pages["tabs"].items():
+        row = index.get((1, 1, int(slot)))
         if row is not None and row.get("ko") != label:
             row["ko"] = label
             changed += 1
 
-    print(f"이름 음절 {len(chars)}자 -> 줄 {len([l for l in lines if l.strip()])}개"
-          f" (면마다 {len(PAGES[0])}줄)")
-    for line in lines:
-        if line.strip():
-            print(f"    {line!r}")
-    print(f"메뉴에서 바꾼 항목 {changed}건")
+    print(f"\n메뉴에서 바꾼 항목 {changed}건")
 
     # 표기 통일
     respelled = 0
