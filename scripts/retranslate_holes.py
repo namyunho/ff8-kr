@@ -38,6 +38,7 @@ import build_hangul_font as BF              # noqa: E402
 import build_text_db as DB                  # noqa: E402
 import extract_field_text as FT             # noqa: E402
 import glyph_text as GT                     # noqa: E402
+import patch_disc as PD                     # noqa: E402
 import text_metrics as TM                   # noqa: E402
 
 ENDPOINT = "http://127.0.0.1:1234/v1/chat/completions"
@@ -77,6 +78,15 @@ def metrics() -> tuple[list[int], dict[str, int]]:
 
 THINK = re.compile(r"<think>.*?</think>|</?think>", re.S)
 
+# **폰트에 없는 따옴표를 있는 것으로 되돌린다.** 폰트에는 `「」『』` 만 있고
+# 곧은따옴표도 둥근따옴표도 없다. 원문도 `『コモーグリカード』` 를 쓰는데 모델이
+# 굳이 `‘…’` 로 바꿔 놓아 인코딩이 통째로 실패했다. 되먹임을 줘도 고집했다.
+#
+# 짝이 맞게 여는 것은 여는 것으로, 닫는 것은 닫는 것으로 옮긴다. 부탁하는
+# 대신 확정적으로 고치는 자리다.
+QUOTES = str.maketrans({"‘": "『", "’": "』", "“": "『", "”": "』",
+                        "〈": "『", "〉": "』", "《": "『", "》": "』"})
+
 
 def clean(answer: str) -> str:
     """모델이 흘린 것을 걷어낸다.
@@ -85,7 +95,7 @@ def clean(answer: str) -> str:
     개수가 안 맞아 검사에 걸리는데, 번역이 나빠서가 아니라 껍데기 때문이다.
     """
     answer = THINK.sub("", answer)
-    return answer.strip().strip("`").strip()
+    return answer.strip().strip("`").strip().translate(QUOTES)
 
 
 def ask(prompt: str, model: str, timeout: float) -> str:
@@ -101,7 +111,7 @@ def ask(prompt: str, model: str, timeout: float) -> str:
         return json.loads(reply.read())["choices"][0]["message"]["content"]
 
 
-def check(ja: str, ko: str, widths, lookup, covered: set[str]) -> str | None:
+def check(ja: str, ko: str, widths, lookup, glyphs, bank1) -> str | None:
     """검사기의 여덟 가지 중 이 자리에 걸리는 것들."""
     ko = ko.strip()
     if not ko:
@@ -119,10 +129,14 @@ def check(ja: str, ko: str, widths, lookup, covered: set[str]) -> str | None:
         spots = [line for line in TM.split_lines(ko)
                  if KANA.search(TM.TOKEN.sub("", line))]
         return f"일본어가 남았다 — 이 줄이다: {' / '.join(spots)[:120]}"
-    missing = sorted({c for c in TM.TOKEN.sub("", ko)
-                      if "가" <= c <= "힣" and c not in covered})
-    if missing:
-        return f"폰트에 없는 음절 {''.join(missing)}"
+    # **넣어 본다.** 한글 음절만 세면 눈이 먼다 — 번역기가 낸 둥근 따옴표
+    # `‘’` 가 폰트에 없어 6건이 통째로 인코딩에 실패했는데, 음절 검사는 전부
+    # 통과시켰다. 인코딩 실패는 조용하지 않다: 그 메시지는 원문 일본어 바이트가
+    # 그대로 남고 한국어 대응표로 읽히면서 잡음이 된다.
+    try:
+        GT.encode(ko, glyphs, bank1)
+    except ValueError as error:
+        return f"넣을 수 없다 — {error}"
     lines = TM.split_lines(ko)
     pixels = TM.line_pixels(ko, widths, lookup.get)
     for line, width in zip(lines, pixels):
@@ -132,8 +146,29 @@ def check(ja: str, ko: str, widths, lookup, covered: set[str]) -> str | None:
     return None
 
 
-def targets(root: Path, glyphs) -> list[tuple[Path, dict, int, str]]:
-    """구멍이 남은 항목과 **디스크에서 새로 읽은 원문**을 짝지어 돌려준다."""
+def broken(entry: dict, glyphs, bank1) -> bool:
+    """되돌려야 할 항목인가. 구멍이 남았거나 **넣을 수 없는** 것이다."""
+    ko = entry.get("ko", "")
+    if not ko.strip():
+        return False
+    if HOLE.search(ko):
+        return True
+    try:
+        GT.encode(ko, glyphs, bank1)
+    except ValueError:
+        return True
+    return False
+
+
+def targets(root: Path, japanese, ko_glyphs, ko_bank1
+            ) -> list[tuple[Path, dict, int, str]]:
+    """되돌릴 항목과 **디스크에서 새로 읽은 원문**을 짝지어 돌려준다.
+
+    대응표가 둘 돌아다닌다. 섞으면 조용히 틀린다.
+
+        japanese                 원문을 디코드하는 데 쓴다
+        ko_glyphs / ko_bank1     번역문을 넣을 수 있는지 보는 데 쓴다
+    """
     out = []
     for path in sorted(root.glob("*.json")):
         if path.name == "manifest.json":
@@ -141,18 +176,19 @@ def targets(root: Path, glyphs) -> list[tuple[Path, dict, int, str]]:
         document = json.loads(path.read_text(encoding="utf-8"))
         if "entries" not in document:
             continue
-        hits = [e for e in document["entries"] if HOLE.search(e.get("ko", ""))]
+        hits = [e for e in document["entries"]
+                if broken(e, ko_glyphs, ko_bank1)]
         if not hits:
             continue
         index = document["field"]
         msd = FT.msd_section(FT.load_entry(index))
-        bank1 = DB.bank1_for(index, msd, glyphs)
+        ja_bank1 = DB.bank1_for(index, msd, japanese)
         offsets = FT.message_offsets(msd)
         for entry in hits:
             start = offsets[entry["id"]]
             stop = msd.find(b"\x00", start)
             fresh = GT.decode(bytes(msd[start:stop if stop >= 0 else len(msd)]),
-                              glyphs, bank1)
+                              japanese, ja_bank1)
             out.append((path, document, entry["id"], fresh))
     return out
 
@@ -166,11 +202,12 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
-    glyphs = GT.GlyphMap.load()
-    jobs = targets(args.root, glyphs)
+    japanese = GT.GlyphMap.load()
+    ko_glyphs, ko_bank1, _ = PD.korean_map(LAYOUT)
+    jobs = targets(args.root, japanese, ko_glyphs, ko_bank1)
     still = [j for j in jobs if HOLE.search(j[3])]
-    print(f"구멍이 남은 대사 {len(jobs)}건")
-    print(f"  원문이 온전해진 것 {len(jobs) - len(still)}건")
+    print(f"되돌릴 대사 {len(jobs)}건")
+    print(f"  원문이 온전한 것 {len(jobs) - len(still)}건")
     if still:
         print(f"  아직 판독이 모자란 것 {len(still)}건 — 건너뛴다")
     jobs = [j for j in jobs if not HOLE.search(j[3])]
@@ -180,7 +217,6 @@ def main() -> int:
         return 0
 
     widths, lookup = metrics()
-    covered = BF.covered()
     good = bad = 0
     problems: list[tuple[int, int, str, str]] = []
     touched: dict[Path, dict] = {}
@@ -195,7 +231,8 @@ def main() -> int:
             except (urllib.error.URLError, OSError, KeyError) as error:
                 print(f"\n로컬 모델에 붙지 못했다: {error}", file=sys.stderr)
                 return 1
-            why = check(fresh, answer, widths, lookup, covered)
+            why = check(fresh, answer, widths, lookup,
+                        ko_glyphs, ko_bank1)
             if not why:
                 break
             prompt = (f"{fresh}\n\n"
