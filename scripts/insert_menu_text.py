@@ -49,6 +49,8 @@ import extract_field_text as FT             # noqa: E402
 import glyph_text as GT                     # noqa: E402
 import patch_disc as PD                     # noqa: E402
 
+ALIGN = 4               # 그룹 오프셋은 4의 배수여야 한다
+
 
 def rebuild(blob: bytes, sub: int, ko: dict, glyphs, bank1) -> tuple[bytes, dict]:
     """블록을 다시 짠다. 원본과 같은 그룹 수·항목 수를 유지한다."""
@@ -98,8 +100,16 @@ def rebuild(blob: bytes, sub: int, ko: dict, glyphs, bank1) -> tuple[bytes, dict
         body += pool
         bodies.append(bytes(body))
 
+    # **그룹은 4바이트 경계에 놓는다.** 원본은 16개 그룹의 오프셋이 예외 없이
+    # 4의 배수다(머리도 34가 아니라 36까지 채워 둔다). 그냥 이어 붙이면 2, 1, 3
+    # 처럼 제멋대로가 되는데, 그룹 데이터를 워드로 읽는 코드가 있으면 실기에서
+    # **정렬 안 된 `lw` -> 주소 오류 예외**가 난다. 에뮬레이터는 봐주므로
+    # 실기에서만 죽는다.
+    #
+    # MSD 섹션이 전부 4의 배수였던 것(R7)과 같은 규칙인데 여기서는 놓쳤다.
     head = bytearray(struct.pack("<H", count))
     cursor = 2 + count * 2
+    cursor += -cursor % ALIGN
     offsets = []
     for body in bodies:
         if not body:
@@ -107,11 +117,18 @@ def rebuild(blob: bytes, sub: int, ko: dict, glyphs, bank1) -> tuple[bytes, dict
             continue
         offsets.append(cursor)
         cursor += len(body)
+        cursor += -cursor % ALIGN
     for value in offsets:
         head += struct.pack("<H", value)
-    out = bytes(head) + b"".join(bodies)
+    out = bytearray(head)
+    out += b"\x00" * (-len(out) % ALIGN)
+    for body in bodies:
+        if not body:
+            continue
+        out += body
+        out += b"\x00" * (-len(out) % ALIGN)
     stats["크기"] = len(out)
-    return out, stats
+    return bytes(out), stats
 
 
 def main() -> int:
