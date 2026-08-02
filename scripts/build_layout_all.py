@@ -1,0 +1,206 @@
+#!/usr/bin/env python3
+"""필드 대사와 메뉴를 함께 세어 글리프 배치를 만든다.
+
+`count_korean_syllables.py` 는 필드 텍스트만 받는다. 실제로 쓰는 배치는 메뉴까지
+합친 것인데 그동안 즉석 코드로 만들어 재현할 방법이 없었다. 여기로 옮긴다.
+
+## 1바이트 구간 224칸을 누가 쓰는가
+
+인덱스 0~223 은 한 바이트로 실린다. 224 부터는 두 바이트다. 그래서 이 224칸을
+어떻게 나누느냐가 곧 텍스트 크기다.
+
+    못 박는 자리    영문자 페이지가 쓰는 55칸. **원래 글리프를 그대로 둔다**
+    이름 음절       이름 입력 글자판이 쓸 음절. 글자판 한 줄이 **5바이트 고정**
+                    이라 여기 있는 것만 글자판에 놓을 수 있다
+    나머지          빈도순 한글
+
+## 왜 못 박는가
+
+이름 입력 화면의 영문자·숫자·기호 페이지를 손대지 않고 그대로 쓰려면 그
+바이트들이 원래 글자를 가리켜야 한다. 빈도순 한글이 덮으면 `ABCDE` 가 한글
+음절로 나온다.
+
+    id130  'ABCDE'  ce cf d0 d1 d2   -> 인덱스 174~178
+
+## 글자판 한 줄은 5바이트다
+
+원본 36줄이 **예외 없이 정확히 5바이트**이고 쓰인 글리프가 전부 1바이트
+구간이다. 빈칸은 `0x5f`(공백)로 메운다. 게임이 줄을 바이트로 센다는 뜻이므로
+글자판에 2바이트 글자를 놓을 수 없다.
+
+    id 62  'や ゆ よ'   b1 5f b3 5f b5
+    id140  'Z    '     e7 5f 5f 5f 5f
+
+    python3 scripts/build_layout_all.py --measure
+    python3 scripts/build_layout_all.py
+"""
+
+from __future__ import annotations
+
+import argparse
+import collections
+import json
+import re
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import glyph_text as GT                     # noqa: E402
+
+TOKEN = re.compile(r"\{[^}]*\}")
+SINGLE = 224                    # 여기부터 두 바이트
+SLOTS = 1512                    # 21 x 18 셀 x 4 평면
+
+# 이름 입력 화면의 영문자 페이지(서브1 그룹1 id130~152)가 쓰는 바이트다.
+# `python3 scripts/build_layout_all.py --pins` 로 다시 뽑을 수 있다.
+LATIN_PAGE = (
+    "cecfd0d1d2", "d3d4d5d6d7", "d8d9dadbdc", "dddedfe0e1", "e2e3e4e5e6",
+    "e75f5f5f5f", "5354555657", "58595a5b5c", "e8e9eaebec", "eeeff0f1ed",
+    "fafbfcfd5f", "f2f3f4f55f",
+)
+
+
+def pinned(japanese: GT.GlyphMap) -> dict[int, str]:
+    """제자리에 둘 인덱스 -> 원래 글자."""
+    out: dict[int, str] = {}
+    for row in LATIN_PAGE:
+        for k in range(0, len(row), 2):
+            index = int(row[k:k + 2], 16) - 32
+            char = japanese.char.get(index)
+            if char:
+                out[index] = char
+    return out
+
+
+def counts(field_root: Path, menu: Path) -> collections.Counter:
+    """번역문에 실제로 그려지는 글자를 센다. 필드와 메뉴를 합친다."""
+    tally: collections.Counter = collections.Counter()
+    for path in sorted(field_root.glob("*.json")):
+        if path.name == "manifest.json":
+            continue
+        document = json.loads(path.read_text(encoding="utf-8"))
+        for entry in document.get("entries", []):
+            tally.update(TOKEN.sub("", entry.get("ko", "")))
+    if menu.exists():
+        for row in json.loads(menu.read_text(encoding="utf-8")):
+            tally.update(TOKEN.sub("", row.get("ko", "")))
+    return tally
+
+
+def build(tally: collections.Counter, pins: dict[int, str],
+          keyboard: list[str]) -> list[str]:
+    """배치를 만든다. 못 박은 자리는 비켜 가고, 이름 음절을 1바이트에 넣는다."""
+    taken = set(pins.values())
+    ordered = [c for c, _ in tally.most_common() if c not in taken]
+    need = [c for c in keyboard if c not in taken]
+
+    free_single = [i for i in range(SINGLE) if i not in pins]
+    if len(need) > len(free_single):
+        raise ValueError(f"이름 음절 {len(need)}자가 1바이트 빈자리 "
+                         f"{len(free_single)}칸을 넘는다")
+
+    chars: dict[int, str] = dict(pins)
+    placed = set(taken)
+    queue = need + [c for c in ordered if c not in need]
+    for index in free_single:
+        while queue and queue[0] in placed:
+            queue.pop(0)
+        if not queue:
+            break
+        chars[index] = queue.pop(0)
+        placed.add(chars[index])
+
+    index = SINGLE
+    while queue and index < SLOTS:
+        char = queue.pop(0)
+        if char in placed:
+            continue
+        chars[index] = char
+        placed.add(char)
+        index += 1
+
+    top = max(chars) + 1
+    return [chars.get(i, " ") for i in range(top)]
+
+
+def cost(tally: collections.Counter, chars: list[str]) -> tuple[int, int]:
+    """그려지는 글자의 총 바이트와, 1바이트로 실리는 글자 수."""
+    index = {c: i for i, c in enumerate(chars)}
+    total = single = 0
+    for char, n in tally.items():
+        i = index.get(char)
+        if i is None:
+            total += 2 * n
+        elif i < SINGLE:
+            total += n
+            single += n
+        else:
+            total += 2 * n
+    return total, single
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--fields", type=Path, default=Path("work/translate"))
+    parser.add_argument("--menu", type=Path,
+                        default=Path("work/text/menu-messages.json"))
+    parser.add_argument("--names", type=Path,
+                        default=Path("data/nameable-entities.json"))
+    parser.add_argument("--output", type=Path,
+                        default=Path("work/hangul-layout-all.json"))
+    parser.add_argument("--measure", action="store_true",
+                        help="현재 배치와 견주기만 하고 쓰지 않는다")
+    args = parser.parse_args()
+
+    japanese = GT.GlyphMap.load()
+    pins = pinned(japanese)
+    names = json.loads(args.names.read_text(encoding="utf-8"))
+    keyboard: list[str] = []
+    for name in names["order"]:
+        for char in names["korean"][name]:
+            if char not in keyboard:
+                keyboard.append(char)
+
+    tally = counts(args.fields, args.menu)
+    chars = build(tally, pins, keyboard)
+
+    print(f"못 박은 자리 {len(pins)}칸  이름 음절 {len(keyboard)}자")
+    print(f"배치 {len(chars)}자 / {SLOTS}칸")
+    total, single = cost(tally, chars)
+    drawn = sum(tally.values())
+    print(f"그려지는 글자 {drawn:,}자 -> {total:,}바이트 "
+          f"(1바이트로 실리는 것 {single * 100 / drawn:.1f}%)")
+
+    if args.output.exists():
+        old = json.loads(args.output.read_text(encoding="utf-8"))["chars"]
+        before, _ = cost(tally, old)
+        delta = total - before
+        print(f"지금 배치 {before:,}바이트 -> {total:,}바이트  "
+              f"({delta:+,}바이트, {delta * 100 / before:+.2f}%)")
+
+    missing = [c for c in keyboard if c not in chars]
+    if missing:
+        print(f"**이름 음절이 배치에 없다**: {''.join(missing)}", file=sys.stderr)
+        return 1
+    late = [c for c in keyboard if chars.index(c) >= SINGLE]
+    if late:
+        print(f"**이름 음절이 2바이트 구간에 있다**: {''.join(late)}",
+              file=sys.stderr)
+        return 1
+
+    if args.measure:
+        print("\n--measure 라 쓰지 않았다")
+        return 0
+    args.output.write_text(json.dumps(
+        {"note": "필드+메뉴 빈도순. 영문자 페이지 55칸은 제자리에 못 박았고 "
+                 "이름 입력 글자판이 쓸 음절은 1바이트 구간에 두었다.",
+         "banks": 2, "pins": len(pins), "chars": chars},
+        ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"→ {args.output}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

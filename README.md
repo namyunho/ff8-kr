@@ -449,9 +449,14 @@ python3 scripts/verify_roundtrip.py --sample 20
 python3 scripts/patch_disc.py --init --force
 
 # 1,512칸 배치와 4중 인터리브 폰트
-python3 scripts/count_korean_syllables.py work/translate \
-  --layout work/hangul-layout-all.json --banks 2
+# 영문자 페이지 55칸을 제자리에 못 박고, 이름 입력 글자판이 쓸 음절을
+# 1바이트 구간에 넣는다 (--measure 로 크기 영향만 먼저 볼 수 있다)
+python3 scripts/build_layout_all.py --measure
+python3 scripts/build_layout_all.py
 python3 scripts/build_font_4plane.py
+
+# 이름 입력 화면 — 기본 이름 21개, 글자판 두 면, 표기 통일
+python3 scripts/build_name_screen.py
 
 # EXE 패치 (바뀐 워드 41개)
 python3 scripts/patch_font_4plane.py --show
