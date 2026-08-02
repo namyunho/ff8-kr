@@ -248,19 +248,46 @@ def source_clut(path: Path = SOURCE_FONT) -> bytes:
 # 16줄(= 16 x 0x40 = 0x400) 아래에 평면2,3 용을 두면 뱅크 비트가 이미 제자리에
 # 있다. 시프트가 필요 없다.
 #
-#   y=224~239   테마8 x 짝/홀   -> 평면 0, 1
-#   y=240~255   테마8 x 짝/홀   -> 평면 2, 3
+#   기준줄 +0~15    테마8 x 짝/홀   -> 평면 0, 1
+#   기준줄 +16~31   테마8 x 짝/홀   -> 평면 2, 3
+#
+# **팔레트를 어디에 두는가.** 처음에는 원본 CLUT `(288,224)` 바로 아래 16줄을
+# 썼다. 실기에서 뱅크1 글자만 노이즈로 나왔다 — 그 자리는 폭 16짜리 **남의
+# CLUT** 가 덮는다. 한 시점에 0 이라고 빈 자리가 아니다.
+#
+# 그래서 **뱅크0 텍스처 사각형 안쪽**으로 옮겼다. 동영상 두 편 뒤에도 100%
+# 온전한 것이 실측된 유일한 자리이고, 폰트가 적재될 때마다 우리가 다시 쓴다.
+# 대신 텍스처를 21셀행에서 18셀행으로 줄여 아래를 비운다.
+#
+#   텍스처   (960,256)  256 x 216      21 x 18 = 378칸
+#   CLUT     (960,472)  16 x 32        뱅크0 472~487 / 뱅크1 488~503
+#
+# `COLS=21` 은 못 바꾼다 — 셀에서 u,v 를 내는 계산이 게임 코드 그대로다.
+# 줄일 수 있는 것은 **행**뿐이다.
 PLANES = 4
-PER_TEXTURE = CELLS_PER_BANK * PLANES       # 1,764
+ROWS_USED = 18                              # 팔레트 자리를 내주고 줄인 행
+CELLS_USED = COLS * ROWS_USED               # 378
+TEX_H_USED = ROWS_USED * CELL               # 216
+SLOTS_PER_BANK = CELLS_USED * 2             # 756 — 셀 하나에 글리프 둘
+PER_TEXTURE = CELLS_USED * PLANES           # 1,512
+CLUT_VRAM = (960, 472)
 UNIFIED_WIDTH_BYTES = 884       # 적재기가 복사할 길이. 16의 배수 + 4
 THEMES = 8
 
+# **인코딩 공간과 배치 공간은 다르다.** 게임의 인덱스 공간은 뱅크당 882 로
+# 고정이고(폭표의 뱅크1 시작이 +441바이트인 이유), 우리가 실제로 채우는 것은
+# 앞 756 개뿐이다. 756~881 은 비워 둔다 — 가리킬 셀이 없다.
+def game_index(slot: int) -> int:
+    """배치 슬롯(0~1511) -> 게임 글리프 인덱스."""
+    bank, local = divmod(slot, SLOTS_PER_BANK)
+    return bank * PER_BANK + local
+
 
 def pack_planes(cells: list[list[list[int]]]) -> bytes:
-    """1,764개 글리프를 441칸 텍스처에 1비트씩 4중으로 넣는다."""
-    texture = bytearray(TEX_W * TEX_H // 2)
+    """1,512개 글리프를 378칸 텍스처에 1비트씩 4중으로 넣는다."""
+    texture = bytearray(TEX_W * TEX_H_USED // 2)
     for index, cell in enumerate(cells):
-        bank, local = divmod(index, PER_BANK)
+        bank, local = divmod(index, SLOTS_PER_BANK)
         slot = local >> 1
         plane = (bank << 1) | (local & 1)
         base_x = (slot % COLS) * CELL
@@ -305,17 +332,27 @@ def clut32(path: Path = SOURCE_FONT) -> bytes:
         for value in range(16):
             out += struct.pack("<H", colors[theme] if (value >> plane) & 1 else 0)
     assert len(out) == 1024, len(out)
-    # 청크 머리의 RECT 높이를 32 로 올린다. 적재기가 x,y 는 상수로 덮어쓰지만
-    # w,h 는 파일 값을 쓴다(0x8002c418). 다만 h 가 17 이상이면 16 으로 자르는
-    # 검사가 있어(`slti v0, v0, 0x11`) 그 상수도 함께 고쳐야 한다.
+    # 청크 머리의 RECT 를 고친다. **x,y 는 적재기가 상수로 덮어쓰므로** 파일
+    # 값은 참고용이고, 실제로 어디에 올라갈지는 `patch_font_4plane.py` 가
+    # 0x8002c408 / 0x8002c410 을 고쳐서 정한다. 여기 값을 맞춰 두는 것은
+    # 둘이 어긋났을 때 눈에 띄게 하려는 것이다.
+    #
+    # h 는 파일 값을 쓴다(0x8002c418). 17 이상이면 16 으로 자르는 검사가
+    # 있어(`slti v0, v0, 0x11`) 그 상수도 함께 고쳐야 한다.
     head = bytearray(chunk[:12])
+    struct.pack_into("<HH", head, 4, *CLUT_VRAM)
     struct.pack_into("<H", head, 10, 32)
     return bytes(head) + bytes(out)
 
 
 def build_texture(cells: list[list[list[int]]], widths: list[int],
                   vram_x: int, vram_y: int, clut_chunk: bytes) -> bytes:
-    """4중 인터리브 폰트 파일 한 벌. 폭 테이블이 1,764칸짜리 통합표다."""
+    """4중 인터리브 폰트 파일 한 벌. 폭 테이블이 1,764칸짜리 통합표다.
+
+    `cells` 는 **배치 슬롯 순서**(0~1511)이고 `widths` 는 **게임 인덱스
+    순서**(0~1763)다. 둘이 다르다 — 뱅크마다 756 개만 채우고 756~881 은
+    빈칸으로 남기기 때문이다. 섞으면 폭이 통째로 밀린다.
+    """
     padded = cells + [[[0] * CELL for _ in range(CELL)]] * (PER_TEXTURE - len(cells))
     pixels = pack_planes(padded[:PER_TEXTURE])
     table = pack_widths(widths, UNIFIED_WIDTH_BYTES)
@@ -329,7 +366,7 @@ def build_texture(cells: list[list[list[int]]], widths: list[int],
     out += table
     out += struct.pack("<II", 0x10, 0x08)
     out += clut_chunk
-    out += struct.pack("<IHHHH", 12 + len(pixels), vram_x, vram_y, 64, TEX_H)
+    out += struct.pack("<IHHHH", 12 + len(pixels), vram_x, vram_y, 64, TEX_H_USED)
     out += pixels
     return bytes(out)
 

@@ -37,7 +37,8 @@ SECTOR_USER = PS.USER_SIZE
 # DAT 304개의 섹션 오프셋 3,648개가 예외 없이 4정렬이고 MSD 길이도 전부 4의
 # 배수다(8·16 정렬은 아니다). 섹션을 밀 때 이 값을 어기면 게임이 죽는다.
 SECTION_ALIGN = 4
-PER_BANK = 882              # 441셀 x 2 — 셀 하나에 글리프 둘이 인터리브된다
+PER_BANK = 882              # 게임의 인코딩 공간. 뱅크당 882 로 고정이다
+SLOTS_PER_BANK = 756        # 378셀 x 2 — 우리가 실제로 채울 수 있는 자리
 
 
 def init(force: bool) -> int:
@@ -195,12 +196,16 @@ def korean_map(layout: Path):
         entries.update({base + n: c for n, c in enumerate(chars)})
         return GT.GlyphMap(entries), None, base
 
+    # **나누는 자리는 882 가 아니라 756 이다.** 인코딩 공간은 뱅크당 882 지만
+    # 텍스처가 21x18=378칸뿐이라 채울 수 있는 것은 756 개다(셀 하나에 글리프
+    # 둘). 882 로 나누면 뱅크0 의 뒤쪽 126자가 **가리킬 셀이 없는 인덱스**를
+    # 받는다. 팔레트 32벌을 텍스처 사각형 안에 넣느라 행을 줄인 결과다.
     banks = document.get("banks", 1)
-    head = chars[:PER_BANK]
+    head = chars[:SLOTS_PER_BANK]
     bank0 = GT.GlyphMap({index: char for index, char in enumerate(head)})
     if banks < 2:
         return bank0, None, 0
-    tail = chars[PER_BANK:banks * PER_BANK]
+    tail = chars[SLOTS_PER_BANK:banks * SLOTS_PER_BANK]
     return bank0, GT.Bank1Map({index: char for index, char in enumerate(tail)}), 0
 
 
@@ -336,14 +341,17 @@ def check(index: int, show: int = 0) -> int:
     lba, size = FT.field_list()[index]
     original = FT.load_entry(index)
     raw = read_user(PATCH_BIN, lba, size)
+    # **선두 u32 는 압축 스트림 길이다. 해제 크기가 아니다.** 게임 해제기
+    # (0x800393A4)가 세는 것이 입력 바이트라는 것을 역어셈블로 확인했다.
+    # 예전에는 이걸 해제 크기로 읽어 `decoded[:declared]` 로 잘랐는데, 그러면
+    # 멀쩡한 필드도 전부 "포인터가 어긋난다" 로 나온다 — 검사기가 틀린 것이다.
     declared = struct.unpack_from("<I", raw, 0)[0]
-    decoded = FT.lzss_decode(raw[4:])
-    if len(decoded) < declared:
-        print(f"해제가 모자란다: {len(decoded):,} < 선언 {declared:,}")
+    if declared > len(raw) - 4:
+        print(f"압축 길이가 섹터를 넘는다: {declared:,} > {len(raw) - 4:,}")
         return 1
-    dat = decoded[:declared]
+    dat = FT.lzss_decode(raw[4:4 + declared])
 
-    print(f"필드 {index}: 선두 u32 {declared:,}B 만큼 해제됨")
+    print(f"필드 {index}: 압축 {declared:,}B -> 해제 {len(dat):,}B")
     if DB.dat_pointers(dat) is None:
         print("  DAT 포인터가 어긋난다. 게임이 읽지 못한다.")
         return 1

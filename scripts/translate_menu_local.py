@@ -101,8 +101,11 @@ def metrics() -> tuple[list[int], dict[str, int]]:
         index = {char: i for i, char in enumerate(chars)}
         data = FONT.read_bytes()
         off = int.from_bytes(data[:4], "little")
+        # 폭표는 **게임 인덱스**로 색인된다. 배치 슬롯과 다르다 — 뱅크마다
+        # 756 개만 채우고 인코딩 공간은 882 이기 때문이다.
         widths = []
-        for i in range(len(chars)):
+        for slot in range(len(chars)):
+            i = BF.game_index(slot)
             byte = data[off + (i >> 1)]
             widths.append((byte >> 4) if (i & 1) else (byte & 0xF))
         _METRICS = (widths, index)
