@@ -76,8 +76,19 @@ BANK1_TABLE_NEW = 0x23B1        # 통합표 안의 뱅크1 시작 = 0x21f8 + 441
 CLUT_X_SITE = 0x8002C408        # addiu v0, zero, 0x120   -> 288
 CLUT_Y_SITE = 0x8002C410        # addiu v0, zero, 0xe0    -> 224
 CLUT_VRAM_X, CLUT_VRAM_Y = 960, 472
-CLUT_ID_OLD = 0x3812            # (224 << 6) | (288 >> 4)
-CLUT_ID_NEW = (CLUT_VRAM_Y << 6) | (CLUT_VRAM_X >> 4)       # 0x763c
+
+# **팔레트 상수는 짝을 이룬다.** 짝수 글리프용과 홀수 글리프용이 한 줄
+# 차이(`+0x40`)로 붙어 있다. 처음에 짝수 것만 고쳤더니 홀수 인덱스 글리프가
+# 게임 전체에서 안 보였다 — 옛 자리를 가리키는데 거기엔 아무것도 없어서
+# 투명하게 그려진다. 검사가 "0x3812 가 5곳" 만 봐서 빠진 짝을 가려 줬다.
+#
+#     addiu a0, zero, 0x3812      짝수
+#     addiu a0, zero, 0x3852      홀수  = +0x40 (한 줄 아래)
+CLUT_IDS = {
+    0x3812: (CLUT_VRAM_Y << 6) | (CLUT_VRAM_X >> 4),            # 0x763c
+    0x3852: ((CLUT_VRAM_Y + 1) << 6) | (CLUT_VRAM_X >> 4),      # 0x767c
+}
+CLUT_ID_COUNT = {0x3812: 5, 0x3852: 4}      # EXE 안에서 기대하는 곳 수
 
 # 그리기 4곳. (분기 주소, tpage 레지, 인덱스 레지, CLUT 저장 오프셋, 프리미티브 레지)
 DRAW_SITES = (
@@ -104,17 +115,17 @@ def expect(exe: Exe, addr: int, want: int, what: str) -> None:
                          f"({want:08x}) — 다른 판본이거나 이미 패치됐다")
 
 
-def clut_id_sites(exe: Exe) -> list[int]:
-    """CLUT id 기준값 `0x3812` 를 즉치로 쓰는 곳을 전부 찾는다.
+def clut_id_sites(exe: Exe, old: int) -> list[int]:
+    """CLUT id 기준값을 즉치로 쓰는 곳을 전부 찾는다.
 
-    그리기 4곳 말고 `0x80033118` 이 하나 더 있다 — 패리티(+0x40)를 안 더하는
-    다섯 번째 글자 그리기 경로다. 4중 인터리브에서 제대로 도는지는 아직 확인
-    안 했지만, **팔레트를 옮기면 여기도 같이 옮겨야** 색을 잃지 않는다.
+    짝수용(`0x3812`)은 그리기 4곳 말고 `0x80033118` 이 하나 더 있다 —
+    패리티를 안 더하는 다섯 번째 글자 그리기 경로다. 4중 인터리브에서 제대로
+    도는지는 아직 확인 안 했지만, **팔레트를 옮기면 여기도 같이 옮겨야** 한다.
     """
     out = []
     for off in range(exe.HEADER, exe.HEADER + exe.size, 4):
         word = int.from_bytes(exe.data[off:off + 4], "little")
-        if word >> 26 in (8, 9) and (word & 0xFFFF) == CLUT_ID_OLD:
+        if word >> 26 in (8, 9) and (word & 0xFFFF) == old:
             out.append(exe.load + off - exe.HEADER)
     return out
 
@@ -156,14 +167,16 @@ def apply(exe: Exe, show: bool) -> list[tuple[int, str]]:
     done.append((CLUT_X_SITE,
                  f"CLUT 적재 위치 (288,224) -> ({CLUT_VRAM_X},{CLUT_VRAM_Y})"))
 
-    ids = clut_id_sites(exe)
-    if len(ids) != 5:
-        raise ValueError(f"CLUT id 기준값이 {len(ids)}곳이다. 5곳이어야 한다")
-    for addr in ids:
-        word = exe.word(addr)
-        exe.put_word(addr, (word & ~0xFFFF) | CLUT_ID_NEW)
-    done.append((ids[0],
-                 f"CLUT id 기준 {len(ids)}곳 {CLUT_ID_OLD:#x} -> {CLUT_ID_NEW:#x}"))
+    for old, new in CLUT_IDS.items():
+        ids = clut_id_sites(exe, old)
+        want = CLUT_ID_COUNT[old]
+        if len(ids) != want:
+            raise ValueError(f"CLUT id {old:#x} 가 {len(ids)}곳이다. "
+                             f"{want}곳이어야 한다")
+        for addr in ids:
+            word = exe.word(addr)
+            exe.put_word(addr, (word & ~0xFFFF) | new)
+        done.append((ids[0], f"CLUT id {len(ids)}곳 {old:#x} -> {new:#x}"))
 
     sites = width_sites(exe)
     if len(sites) != 7:
