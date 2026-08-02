@@ -147,70 +147,87 @@ SHADOW_LOOP = 0x8002F000
 PRIM_CTX = 0x800821E0           # [여기] -> {현재 포인터, 한계, …}
 SHADOW_CLUT = 0x7E3C            # (504 << 6) | (960 >> 4)
 
+# 자리마다 레지스터가 다르다. 틀 하나에 이름만 갈아 끼운다.
+#
+#   prim   프리미티브 기준 주소. 루프 꼬리에서는 **이미 0x18 전진한 상태**라
+#          방금 만든 글리프는 prim-0x18 에 있다
+#   link   앞 프리미티브를 가리키는 값(주소 << 8). 우리가 그림자로 갱신한다
+#   extra  같이 전진시켜야 하는 두 번째 커서 (없으면 빈 줄)
+#   s0~s5  긁어 써도 되는 레지스터. 루프 머리에서 다시 만들어지는 것들이다
 SHADOW_ASM = """
     lui   at, 0x8008
     lw    at, {ctx_lo:#x}(at)
-    addiu a0, s2, 0x18
-    lw    v0, 0x4(at)
+    addiu {s1}, {prim}, 0x18
+    lw    {s0}, 0x4(at)
     nop
-    sltu  v0, v0, a0
-    bne   v0, zero, {back:#x}
+    sltu  {s0}, {s0}, {s1}
+    bne   {s0}, zero, {back:#x}
     nop
 
-    lw    v0, -0x18(s2)
-    lw    v1, -0x14(s2)
-    lw    a1, -0x10(s2)
-    lw    a2, -0xc(s2)
-    lw    a3, -0x8(s2)
-    lw    t0, -0x4(s2)
-    sw    v0, 0x0(s2)
-    sw    v1, 0x4(s2)
-    sw    a1, 0x8(s2)
-    sw    a2, 0xc(s2)
-    sw    a3, 0x10(s2)
-    sw    t0, 0x14(s2)
+    lw    {s0}, -0x18({prim})
+    lw    {s1}, -0x14({prim})
+    lw    {s2}, -0x10({prim})
+    lw    {s3}, -0xc({prim})
+    lw    {s4}, -0x8({prim})
+    lw    {s5}, -0x4({prim})
+    sw    {s0}, 0x0({prim})
+    sw    {s1}, 0x4({prim})
+    sw    {s2}, 0x8({prim})
+    sw    {s3}, 0xc({prim})
+    sw    {s4}, 0x10({prim})
+    sw    {s5}, 0x14({prim})
 
-    lhu   v0, 0xc(s2)
-    lhu   v1, 0xe(s2)
-    addiu v0, v0, 0x1
-    addiu v1, v1, 0x1
-    sh    v0, 0xc(s2)
-    sh    v1, 0xe(s2)
+    lhu   {s0}, 0xc({prim})
+    lhu   {s1}, 0xe({prim})
+    addiu {s0}, {s0}, 0x1
+    addiu {s1}, {s1}, 0x1
+    sh    {s0}, 0xc({prim})
+    sh    {s1}, 0xe({prim})
 
-    lhu   v0, 0x12(s2)
+    lhu   {s0}, 0x12({prim})
     nop
-    andi  v1, v0, 0x40
-    andi  v0, v0, 0x400
-    srl   v0, v0, 3
-    addu  v1, v1, v0
-    addiu v1, v1, {clut:#x}
-    sh    v1, 0x12(s2)
+    andi  {s1}, {s0}, 0x40
+    andi  {s0}, {s0}, 0x400
+    srl   {s0}, {s0}, 3
+    addu  {s1}, {s1}, {s0}
+    addiu {s1}, {s1}, {clut:#x}
+    sh    {s1}, 0x12({prim})
 
-    lw    v0, 0x0(s2)
-    srl   v1, s4, 8
-    lui   a0, 0xff00
-    and   v0, v0, a0
-    sll   v1, v1, 8
-    srl   v1, v1, 8
-    or    v0, v0, v1
-    sw    v0, 0x0(s2)
+    lw    {s0}, 0x0({prim})
+    srl   {s1}, {link}, 8
+    lui   {s2}, 0xff00
+    and   {s0}, {s0}, {s2}
+    sll   {s1}, {s1}, 8
+    srl   {s1}, {s1}, 8
+    or    {s0}, {s0}, {s1}
+    sw    {s0}, 0x0({prim})
 
-    sll   s4, s2, 8
-    addiu s2, s2, 0x18
-    beq   zero, zero, {loop:#x}
+    sll   {link}, {prim}, 8
+    addiu {prim}, {prim}, 0x18
+{extra}    beq   zero, zero, {loop:#x}
     nop
 """
 
-def shadow_free(exe: Exe, size: int) -> None:
+# (이름, 꼬리 분기 자리, 원래 워드, 루프 머리, prim, link, extra, 긁을 레지스터)
+SHADOW_SITES = (
+    ("필드 대사", 0x8002F1A4, 0x0800BC00, 0x8002F000, "s2", "s4", "",
+     ("v0", "v1", "a1", "a2", "a3", "t0")),
+    ("메뉴 계열", 0x8002EAF0, 0x0800BA52, 0x8002E948, "a1", "t5",
+     "    addiu t3, t3, 0x18\n",
+     ("v0", "v1", "a0", "t0", "t1", "t2")),
+)
+
+
+def shadow_free(exe: Exe, where: int, size: int) -> None:
     """코드를 놓을 자리가 정말 비었는지 본다. **0 이라고 빈 자리가 아니다.**
 
     실행 중 RAM 에서도 0 인 것을 따로 확인했고, 여기서는 그 구간이 함수 사이
     여백인지(앞이 `jr ra`, 뒤가 프롤로그) 그리고 아무도 가리키지 않는지를 본다.
     """
     for offset in range(0, size, 4):
-        if exe.word(SHADOW_CODE + offset) != 0:
-            raise ValueError(f"{SHADOW_CODE + offset:#x} 가 0 이 아니다")
-    lo, hi = SHADOW_CODE, SHADOW_CODE + size
+        if exe.word(where + offset) != 0:
+            raise ValueError(f"{where + offset:#x} 가 0 이 아니다")
+    lo, hi = where, where + size
     for off in range(exe.HEADER, exe.HEADER + exe.size, 4):
         word = int.from_bytes(exe.data[off:off + 4], "little")
         here = exe.load + off - exe.HEADER
@@ -296,28 +313,28 @@ def apply(exe: Exe, show: bool) -> list[tuple[int, str]]:
         exe.put_word(addr, (word & ~0xFFFF) | BANK1_TABLE_NEW)
     done.append((sites[0], f"뱅크1 폭표 {len(sites)}곳 -> 통합표 +441"))
 
-    code = assemble(SHADOW_ASM.format(
-        ctx_lo=PRIM_CTX & 0xFFFF, back=SHADOW_CODE, clut=SHADOW_CLUT,
-        loop=SHADOW_LOOP),
-        SHADOW_CODE)
-    back = SHADOW_CODE + len(code) - 8            # 마지막 `j` 자리
-    code = assemble(SHADOW_ASM.format(
-        ctx_lo=PRIM_CTX & 0xFFFF, back=back, clut=SHADOW_CLUT, loop=SHADOW_LOOP),
-        SHADOW_CODE)
-    shadow_free(exe, len(code) + 16)
     for i, line in enumerate(("jr ra", "nop")):
         exe.put_word(SHADOW_STUB + i * 4,
                      int.from_bytes(assemble(line, SHADOW_STUB + i * 4), "little"))
     done.append((SHADOW_STUB, "빈 함수를 즉시 반환으로 — 뒤를 쓴다"))
-    for i in range(0, len(code), 4):
-        exe.put_word(SHADOW_CODE + i,
-                     int.from_bytes(code[i:i + 4], "little"))
-    expect(exe, SHADOW_HOOK, 0x0800BC00, "j 0x8002f000")
-    exe.put_word(SHADOW_HOOK, int.from_bytes(
-        assemble(f"beq zero, zero, {SHADOW_CODE:#x}", SHADOW_HOOK),
-        "little"))
-    done.append((SHADOW_CODE, f"그림자 루틴 {len(code) // 4}명령"))
-    done.append((SHADOW_HOOK, "루프 꼬리 -> 그림자 루틴"))
+
+    cursor = SHADOW_CODE
+    for name, hook, was, loop, prim, link, extra, scratch in SHADOW_SITES:
+        fields = dict(ctx_lo=PRIM_CTX & 0xFFFF, clut=SHADOW_CLUT, loop=loop,
+                      prim=prim, link=link, extra=extra,
+                      **{f"s{n}": r for n, r in enumerate(scratch)})
+        code = assemble(SHADOW_ASM.format(back=cursor, **fields), cursor)
+        code = assemble(
+            SHADOW_ASM.format(back=cursor + len(code) - 8, **fields), cursor)
+        shadow_free(exe, cursor, len(code))
+        for i in range(0, len(code), 4):
+            exe.put_word(cursor + i, int.from_bytes(code[i:i + 4], "little"))
+        expect(exe, hook, was, f"{name} 루프 꼬리 분기")
+        exe.put_word(hook, int.from_bytes(
+            assemble(f"beq zero, zero, {cursor:#x}", hook), "little"))
+        done.append((cursor, f"그림자 루틴 [{name}] {len(code) // 4}명령"))
+        done.append((hook, f"[{name}] 루프 꼬리 -> 그림자"))
+        cursor += len(code)
 
     for branch, tp, idx, off, prim in DRAW_SITES:
         code = assemble(DRAW_PATCH.format(tp=tp, idx=idx, off=off, prim=prim),
