@@ -276,7 +276,33 @@ def width_sites(exe: Exe) -> list[int]:
     return out
 
 
-def apply(exe: Exe, show: bool) -> list[tuple[int, str]]:
+def _install_shadow(exe: Exe, done: list) -> None:
+    for i, line in enumerate(("jr ra", "nop")):
+        exe.put_word(SHADOW_STUB + i * 4,
+                     int.from_bytes(assemble(line, SHADOW_STUB + i * 4), "little"))
+    done.append((SHADOW_STUB, "빈 함수를 즉시 반환으로 — 뒤를 쓴다"))
+
+    cursor = SHADOW_CODE
+    for name, hook, was, loop, prim, link, extra, scratch in SHADOW_SITES:
+        fields = dict(ctx_lo=PRIM_CTX & 0xFFFF, clut=SHADOW_CLUT, loop=loop,
+                      prim=prim, link=link, extra=extra,
+                      **{f"s{n}": r for n, r in enumerate(scratch)})
+        code = assemble(SHADOW_ASM.format(back=cursor, **fields), cursor)
+        code = assemble(
+            SHADOW_ASM.format(back=cursor + len(code) - 8, **fields), cursor)
+        shadow_free(exe, cursor, len(code))
+        for i in range(0, len(code), 4):
+            exe.put_word(cursor + i, int.from_bytes(code[i:i + 4], "little"))
+        expect(exe, hook, was, f"{name} 루프 꼬리 분기")
+        exe.put_word(hook, int.from_bytes(
+            assemble(f"beq zero, zero, {cursor:#x}", hook), "little"))
+        done.append((cursor, f"그림자 루틴 [{name}] {len(code) // 4}명령"))
+        done.append((hook, f"[{name}] 루프 꼬리 -> 그림자"))
+        cursor += len(code)
+
+
+
+def apply(exe: Exe, show: bool, shadow: bool = True) -> list[tuple[int, str]]:
     done: list[tuple[int, str]] = []
 
     expect(exe, CLUT_LIMIT, 0x28420011, "slti v0, v0, 0x11")
@@ -322,28 +348,8 @@ def apply(exe: Exe, show: bool) -> list[tuple[int, str]]:
         exe.put_word(addr, (word & ~0xFFFF) | BANK1_TABLE_NEW)
     done.append((sites[0], f"뱅크1 폭표 {len(sites)}곳 -> 통합표 +441"))
 
-    for i, line in enumerate(("jr ra", "nop")):
-        exe.put_word(SHADOW_STUB + i * 4,
-                     int.from_bytes(assemble(line, SHADOW_STUB + i * 4), "little"))
-    done.append((SHADOW_STUB, "빈 함수를 즉시 반환으로 — 뒤를 쓴다"))
-
-    cursor = SHADOW_CODE
-    for name, hook, was, loop, prim, link, extra, scratch in SHADOW_SITES:
-        fields = dict(ctx_lo=PRIM_CTX & 0xFFFF, clut=SHADOW_CLUT, loop=loop,
-                      prim=prim, link=link, extra=extra,
-                      **{f"s{n}": r for n, r in enumerate(scratch)})
-        code = assemble(SHADOW_ASM.format(back=cursor, **fields), cursor)
-        code = assemble(
-            SHADOW_ASM.format(back=cursor + len(code) - 8, **fields), cursor)
-        shadow_free(exe, cursor, len(code))
-        for i in range(0, len(code), 4):
-            exe.put_word(cursor + i, int.from_bytes(code[i:i + 4], "little"))
-        expect(exe, hook, was, f"{name} 루프 꼬리 분기")
-        exe.put_word(hook, int.from_bytes(
-            assemble(f"beq zero, zero, {cursor:#x}", hook), "little"))
-        done.append((cursor, f"그림자 루틴 [{name}] {len(code) // 4}명령"))
-        done.append((hook, f"[{name}] 루프 꼬리 -> 그림자"))
-        cursor += len(code)
+    if shadow:
+        _install_shadow(exe, done)
 
     for branch, tp, idx, off, prim in DRAW_SITES:
         code = assemble(DRAW_PATCH.format(tp=tp, idx=idx, off=off, prim=prim),
@@ -370,11 +376,13 @@ def main() -> int:
     parser.add_argument("--output", type=Path,
                         default=Path("work/patch-4plane/SLPS_018.80"))
     parser.add_argument("--show", action="store_true")
+    parser.add_argument("--no-shadow", action="store_true",
+                        help="그림자를 빼고 만든다 (실기 문제 가르기용)")
     args = parser.parse_args()
 
     try:
         exe = Exe(str(args.exe))
-        done = apply(exe, args.show)
+        done = apply(exe, args.show, not args.no_shadow)
     except (ValueError, FileNotFoundError) as error:
         print(error, file=sys.stderr)
         return 1
