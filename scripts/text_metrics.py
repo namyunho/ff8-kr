@@ -39,10 +39,15 @@ def split_lines(text: str) -> list[str]:
     return pieces
 
 
+# `{b1:N}` 은 필드 전용 폰트의 글리프, `{g:N}` 은 대응표에 없어 인덱스로만
+# 적어 둔 글리프다. **둘 다 그려지는 글자이지 제어 코드가 아니다.**
+RAW_GLYPH = "{g:"
+
+
 def control_codes(text: str) -> list[str]:
-    """제어 코드만 순서대로. `{b1:N}` 은 글자이므로 뺀다."""
+    """제어 코드만 순서대로. 그려지는 글리프 토큰은 뺀다."""
     return [token for token in TOKEN.findall(text)
-            if not token.startswith(BANK1)]
+            if not token.startswith(BANK1) and not token.startswith(RAW_GLYPH)]
 
 
 def drawn(line: str) -> list[str]:
