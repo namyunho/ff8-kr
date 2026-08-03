@@ -100,33 +100,33 @@ def rebuild(blob: bytes, sub: int, ko: dict, glyphs, bank1) -> tuple[bytes, dict
         body += pool
         bodies.append(bytes(body))
 
-    # **그룹은 4바이트 경계에 놓는다.** 원본은 16개 그룹의 오프셋이 예외 없이
-    # 4의 배수다(머리도 34가 아니라 36까지 채워 둔다). 그냥 이어 붙이면 2, 1, 3
-    # 처럼 제멋대로가 되는데, 그룹 데이터를 워드로 읽는 코드가 있으면 실기에서
-    # **정렬 안 된 `lw` -> 주소 오류 예외**가 난다. 에뮬레이터는 봐주므로
-    # 실기에서만 죽는다.
+    # **그룹을 옮기지 않는다.** 원본 블록을 바탕으로 두고 각 그룹의 내용만
+    # 제자리에서 갈아 끼운다. 한국어가 원문보다 짧아 15개 중 14개가 원래 자리에
+    # 그대로 들어가고, 남는 그룹 하나는 번역을 조금 줄여 맞췄다.
     #
-    # MSD 섹션이 전부 4의 배수였던 것(R7)과 같은 규칙인데 여기서는 놓쳤다.
-    head = bytearray(struct.pack("<H", count))
-    cursor = 2 + count * 2
-    cursor += -cursor % ALIGN
-    offsets = []
-    for body in bodies:
-        if not body:
-            offsets.append(0)
+    # 처음에는 블록 전체를 다시 짜고 오프셋 표를 고쳤다. 그러면 두 가지가 함께
+    # 위태로워진다.
+    #
+    #   1. **읽는 법을 모르는 그룹 셋**이 자리를 옮긴다. 바이트는 그대로여도
+    #      그 안의 오프셋이 무엇을 기준으로 하는지 모른다
+    #   2. 그룹 오프셋의 4바이트 정렬이 깨진다 (실기 크래시의 원인이었다)
+    #
+    # 자리를 안 건드리면 둘 다 사라진다. 오프셋 표도 원본 그대로 남는다.
+    out = bytearray(blob)
+    for index, off in enumerate(starts):
+        body = bodies[index]
+        if not off or not body:
             continue
-        offsets.append(cursor)
-        cursor += len(body)
-        cursor += -cursor % ALIGN
-    for value in offsets:
-        head += struct.pack("<H", value)
-    out = bytearray(head)
-    out += b"\x00" * (-len(out) % ALIGN)
-    for body in bodies:
-        if not body:
-            continue
-        out += body
-        out += b"\x00" * (-len(out) % ALIGN)
+        if body == blob[off:off + len(body)]:
+            continue                          # 그대로 둔 그룹
+        end = min([b for b in bounds if b > off] + [len(blob)])
+        span = end - off
+        if len(body) > span:
+            raise ValueError(
+                f"그룹 {index} 가 원래 자리 {span}바이트를 {len(body) - span}바이트 "
+                f"넘는다. 번역을 줄여야 한다")
+        out[off:off + len(body)] = body
+        out[off + len(body):end] = b"\x00" * (span - len(body))
     stats["크기"] = len(out)
     return bytes(out), stats
 
