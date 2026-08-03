@@ -298,6 +298,32 @@ OVL_SHADOW_ASM = """
 """
 
 
+# ----------------------------------------------------------------------
+# 네 번째 자리 — TOC #26 안의 모듈 (메뉴 화면을 실제로 그리는 것)
+#
+# `menumain.ovl` 에 훅을 걸었는데도 메뉴에 그림자가 안 졌다. 메뉴 화면을 그리는
+# 것은 **아카이브 TOC #26 안의 모듈**이었다. 목차의 dest 가 `0x200` 이라
+# 오버레이가 아닌 것처럼 보이지만 안의 코드가 따로 `0x8009a000` 에 실린다.
+#
+# 적재 주소는 `jal` 목적지 분포로 역산했다 — 후보 베이스마다 "목적지가 함수
+# 프롤로그(`addiu sp,sp,-N`)에 떨어지는가" 를 세면 신호가 뚜렷하다.
+# `0x8009a000` 에서 3,960개 중 1,715개가 맞았다.
+#
+# 루프 모양은 EXE 메뉴 변형과 같다(24바이트, 커서 둘). 레지스터만 다르다 —
+# **`t1` 이 두 번째 커서**라 긁는 데 못 쓴다.
+#
+#   prim=t4  사슬=t7  두 번째 커서=t1  긁기=v0,v1,a0,a1,t0,t2
+MOD_ARCHIVE = 26                # IMG 목차 색인
+MOD_BASE = 0x8009A000
+MOD_HOOK = 224688               # 파일 오프셋. `j 0x800d0c8c` (루프 꼬리)
+MOD_LOOP = 0x800D0C8C
+MOD_SHADOW_AT = 0        # apply() 가 채운다
+
+# 끝을 `j` 로 바꾼다. EXE 의 루틴에서 700KB 떨어져 상대 분기로는 못 닿는다.
+MOD_SHADOW_ASM = SHADOW_ASM.replace(
+    "    beq   zero, zero, {loop:#x}\n    nop\n", "    nop\n    nop\n")
+
+
 def jump(target: int) -> int:
     """`j target` 을 손으로 짠다. 어셈블러에 없다."""
     return (2 << 26) | ((target >> 2) & 0x03FFFFFF)
@@ -389,6 +415,23 @@ def _install_shadow(exe: Exe, done: list) -> None:
     global OVL_SHADOW_AT
     OVL_SHADOW_AT = cursor
     done.append((cursor, f"그림자 루틴 [메뉴 오버레이] {len(code) // 4}명령"))
+    cursor += len(code)
+
+    # 네 번째 — TOC #26 안의 모듈. 24바이트 프리미티브에 커서 둘.
+    fields = dict(ctx_lo=PRIM_CTX & 0xFFFF, clut=SHADOW_CLUT, loop=MOD_LOOP,
+                  prim="t4", link="t7", extra="    addiu t1, t1, 0x18\n",
+                  **{f"s{n}": r for n, r in
+                     enumerate(("v0", "v1", "a0", "a1", "t0", "t2"))})
+    code = bytearray(assemble(MOD_SHADOW_ASM.format(back=cursor, **fields), cursor))
+    back = cursor + len(code) - 8
+    code = bytearray(assemble(MOD_SHADOW_ASM.format(back=back, **fields), cursor))
+    code[-8:-4] = jump(MOD_LOOP).to_bytes(4, "little")
+    shadow_free(exe, cursor, len(code) + 16)
+    for i in range(0, len(code), 4):
+        exe.put_word(cursor + i, int.from_bytes(code[i:i + 4], "little"))
+    global MOD_SHADOW_AT
+    MOD_SHADOW_AT = cursor
+    done.append((cursor, f"그림자 루틴 [메뉴 모듈] {len(code) // 4}명령"))
 
 
 

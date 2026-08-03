@@ -76,20 +76,26 @@ def pairs(data: bytes) -> list[int]:
     return out
 
 
-SIGNATURE = (0x3C018008, 0x8C2121E0, 0x26230014)     # lui/lw at, addiu v1,s1,0x14
+# 그림자 훅 두 곳. 루틴 주소는 상수로 박지 않고 **서명으로 찾는다** —
+# 앞선 루틴 길이가 바뀌면 밀리기 때문이다. 세 번째 워드가 서로 다르다.
+#
+#   menumain.ovl   `addiu v1, s1, 0x14`   보폭 20바이트
+#   메뉴 모듈       `addiu v1, t4, 0x18`   보폭 24바이트, prim 이 t4
+SHADOW_HOOKS = (
+    ("menumain.ovl", 4, PF.OVL_HOOK, PF.OVL_LOOP, 0x26230014),
+    ("메뉴 모듈", PF.MOD_ARCHIVE, PF.MOD_HOOK, PF.MOD_LOOP, 0x25830018),
+)
+SIG_HEAD = (0x3C018008, 0x8C2121E0)                 # lui at / lw at, 0x21e0(at)
 
 
-def find_shadow(exe: "Exe") -> int:
-    """패치된 EXE 에서 오버레이용 그림자 루틴을 찾는다.
-
-    주소를 상수로 박지 않는다 — 앞의 두 루틴 길이에 따라 밀린다. 서명 세 워드로
-    찾는다. `addiu v1, s1, 0x14` 는 오버레이 변형에만 있다(보폭이 20바이트).
-    """
+def find_shadow(exe: "Exe", third: int) -> int:
+    """패치된 EXE 에서 그림자 루틴을 서명으로 찾는다."""
+    want = SIG_HEAD + (third,)
     for off in range(exe.HEADER, exe.HEADER + exe.size, 4):
         addr = exe.load + off - exe.HEADER
-        if all(exe.word(addr + i * 4) == w for i, w in enumerate(SIGNATURE)):
+        if all(exe.word(addr + i * 4) == w for i, w in enumerate(want)):
             return addr
-    raise ValueError("EXE 에 오버레이용 그림자 루틴이 없다 — --no-shadow 로 만들었나")
+    raise ValueError(f"EXE 에 그림자 루틴({third:08x})이 없다 — --no-shadow 인가")
 
 
 def main() -> int:
@@ -128,34 +134,38 @@ def main() -> int:
             return 1
         print("    썼다. 되읽기 일치")
 
-    # 메뉴 오버레이의 그림자 훅
+    # 그림자 훅 — menumain.ovl 과 메뉴 모듈
     from mips_dis import Exe
 
     try:
         exe = Exe(str(EXE_PATCHED))
-        where = find_shadow(exe)
-    except (ValueError, FileNotFoundError) as error:
-        print(f"\n그림자 훅 건너뜀 — {error}")
-        where = 0
-    if where:
-        lba, size = next((l, s) for i, l, s in entries() if i == 4)
+    except FileNotFoundError:
+        exe = None
+    for name, archive, hook, loop, third in SHADOW_HOOKS:
+        if exe is None:
+            print(f"\n{name} 그림자 훅 건너뜀 — 패치된 EXE 가 없다")
+            continue
+        try:
+            where = find_shadow(exe, third)
+        except ValueError as error:
+            print(f"\n{name} 그림자 훅 건너뜀 — {error}")
+            continue
+        lba, size = next((l, s) for i, l, s in entries() if i == archive)
         data = bytearray(PD.read_user(PD.PATCH_BIN, lba, size))
-        was = int.from_bytes(data[PF.OVL_HOOK:PF.OVL_HOOK + 4], "little")
-        want = PF.jump(PF.OVL_LOOP)
-        if was != want:
-            print(f"\n**menumain.ovl +{PF.OVL_HOOK:,} 가 {was:08x} 다. "
-                  f"{want:08x} 여야 한다**", file=sys.stderr)
+        was = int.from_bytes(data[hook:hook + 4], "little")
+        if was != PF.jump(loop):
+            print(f"\n**{name} +{hook:,} 가 {was:08x} 다. "
+                  f"{PF.jump(loop):08x} 여야 한다**", file=sys.stderr)
             return 1
-        struct.pack_into("<I", data, PF.OVL_HOOK, PF.jump(where))
-        print(f"\nmenumain.ovl  +{PF.OVL_HOOK:,}  "
-              f"j {PF.OVL_LOOP:#x} -> j {where:#x}  (그림자)")
-        if not args.dry_run:
-            PD.write_user(PD.PATCH_BIN, lba, bytes(data))
-            back = PD.read_user(PD.PATCH_BIN, lba, size)
-            if back[:len(data)] != bytes(data):
-                print("    쓴 대로 안 읽힌다", file=sys.stderr)
-                return 1
-            print("    썼다. 되읽기 일치")
+        struct.pack_into("<I", data, hook, PF.jump(where))
+        print(f"\n{name}  +{hook:,}  j {loop:#x} -> j {where:#x}  (그림자)")
+        if args.dry_run:
+            continue
+        PD.write_user(PD.PATCH_BIN, lba, bytes(data))
+        if PD.read_user(PD.PATCH_BIN, lba, size)[:len(data)] != bytes(data):
+            print("    쓴 대로 안 읽힌다", file=sys.stderr)
+            return 1
+        print("    썼다. 되읽기 일치")
 
     print(f"\n고친 짝 {total}곳")
     if args.dry_run:
