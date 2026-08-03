@@ -329,6 +329,106 @@ MOD_SHADOW_ASM = SHADOW_ASM.replace(
     "    beq   zero, zero, {loop:#x}\n    nop\n", "    nop\n    nop\n")
 
 
+# ----------------------------------------------------------------------
+# 다섯 번째 자리 — 삽입식 사슬 (메뉴 창을 실제로 그리는 경로)
+#
+# 훅을 넷 걸고도 메뉴에 그림자가 안 졌다. 아주 초기에 "패리티를 안 더하는
+# 다섯 번째 경로" 로 적어 두고 넘긴 `0x80033118` 이 진짜였다.
+#
+# 앞의 넷과 사슬 방식이 다르다. **고정 기준점 `s5` 뒤에 끼워 넣는다.**
+#
+#     sll at, s2, 8        at = 새 프리미티브
+#     lwl s4, 0x2(s5)      s4 = 기준점의 현재 링크
+#     swl at, 0x2(s5)      s5 -> 새 것
+#     swl s4, 0x2(s2)      새 것 -> 원래 링크
+#
+# 나중에 끼운 것이 머리에 가까우므로 **그림자를 글리프 뒤에 끼우면** 그림자가
+# 먼저 그려진다 — 앞의 넷과 결론이 같다.
+#
+# 레지스터가 빡빡하다. a0(커서)·t0·s1·s6·fp 가 살아 있고 확실히 죽은 것은
+# v0·v1 뿐이다. 그래서 **스택에 저장·복원**한다. 분석으로 아끼는 것보다
+# 안전하고, 자리는 넉넉하다.
+INS_HOOK = 0x8003317C           # j 0x8003311c  (루프 꼬리)
+INS_LOOP = 0x8003311C
+INS_WAS = 0x0800CC47
+INS_ANCHOR = "s5"               # 삽입 기준점
+INS_PRIM = "s2"
+INS_CURSOR = "a0"
+
+INS_SHADOW_ASM = """
+    addiu sp, sp, -0x20
+    sw    v0, 0x0(sp)
+    sw    v1, 0x4(sp)
+    sw    at, 0x8(sp)
+    sw    t0, 0xc(sp)
+    sw    t1, 0x10(sp)
+
+    lui   at, 0x8008
+    lw    at, {ctx_lo:#x}(at)
+    addiu v1, {prim}, 0x14
+    lw    v0, 0x4(at)
+    nop
+    sltu  v0, v0, v1
+    bne   v0, zero, {back:#x}
+    nop
+
+    lw    v0, -0x14({prim})
+    lw    v1, -0x10({prim})
+    lw    at, -0xc({prim})
+    lw    t0, -0x8({prim})
+    lw    t1, -0x4({prim})
+    sw    v0, 0x0({prim})
+    sw    v1, 0x4({prim})
+    sw    at, 0x8({prim})
+    sw    t0, 0xc({prim})
+    sw    t1, 0x10({prim})
+
+    lhu   v0, 0x8({prim})
+    lhu   v1, 0xa({prim})
+    addiu v0, v0, 0x1
+    addiu v1, v1, 0x1
+    sh    v0, 0x8({prim})
+    sh    v1, 0xa({prim})
+
+    lhu   v0, 0xe({prim})
+    nop
+    andi  v1, v0, 0x40
+    andi  v0, v0, 0x400
+    srl   v0, v0, 3
+    addu  v1, v1, v0
+    addiu v1, v1, {clut:#x}
+    sh    v1, 0xe({prim})
+
+    lui   t1, 0xff00
+    lw    v0, 0x0({anchor})
+    lw    v1, 0x0({prim})
+    nop
+    and   v1, v1, t1
+    sll   t0, v0, 8
+    srl   t0, t0, 8
+    or    v1, v1, t0
+    sw    v1, 0x0({prim})
+
+    and   v0, v0, t1
+    sll   t0, {prim}, 8
+    srl   t0, t0, 8
+    or    v0, v0, t0
+    sw    v0, 0x0({anchor})
+
+    addiu {prim}, {prim}, 0x14
+    addiu {cursor}, {cursor}, 0x14
+
+    lw    v0, 0x0(sp)
+    lw    v1, 0x4(sp)
+    lw    at, 0x8(sp)
+    lw    t0, 0xc(sp)
+    lw    t1, 0x10(sp)
+    addiu sp, sp, 0x20
+    beq   zero, zero, {loop:#x}
+    nop
+"""
+
+
 def jump(target: int) -> int:
     """`j target` 을 손으로 짠다. 어셈블러에 없다."""
     return (2 << 26) | ((target >> 2) & 0x03FFFFFF)
@@ -437,6 +537,23 @@ def _install_shadow(exe: Exe, done: list) -> None:
     global MOD_SHADOW_AT
     MOD_SHADOW_AT = cursor
     done.append((cursor, f"그림자 루틴 [메뉴 모듈] {len(code) // 4}명령"))
+    cursor += len(code)
+
+    # 다섯 번째 — 삽입식 사슬. 건너뛸 때도 스택을 되돌려야 하므로 목적지가
+    # 마지막 분기가 아니라 **복원 블록(끝에서 8명령)** 이다.
+    fields = dict(ctx_lo=PRIM_CTX & 0xFFFF, clut=SHADOW_CLUT, loop=INS_LOOP,
+                  prim=INS_PRIM, anchor=INS_ANCHOR, cursor=INS_CURSOR)
+    code = assemble(INS_SHADOW_ASM.format(back=cursor, **fields), cursor)
+    back = cursor + len(code) - 32
+    code = assemble(INS_SHADOW_ASM.format(back=back, **fields), cursor)
+    shadow_free(exe, cursor, len(code) + 16)
+    for i in range(0, len(code), 4):
+        exe.put_word(cursor + i, int.from_bytes(code[i:i + 4], "little"))
+    expect(exe, INS_HOOK, INS_WAS, "삽입식 루프 꼬리")
+    exe.put_word(INS_HOOK, int.from_bytes(
+        assemble(f"beq zero, zero, {cursor:#x}", INS_HOOK), "little"))
+    done.append((cursor, f"그림자 루틴 [메뉴 창-삽입식] {len(code) // 4}명령"))
+    done.append((INS_HOOK, "[메뉴 창-삽입식] 루프 꼬리 -> 그림자"))
 
 
 
