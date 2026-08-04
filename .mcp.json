@@ -11,9 +11,9 @@
       "args": ["--stdio"]
     },
     "ghidra": {
-      "command": "/Users/namyunho/tools/ghidra-mcp/venv/bin/python",
+      "command": "/Users/namyunho/Library/Application Support/GhidraMCP/5.14.2/venv/bin/python",
       "args": [
-        "/Users/namyunho/tools/ghidra-mcp/bridge_mcp_ghidra.py",
+        "/Users/namyunho/Library/Application Support/GhidraMCP/5.14.2/bridge_mcp_ghidra.py",
         "--transport",
         "stdio"
       ]

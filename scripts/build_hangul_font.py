@@ -11,12 +11,17 @@
     0x0000     4      u32 = 8    (폭 테이블 오프셋)
     0x0004     4      u32 = 452  (TIM 헤더 오프셋)
     0x0008   452      글리프 폭 테이블 (니블 팩, 뱅크당 904 엔트리)
-    0x01C4    12      TIM 헤더  magic 0x10 / flag 0x08 (4bpp + CLUT)
-    0x01D0  1024      CLUT
-    0x05E4    12      IMG 블록 헤더  RECT (x, y) 64 x 252
-    0x05F0 32256      픽셀 (256 x 252, 4bpp)
+    0x01C4     8      TIM 헤더  magic 0x10 / flag 0x08 (4bpp + CLUT)
+    0x01CC    12      CLUT 블록 헤더  blockSize = 1036
+    0x01D8  1024      CLUT 데이터
+    0x05D8    12      IMG 블록 헤더  RECT (x, y) 64 x 252
+    0x05E4 32256      픽셀 (256 x 252, 4bpp)
 
-게임은 TIM 의 RECT 를 무시하고 하드코딩된 VRAM 좌표를 쓰므로, 여기 적는 RECT
+적재기 `sub_8002C358` 은 **블록을 건너뛸 때 `blockSize` 를 쓰고** VRAM 전송량은
+RECT 로 정한다. 그래서 CLUT 블록의 `blockSize` 1036 이 픽셀 시작 위치를
+결정한다. 이 값을 바꾸면 픽셀 시작이 밀려 글리프가 통째로 어긋난다.
+
+게임은 TIM 의 RECT 좌표를 무시하고 하드코딩된 VRAM 좌표를 쓰므로, 여기 적는
 좌표는 참고값이다. 자세한 내용은 docs/font-analysis.md 를 본다.
 """
 
@@ -32,6 +37,9 @@ DEFAULT_TTF = (PROJECT_ROOT / "fonts" / "galmuri11_16x16_12pt"
                / "font-58c1637749eb0742.ttf")
 DEFAULT_MAP = (PROJECT_ROOT / "fonts" / "galmuri11_16x16_12pt"
                / "font-58c1637749eb0742_glyph_map.json")
+# 원본 폰트(IMG TOC #130). CLUT 을 여기서 그대로 베낀다.
+#   python3 scripts/psx_disc.py extract --index 130
+SOURCE_FONT = PROJECT_ROOT / "work" / "extracted" / "img_130_lba849.bin"
 
 CELL = 12               # FF8 글리프 셀
 COLS, ROWS = 21, 21     # 256x252 텍스처의 격자
@@ -58,6 +66,7 @@ TIM_OFFSET = 452        # 원본 #130 과 동일
 WIDTH_TABLE_BYTES = TIM_OFFSET - 8      # 파일상 444바이트
 COPY_BYTES = 452        # sub_8002C358 이 실제로 복사하는 길이
 GAP = 1                 # 글리프 오른쪽 여백 -> 진행폭 = 잉크폭 + GAP
+BLANK_WIDTH = 8         # 잉크가 없는 글리프(공백). 원본 인덱스 63 과 같다
 
 # 적재기는 오프셋 8부터 452바이트를 복사하므로 마지막 8바이트는 TIM 헤더를
 # 덮어 읽는다. 그 8바이트는 인덱스 888..903 에 해당하고 뱅크당 441칸만 쓰므로
@@ -65,35 +74,73 @@ GAP = 1                 # 글리프 오른쪽 여백 -> 진행폭 = 잉크폭 + 
 # in-place 교체가 된다.
 
 
+def covered(path: Path = DEFAULT_MAP) -> set[str]:
+    """폰트가 실제로 담은 글자. **오타 판정의 정본이다.**
+
+    갈무리는 KS X 1001 완성형 2,350자만 담는다. 그 밖의 음절은 그릴 수 없으므로
+    번역문에 나오면 화면에서 빈칸이 된다. 그리고 그런 음절은 거의 예외 없이
+    기계 번역의 오타다 — 정상적인 한국어 낱말에 안 쓰이는 글자이기 때문이다.
+
+    배치를 "번역문이 쓰는 음절" 로 만들면 오타까지 칸을 받아 스스로를
+    정당화한다. 정본은 번역문이 아니라 폰트다.
+    """
+    return set(json.loads(path.read_text(encoding="utf-8")))
+
+
 def rasterize(ttf: Path, size: int, chars: list[str]) -> dict[str, list[list[int]]]:
-    """TTF 를 지정 픽셀 크기로 래스터라이즈해 12x12 셀 비트맵을 만든다."""
+    """TTF 를 지정 픽셀 크기로 래스터라이즈해 12x12 셀 비트맵을 만든다.
+
+    **세로 위치는 글자마다 정하지 않고 전체 공통으로 잡는다.** 글자별
+    잉크 높이로 중앙 정렬하면 받침 없는 '도'·'보' 가 받침 있는 '랄' 보다
+    1픽셀 내려앉아 베이스라인이 흔들린다. 그래서 먼저 전체를 그려 잉크
+    범위를 모은 뒤 하나의 세로 기준을 적용한다.
+
+    가로는 글자별 중앙 정렬을 유지한다. 한글은 모아쓰기라 글자마다 폭이
+    달라도 어색하지 않고, 폭 테이블이 진행폭을 따로 정한다.
+    """
     from PIL import Image, ImageDraw, ImageFont
 
     font = ImageFont.truetype(str(ttf), size)
     box = CELL * 3
-    cells: dict[str, list[list[int]]] = {}
+
+    drawn: dict[str, list[tuple[int, int]]] = {}
     for char in chars:
         image = Image.new("1", (box, box), 0)
         draw = ImageDraw.Draw(image)
         draw.fontmode = "1"          # 픽셀 폰트: 안티에일리어싱 금지
         draw.text((CELL, CELL - 2), char, font=font, fill=1)
         pixels = image.load()
-        points = [(x, y) for y in range(box) for x in range(box) if pixels[x, y]]
+        drawn[char] = [(x, y) for y in range(box) for x in range(box)
+                       if pixels[x, y]]
+
+    inked = [p for points in drawn.values() for p in points]
+    if inked:
+        top = min(y for _, y in inked)
+        bottom = max(y for _, y in inked)
+        span = bottom - top + 1
+        if span > CELL:
+            raise ValueError(
+                f"글자들의 세로 범위가 {size}px 에서 {span}px 로 셀 {CELL} 을 "
+                f"넘는다. --size 를 줄인다."
+            )
+        base_y = (CELL - span) // 2 - top
+    else:
+        base_y = 0
+
+    cells: dict[str, list[list[int]]] = {}
+    for char, points in drawn.items():
         cell = [[0] * CELL for _ in range(CELL)]
         if points:
             min_x = min(x for x, _ in points)
-            min_y = min(y for _, y in points)
             width = max(x for x, _ in points) - min_x + 1
-            height = max(y for _, y in points) - min_y + 1
-            if width > CELL or height > CELL:
+            if width > CELL:
                 raise ValueError(
-                    f"'{char}' 가 {size}px 에서 {width}x{height} 로 셀을 넘는다. "
+                    f"'{char}' 가 {size}px 에서 가로 {width}px 로 셀을 넘는다. "
                     f"--size 를 줄인다."
                 )
             off_x = (CELL - width) // 2
-            off_y = (CELL - height) // 2
             for x, y in points:
-                cell[y - min_y + off_y][x - min_x + off_x] = 1
+                cell[y + base_y][x - min_x + off_x] = 1
         cells[char] = cell
     return cells
 
@@ -101,6 +148,17 @@ def rasterize(ttf: Path, size: int, chars: list[str]) -> dict[str, list[list[int
 def ink_width(cell: list[list[int]]) -> int:
     columns = [x for y in range(CELL) for x in range(CELL) if cell[y][x]]
     return (max(columns) + 1) if columns else 0
+
+
+def advance(cell: list[list[int]]) -> int:
+    """진행폭. **잉크가 없는 글리프는 공백이므로 따로 준다.**
+
+    잉크폭 + GAP 으로만 계산하면 공백이 1픽셀이 되어 어절이 붙어 버린다.
+    화면에서는 글자 둘이 겹친 것처럼 보인다. 원본은 공백(인덱스 63)에 8 을
+    준다. 표는 니블이라 15 를 넘을 수 없다.
+    """
+    ink = ink_width(cell)
+    return min(ink + GAP if ink else BLANK_WIDTH, 15)
 
 
 def pack_bank(cells: list[list[list[int]]], level: int) -> bytes:
@@ -133,10 +191,10 @@ def pack_bank(cells: list[list[list[int]]], level: int) -> bytes:
     return bytes(texture)
 
 
-def pack_widths(widths: list[int]) -> bytes:
+def pack_widths(widths: list[int], nbytes: int = WIDTH_TABLE_BYTES) -> bytes:
     """니블 팩. sub_8002E3EC 규칙: table[i >> 1] 의 하위/상위 니블."""
-    table = bytearray(WIDTH_TABLE_BYTES)
-    for index, value in enumerate(widths[:WIDTH_TABLE_BYTES * 2]):
+    table = bytearray(nbytes)
+    for index, value in enumerate(widths[:nbytes * 2]):
         value &= 0xF
         position = index >> 1
         if index & 1:
@@ -146,33 +204,203 @@ def pack_widths(widths: list[int]) -> bytes:
     return bytes(table)
 
 
-def build_clut() -> bytes:
-    """원본과 같은 4색 x 4반복 구성. 하위 2비트만 색을 정한다."""
-    def bgr555(r: int, g: int, b: int) -> int:
-        return (b >> 3) << 10 | (g >> 3) << 5 | (r >> 3)
+def source_clut(path: Path = SOURCE_FONT) -> bytes:
+    """원본 폰트의 CLUT 청크를 **통째로** 가져온다. 머리까지 그대로다.
 
-    base = [bgr555(0, 0, 0), bgr555(0x52, 0x5A, 0x52),
-            bgr555(0x63, 0x63, 0x63), bgr555(0xA5, 0xA5, 0xA5)]
-    entries = (base * 4)                      # 16색 팔레트 1개
-    data = bytearray()
-    for _ in range(32):                       # 1024바이트 = 32팔레트분
-        for value in entries:
-            data += struct.pack("<H", value)
-    return bytes(data[:1024])
+    직접 만들지 않는 이유가 있다. 팔레트는 16개가 짝을 이루고 있고, **짝수
+    글리프용은 하위 2비트로, 홀수 글리프용은 상위 2비트로** 색을 정한다.
+    렌더러가 글리프 인덱스의 홀짝으로 둘 중 하나를 고른다(`0x8002f098`,
+    CLUT id `0x3812` / `0x3852`).
+
+        팔레트 0 (짝수)  0000 d294 b18c a96a | 반복
+        팔레트 1 (홀수)  0000 0000 0000 0000 | d294 x4 | b18c x4 | a96a x4
+
+    예전에는 한 종류를 32번 반복해 만들었다. 홀수용이 없으니 상위 2비트가
+    색을 못 얻고, 같은 니블에 든 짝수 글리프만 화면에 나왔다 — `카`(89)가
+    `안`(88)로, `스`(33)가 `의`(32)로 보이는 증상이다. 색 순서도 뒤집혀
+    있었고 반투명 비트(0x8000)도 빠져 있었다.
+
+    창 색 테마가 8가지라 우리가 지어낼 값이 아니다. **우리가 바꿀 것은
+    글리프뿐이다.**
+    """
+    if not path.exists():
+        raise FileNotFoundError(
+            f"원본 폰트가 없다: {path}\n"
+            "  python3 scripts/psx_disc.py extract --index 130")
+    data = path.read_bytes()
+    chunk = int.from_bytes(data[4:8], "little")     # 이미지 청크 오프셋
+    start = chunk + 8                               # 첫 청크 = CLUT
+    length = int.from_bytes(data[start:start + 4], "little")
+    if not 12 < length <= len(data) - start:
+        raise ValueError(f"CLUT 청크 길이가 이상하다: {length}")
+    return data[start:start + length]
+
+
+# 4중 인터리브
+# ----------------------------------------------------------------------
+# 4bpp 픽셀에 글리프를 **1비트씩 4개** 넣는다. 갈무리는 원래 1비트 픽셀 폰트라
+# 화질 손실이 0 이다. 441칸 x 4 = 1,764칸.
+#
+#   평면 = (뱅크비트 ? 2 : 0) | (인덱스 & 1)
+#   셀   = (인덱스 & 0x3FF) >> 1
+#
+# 팔레트는 32벌이다. 렌더러가 `기존계산 + (s0 & 0x400)` 로 고르게 되어 있어
+# 16줄(= 16 x 0x40 = 0x400) 아래에 평면2,3 용을 두면 뱅크 비트가 이미 제자리에
+# 있다. 시프트가 필요 없다.
+#
+#   기준줄 +0~15    테마8 x 짝/홀   -> 평면 0, 1
+#   기준줄 +16~31   테마8 x 짝/홀   -> 평면 2, 3
+#
+# **팔레트를 어디에 두는가.** 처음에는 원본 CLUT `(288,224)` 바로 아래 16줄을
+# 썼다. 실기에서 뱅크1 글자만 노이즈로 나왔다 — 그 자리는 폭 16짜리 **남의
+# CLUT** 가 덮는다. 한 시점에 0 이라고 빈 자리가 아니다.
+#
+# 그래서 **뱅크0 텍스처 사각형 안쪽**으로 옮겼다. 동영상 두 편 뒤에도 100%
+# 온전한 것이 실측된 유일한 자리이고, 폰트가 적재될 때마다 우리가 다시 쓴다.
+# 대신 텍스처를 21셀행에서 18셀행으로 줄여 아래를 비운다.
+#
+#   텍스처   (960,256)  256 x 216      21 x 18 = 378칸
+#   CLUT     (960,472)  16 x 32        뱅크0 472~487 / 뱅크1 488~503
+#
+# `COLS=21` 은 못 바꾼다 — 셀에서 u,v 를 내는 계산이 게임 코드 그대로다.
+# 줄일 수 있는 것은 **행**뿐이다.
+PLANES = 4
+ROWS_USED = 18                              # 팔레트 자리를 내주고 줄인 행
+CELLS_USED = COLS * ROWS_USED               # 378
+TEX_H_USED = ROWS_USED * CELL               # 216
+SLOTS_PER_BANK = CELLS_USED * 2             # 756 — 셀 하나에 글리프 둘
+PER_TEXTURE = CELLS_USED * PLANES           # 1,512
+CLUT_VRAM = (960, 472)
+CLUT_ROWS = 32 + PLANES         # 테마 32벌 + 그림자 4줄
+# 그림자 색. 원본 팔레트는 밝은 쪽부터 (20,20,20) (12,12,12) (10,11,10) 이고
+# 우리 글자는 가장 어두운 것을 쓴다. 그림자는 그보다 더 어두워야 한다.
+SHADOW = 0x8000 | (5 << 10) | (5 << 5) | 5      # R5 G5 B5, 불투명
+UNIFIED_WIDTH_BYTES = 884       # 적재기가 복사할 길이. 16의 배수 + 4
+THEMES = 8
+
+# **인코딩 공간과 배치 공간은 다르다.** 게임의 인덱스 공간은 뱅크당 882 로
+# 고정이고(폭표의 뱅크1 시작이 +441바이트인 이유), 우리가 실제로 채우는 것은
+# 앞 756 개뿐이다. 756~881 은 비워 둔다 — 가리킬 셀이 없다.
+def game_index(slot: int) -> int:
+    """배치 슬롯(0~1511) -> 게임 글리프 인덱스."""
+    bank, local = divmod(slot, SLOTS_PER_BANK)
+    return bank * PER_BANK + local
+
+
+def pack_planes(cells: list[list[list[int]]]) -> bytes:
+    """1,512개 글리프를 378칸 텍스처에 1비트씩 4중으로 넣는다."""
+    texture = bytearray(TEX_W * TEX_H_USED // 2)
+    for index, cell in enumerate(cells):
+        bank, local = divmod(index, SLOTS_PER_BANK)
+        slot = local >> 1
+        plane = (bank << 1) | (local & 1)
+        base_x = (slot % COLS) * CELL
+        base_y = (slot // COLS) * CELL
+        for y in range(CELL):
+            row = base_y + y
+            for x in range(CELL):
+                if not cell[y][x]:
+                    continue
+                column = base_x + x
+                offset = row * (TEX_W // 2) + column // 2
+                bit = 1 << plane
+                if column & 1:
+                    texture[offset] |= bit << 4
+                else:
+                    texture[offset] |= bit
+    return bytes(texture)
+
+
+def clut32(path: Path = SOURCE_FONT) -> bytes:
+    """32팔레트를 만든다. 색은 **원본 테마에서 그대로 가져온다.**
+
+    평면 p 의 팔레트는 픽셀값의 비트 p 만 본다.
+
+        entry[v] = 테마색  (v >> p) & 1 이면
+                   0x0000  아니면 (투명)
+
+    원본은 테마마다 3단계 농도를 쓰지만 1비트 평면은 한 색뿐이다. 지금 한글이
+    쓰는 농도(값 3)에 해당하는 색을 고른다 — 화면에서 이미 확인된 색이다.
+    """
+    chunk = source_clut(path)
+    data = chunk[12:]
+    colors = []
+    for theme in range(THEMES):
+        entries = [int.from_bytes(data[theme * 64 + i * 2:theme * 64 + i * 2 + 2],
+                                  "little") for i in range(16)]
+        colors.append(entries[3])           # 짝수 팔레트의 값 3 = 획 색
+    out = bytearray()
+    for row in range(32):
+        theme = (row % 16) // 2
+        plane = (row // 16) * 2 + (row % 2)
+        for value in range(16):
+            out += struct.pack("<H", colors[theme] if (value >> plane) & 1 else 0)
+    # **그림자 팔레트 4줄.** 평면마다 하나씩이고 테마와 무관하다 — 그림자는
+    # 어느 창 색에서도 같은 어두운 회색이면 된다. 그래서 32벌이 아니라 4줄로
+    # 끝난다. 텍스처가 y471 에서 끝나고 팔레트 32줄이 503 까지이므로 504~507 에
+    # 놓는다(뒤로 511 까지 더 남는다).
+    #
+    #   그림자 줄 = 504 + 2 x 뱅크 + 짝홀
+    #   CLUT id   = 0x7e3c + (글리프CLUT & 0x40) + ((글리프CLUT & 0x400) >> 3)
+    for plane in range(PLANES):
+        for value in range(16):
+            out += struct.pack("<H", SHADOW if (value >> plane) & 1 else 0)
+    assert len(out) == (32 + PLANES) * 32, len(out)
+    # 청크 머리의 RECT 를 고친다. **x,y 는 적재기가 상수로 덮어쓰므로** 파일
+    # 값은 참고용이고, 실제로 어디에 올라갈지는 `patch_font_4plane.py` 가
+    # 0x8002c408 / 0x8002c410 을 고쳐서 정한다. 여기 값을 맞춰 두는 것은
+    # 둘이 어긋났을 때 눈에 띄게 하려는 것이다.
+    #
+    # h 는 파일 값을 쓴다(0x8002c418). 17 이상이면 16 으로 자르는 검사가
+    # 있어(`slti v0, v0, 0x11`) 그 상수도 함께 고쳐야 한다.
+    head = bytearray(chunk[:12])
+    # **청크 길이를 같이 고쳐야 한다.** 적재기가 `s2 = 청크시작 + 길이` 로
+    # 다음(텍스처) 청크를 찾는다. 줄 수만 늘리고 길이를 두면 픽셀 시작이 밀려
+    # 글리프가 통째로 어긋난다.
+    struct.pack_into("<I", head, 0, 12 + len(out))
+    struct.pack_into("<HH", head, 4, *CLUT_VRAM)
+    struct.pack_into("<H", head, 10, CLUT_ROWS)
+    return bytes(head) + bytes(out)
+
+
+def build_texture(cells: list[list[list[int]]], widths: list[int],
+                  vram_x: int, vram_y: int, clut_chunk: bytes) -> bytes:
+    """4중 인터리브 폰트 파일 한 벌. 폭 테이블이 1,764칸짜리 통합표다.
+
+    `cells` 는 **배치 슬롯 순서**(0~1511)이고 `widths` 는 **게임 인덱스
+    순서**(0~1763)다. 둘이 다르다 — 뱅크마다 756 개만 채우고 756~881 은
+    빈칸으로 남기기 때문이다. 섞으면 폭이 통째로 밀린다.
+    """
+    padded = cells + [[[0] * CELL for _ in range(CELL)]] * (PER_TEXTURE - len(cells))
+    pixels = pack_planes(padded[:PER_TEXTURE])
+    table = pack_widths(widths, UNIFIED_WIDTH_BYTES)
+    tim_offset = 8 + len(table)
+    if tim_offset % 4:
+        table += bytes(4 - tim_offset % 4)
+        tim_offset = 8 + len(table)
+
+    out = bytearray()
+    out += struct.pack("<II", 8, tim_offset)
+    out += table
+    out += struct.pack("<II", 0x10, 0x08)
+    out += clut_chunk
+    out += struct.pack("<IHHHH", 12 + len(pixels), vram_x, vram_y, 64, TEX_H_USED)
+    out += pixels
+    return bytes(out)
 
 
 def build_bank(cells: list[list[list[int]]], widths: list[int],
-               vram_x: int, vram_y: int, level: int) -> bytes:
+               vram_x: int, vram_y: int, level: int,
+               clut_chunk: bytes | None = None) -> bytes:
     padded = cells + [[[0] * CELL for _ in range(CELL)]] * (PER_BANK - len(cells))
     pixels = pack_bank(padded[:PER_BANK], level)
-    clut = build_clut()
+    clut = clut_chunk if clut_chunk is not None else source_clut()
 
     out = bytearray()
     out += struct.pack("<II", 8, TIM_OFFSET)
     out += pack_widths(widths)
     out += struct.pack("<II", 0x10, 0x08)                       # TIM magic / flag
-    out += struct.pack("<IHHHH", 12 + len(clut), 896, 256, 16, 16)
-    out += clut
+    out += clut                                                 # 머리까지 원본 그대로
     out += struct.pack("<IHHHH", 12 + len(pixels), vram_x, vram_y, 64, TEX_H)
     out += pixels
     return bytes(out)
@@ -195,7 +423,12 @@ def main() -> int:
     args = parser.parse_args()
 
     glyph_map = json.loads(args.glyph_map.read_text(encoding="utf-8"))
-    chars = list(glyph_map.keys())
+    # 두 가지 입력을 받는다. 완성형 전체 대응표는 문자를 **키**로 담고,
+    # `count_korean_syllables.py --layout` 이 내는 배치 후보는 빈도순으로
+    # 정렬한 `chars` 배열을 담는다. 배치를 그대로 폰트로 만들 수 있어야
+    # 음절 수 판정이 실행 가능한 결론이 된다.
+    chars = (glyph_map["chars"] if isinstance(glyph_map, dict)
+             and "chars" in glyph_map else list(glyph_map))
     print(f"음절 {len(chars)}자, 래스터 {args.size}px, 뱅크 {args.banks}개 "
           f"(수용 {args.banks * PER_BANK}칸)")
 
@@ -211,9 +444,15 @@ def main() -> int:
         for slot, char in enumerate(chunk):
             assignment[char] = (bank, slot)
         bank_cells = [cells[c] for c in chunk]
-        widths = [ink_width(cell) + GAP for cell in bank_cells]
-        # 원본 뱅크 0/1 은 (832,256) / (960,256). 뱅크 2 이상은 빈 VRAM 을 쓴다.
-        vram_x = (832, 960, 320, 384, 448)[bank] if bank < 5 else 320
+        widths = [advance(cell) for cell in bank_cells]
+        # 원본 뱅크 0/1 은 (960,256) / (832,256) 이다. `sub_8002C358` 의
+        # 뱅크 분기(0x8002c3b8)가 `bne t0,zero` 라 **떨어지는 쪽이 뱅크0** 이고
+        # 거기서 x=0x3c0(960)을 쓴다. 의사코드를 그대로 읽으면 뒤집힌다.
+        #
+        # 재적재 경로(sub_8002C358)는 이 값을 상수로 덮어쓰므로 스톡에서는
+        # 파일의 x 가 무시된다. 그러나 뱅크1 을 우리 훅이 직접 올릴 때는
+        # 파일 값이 그대로 쓰인다 — 여기서 틀리면 글리프가 엉뚱한 데 박힌다.
+        vram_x = (960, 832, 448, 512, 576)[bank] if bank < 5 else 448
         data = build_bank(bank_cells, widths, vram_x, 256, args.level)
         path = args.output / f"bank{bank:02d}.bin"
         path.write_bytes(data)

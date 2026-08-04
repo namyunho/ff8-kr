@@ -1,0 +1,3610 @@
+{
+ "bank": 0,
+ "entries": {
+  "74": {
+   "char": "カ",
+   "source": "confirmed"
+  },
+  "76": {
+   "char": "キ",
+   "source": "confirmed"
+  },
+  "78": {
+   "char": "ク",
+   "source": "confirmed"
+  },
+  "80": {
+   "char": "ケ",
+   "source": "confirmed"
+  },
+  "82": {
+   "char": "コ",
+   "source": "confirmed"
+  },
+  "38": {
+   "char": "ド",
+   "source": "confirmed"
+  },
+  "150": {
+   "char": "ワ",
+   "source": "confirmed"
+  },
+  "138": {
+   "char": "ル",
+   "source": "confirmed"
+  },
+  "106": {
+   "char": "ア",
+   "source": "confirmed"
+  },
+  "136": {
+   "char": "リ",
+   "source": "confirmed"
+  },
+  "114": {
+   "char": "ナ",
+   "source": "confirmed"
+  },
+  "128": {
+   "char": "ム",
+   "source": "confirmed"
+  },
+  "14": {
+   "char": "グ",
+   "source": "confirmed"
+  },
+  "223": {
+   "char": "ー",
+   "source": "confirmed"
+  },
+  "224": {
+   "char": "e",
+   "source": "confirmed",
+   "note": "폭테이블 실측 7 — 가나·전각 폭(11~13)보다 뚜렷이 좁아 반각 소문자 e로 확정. SeeD 표기에 필요."
+  },
+  "225": {
+   "char": "皿",
+   "source": "read"
+  },
+  "226": {
+   "char": "悪",
+   "source": "read"
+  },
+  "227": {
+   "char": "安",
+   "source": "read"
+  },
+  "228": {
+   "char": "暗",
+   "source": "read"
+  },
+  "229": {
+   "char": "闇",
+   "source": "read"
+  },
+  "230": {
+   "char": "以",
+   "source": "read"
+  },
+  "231": {
+   "char": "異",
+   "source": "read"
+  },
+  "232": {
+   "char": "違",
+   "source": "read"
+  },
+  "233": {
+   "char": "一",
+   "source": "read"
+  },
+  "234": {
+   "char": "員",
+   "source": "read"
+  },
+  "235": {
+   "char": "右",
+   "source": "read"
+  },
+  "236": {
+   "char": "運",
+   "source": "read"
+  },
+  "237": {
+   "char": "鋭",
+   "source": "read"
+  },
+  "238": {
+   "char": "液",
+   "source": "read"
+  },
+  "239": {
+   "char": "越",
+   "source": "read"
+  },
+  "240": {
+   "char": "園",
+   "source": "read"
+  },
+  "241": {
+   "char": "援",
+   "source": "read"
+  },
+  "242": {
+   "char": "炎",
+   "source": "read"
+  },
+  "243": {
+   "char": "煙",
+   "source": "read"
+  },
+  "244": {
+   "char": "押",
+   "source": "read"
+  },
+  "245": {
+   "char": "屋",
+   "source": "read"
+  },
+  "246": {
+   "char": "音",
+   "source": "read"
+  },
+  "247": {
+   "char": "下",
+   "source": "read"
+  },
+  "248": {
+   "char": "化",
+   "source": "read"
+  },
+  "249": {
+   "char": "何",
+   "source": "read"
+  },
+  "250": {
+   "char": "果",
+   "source": "read"
+  },
+  "251": {
+   "char": "火",
+   "source": "read"
+  },
+  "252": {
+   "char": "我",
+   "source": "read"
+  },
+  "253": {
+   "char": "会",
+   "source": "read"
+  },
+  "254": {
+   "char": "回",
+   "source": "read"
+  },
+  "255": {
+   "char": "快",
+   "source": "read"
+  },
+  "256": {
+   "char": "海",
+   "source": "read"
+  },
+  "257": {
+   "char": "格",
+   "source": "read"
+  },
+  "258": {
+   "char": "確",
+   "source": "read"
+  },
+  "259": {
+   "char": "覚",
+   "source": "read"
+  },
+  "260": {
+   "char": "学",
+   "source": "read"
+  },
+  "261": {
+   "char": "喚",
+   "source": "read"
+  },
+  "262": {
+   "char": "完",
+   "source": "read"
+  },
+  "263": {
+   "char": "間",
+   "source": "read"
+  },
+  "264": {
+   "char": "関",
+   "source": "read"
+  },
+  "265": {
+   "char": "岸",
+   "source": "read"
+  },
+  "266": {
+   "char": "顔",
+   "source": "read"
+  },
+  "267": {
+   "char": "器",
+   "source": "read"
+  },
+  "268": {
+   "char": "機",
+   "source": "read"
+  },
+  "269": {
+   "char": "気",
+   "source": "read"
+  },
+  "270": {
+   "char": "技",
+   "source": "read"
+  },
+  "271": {
+   "char": "吸",
+   "source": "read"
+  },
+  "272": {
+   "char": "急",
+   "source": "read"
+  },
+  "273": {
+   "char": "給",
+   "source": "read"
+  },
+  "274": {
+   "char": "居",
+   "source": "read"
+  },
+  "275": {
+   "char": "巨",
+   "source": "read"
+  },
+  "276": {
+   "char": "共",
+   "source": "read"
+  },
+  "277": {
+   "char": "強",
+   "source": "read"
+  },
+  "278": {
+   "char": "恐",
+   "source": "read"
+  },
+  "279": {
+   "char": "近",
+   "source": "read"
+  },
+  "280": {
+   "char": "金",
+   "source": "read"
+  },
+  "281": {
+   "char": "空",
+   "source": "read"
+  },
+  "282": {
+   "char": "軍",
+   "source": "read"
+  },
+  "283": {
+   "char": "形",
+   "source": "read"
+  },
+  "284": {
+   "char": "警",
+   "source": "read"
+  },
+  "285": {
+   "char": "撃",
+   "source": "read"
+  },
+  "286": {
+   "char": "激",
+   "source": "read"
+  },
+  "287": {
+   "char": "血",
+   "source": "read"
+  },
+  "288": {
+   "char": "月",
+   "source": "read"
+  },
+  "289": {
+   "char": "剣",
+   "source": "read"
+  },
+  "290": {
+   "char": "見",
+   "source": "read"
+  },
+  "291": {
+   "char": "験",
+   "source": "read"
+  },
+  "292": {
+   "char": "減",
+   "source": "read"
+  },
+  "293": {
+   "char": "言",
+   "source": "read"
+  },
+  "294": {
+   "char": "個",
+   "source": "read"
+  },
+  "295": {
+   "char": "呼",
+   "source": "read"
+  },
+  "296": {
+   "char": "己",
+   "source": "read"
+  },
+  "297": {
+   "char": "御",
+   "source": "read"
+  },
+  "298": {
+   "char": "光",
+   "source": "read"
+  },
+  "299": {
+   "char": "効",
+   "source": "read"
+  },
+  "300": {
+   "char": "口",
+   "source": "read"
+  },
+  "301": {
+   "char": "好",
+   "source": "read"
+  },
+  "302": {
+   "char": "攻",
+   "source": "read"
+  },
+  "303": {
+   "char": "校",
+   "source": "read"
+  },
+  "304": {
+   "char": "甲",
+   "source": "read"
+  },
+  "305": {
+   "char": "行",
+   "source": "read"
+  },
+  "306": {
+   "char": "降",
+   "source": "read"
+  },
+  "307": {
+   "char": "高",
+   "source": "read"
+  },
+  "308": {
+   "char": "合",
+   "source": "read"
+  },
+  "309": {
+   "char": "告",
+   "source": "read"
+  },
+  "310": {
+   "char": "黒",
+   "source": "read"
+  },
+  "311": {
+   "char": "獄",
+   "source": "read"
+  },
+  "312": {
+   "char": "今",
+   "source": "read"
+  },
+  "313": {
+   "char": "混",
+   "source": "read"
+  },
+  "314": {
+   "char": "佐",
+   "source": "read"
+  },
+  "315": {
+   "char": "左",
+   "source": "read"
+  },
+  "316": {
+   "char": "砂",
+   "source": "read"
+  },
+  "317": {
+   "char": "催",
+   "source": "read"
+  },
+  "318": {
+   "char": "殺",
+   "source": "read"
+  },
+  "319": {
+   "char": "三",
+   "source": "read"
+  },
+  "320": {
+   "char": "山",
+   "source": "read"
+  },
+  "321": {
+   "char": "散",
+   "source": "read"
+  },
+  "322": {
+   "char": "斬",
+   "source": "read"
+  },
+  "323": {
+   "char": "使",
+   "source": "read"
+  },
+  "324": {
+   "char": "士",
+   "source": "read"
+  },
+  "325": {
+   "char": "始",
+   "source": "read"
+  },
+  "326": {
+   "char": "止",
+   "source": "read"
+  },
+  "327": {
+   "char": "死",
+   "source": "read"
+  },
+  "328": {
+   "char": "試",
+   "source": "read"
+  },
+  "329": {
+   "char": "事",
+   "source": "read"
+  },
+  "330": {
+   "char": "持",
+   "source": "read"
+  },
+  "331": {
+   "char": "時",
+   "source": "read"
+  },
+  "332": {
+   "char": "次",
+   "source": "read"
+  },
+  "333": {
+   "char": "治",
+   "source": "read"
+  },
+  "334": {
+   "char": "自",
+   "source": "read"
+  },
+  "335": {
+   "char": "失",
+   "source": "read"
+  },
+  "336": {
+   "char": "実",
+   "source": "read"
+  },
+  "337": {
+   "char": "射",
+   "source": "read"
+  },
+  "338": {
+   "char": "捨",
+   "source": "read"
+  },
+  "339": {
+   "char": "弱",
+   "source": "read"
+  },
+  "340": {
+   "char": "取",
+   "source": "read"
+  },
+  "341": {
+   "char": "手",
+   "source": "read"
+  },
+  "342": {
+   "char": "殊",
+   "source": "read"
+  },
+  "343": {
+   "char": "受",
+   "source": "read"
+  },
+  "344": {
+   "char": "呪",
+   "source": "read"
+  },
+  "345": {
+   "char": "修",
+   "source": "read"
+  },
+  "346": {
+   "char": "終",
+   "source": "read"
+  },
+  "347": {
+   "char": "臭",
+   "source": "read"
+  },
+  "348": {
+   "char": "襲",
+   "source": "read"
+  },
+  "349": {
+   "char": "集",
+   "source": "read"
+  },
+  "350": {
+   "char": "出",
+   "source": "read"
+  },
+  "351": {
+   "char": "術",
+   "source": "read"
+  },
+  "352": {
+   "char": "女",
+   "source": "read"
+  },
+  "353": {
+   "char": "召",
+   "source": "read"
+  },
+  "354": {
+   "char": "将",
+   "source": "read"
+  },
+  "355": {
+   "char": "少",
+   "source": "read"
+  },
+  "356": {
+   "char": "消",
+   "source": "read"
+  },
+  "357": {
+   "char": "称",
+   "source": "read"
+  },
+  "358": {
+   "char": "笑",
+   "source": "read"
+  },
+  "359": {
+   "char": "上",
+   "source": "read"
+  },
+  "360": {
+   "char": "場",
+   "source": "read"
+  },
+  "361": {
+   "char": "常",
+   "source": "read"
+  },
+  "362": {
+   "char": "状",
+   "source": "read"
+  },
+  "363": {
+   "char": "食",
+   "source": "read"
+  },
+  "364": {
+   "char": "審",
+   "source": "read"
+  },
+  "365": {
+   "char": "心",
+   "source": "read"
+  },
+  "366": {
+   "char": "振",
+   "source": "read"
+  },
+  "367": {
+   "char": "新",
+   "source": "read"
+  },
+  "368": {
+   "char": "針",
+   "source": "read"
+  },
+  "369": {
+   "char": "震",
+   "source": "read"
+  },
+  "370": {
+   "char": "人",
+   "source": "read"
+  },
+  "371": {
+   "char": "刃",
+   "source": "read"
+  },
+  "372": {
+   "char": "水",
+   "source": "read"
+  },
+  "373": {
+   "char": "睡",
+   "source": "read"
+  },
+  "374": {
+   "char": "制",
+   "source": "read"
+  },
+  "375": {
+   "char": "性",
+   "source": "read"
+  },
+  "376": {
+   "char": "成",
+   "source": "read"
+  },
+  "377": {
+   "char": "整",
+   "source": "read"
+  },
+  "378": {
+   "char": "生",
+   "source": "read"
+  },
+  "379": {
+   "char": "精",
+   "source": "read"
+  },
+  "380": {
+   "char": "聖",
+   "source": "read"
+  },
+  "381": {
+   "char": "製",
+   "source": "read"
+  },
+  "382": {
+   "char": "青",
+   "source": "read"
+  },
+  "383": {
+   "char": "石",
+   "source": "read"
+  },
+  "384": {
+   "char": "切",
+   "source": "read"
+  },
+  "385": {
+   "char": "折",
+   "source": "read"
+  },
+  "386": {
+   "char": "説",
+   "source": "read"
+  },
+  "387": {
+   "char": "先",
+   "source": "read"
+  },
+  "388": {
+   "char": "千",
+   "source": "read"
+  },
+  "389": {
+   "char": "宣",
+   "source": "read"
+  },
+  "390": {
+   "char": "戦",
+   "source": "read"
+  },
+  "391": {
+   "char": "選",
+   "source": "read"
+  },
+  "392": {
+   "char": "全",
+   "source": "read"
+  },
+  "393": {
+   "char": "蘇",
+   "source": "read"
+  },
+  "394": {
+   "char": "早",
+   "source": "read"
+  },
+  "395": {
+   "char": "相",
+   "source": "read"
+  },
+  "396": {
+   "char": "装",
+   "source": "read"
+  },
+  "397": {
+   "char": "増",
+   "source": "read"
+  },
+  "398": {
+   "char": "即",
+   "source": "read"
+  },
+  "399": {
+   "char": "息",
+   "source": "read"
+  },
+  "400": {
+   "char": "速",
+   "source": "read"
+  },
+  "401": {
+   "char": "属",
+   "source": "read"
+  },
+  "402": {
+   "char": "続",
+   "source": "read"
+  },
+  "403": {
+   "char": "体",
+   "source": "read"
+  },
+  "404": {
+   "char": "対",
+   "source": "read"
+  },
+  "405": {
+   "char": "態",
+   "source": "read"
+  },
+  "406": {
+   "char": "袋",
+   "source": "read"
+  },
+  "407": {
+   "char": "隊",
+   "source": "read"
+  },
+  "408": {
+   "char": "代",
+   "source": "read"
+  },
+  "409": {
+   "char": "大",
+   "source": "read"
+  },
+  "410": {
+   "char": "択",
+   "source": "read"
+  },
+  "411": {
+   "char": "誰",
+   "source": "read"
+  },
+  "412": {
+   "char": "弾",
+   "source": "read"
+  },
+  "413": {
+   "char": "断",
+   "source": "read"
+  },
+  "414": {
+   "char": "男",
+   "source": "read"
+  },
+  "415": {
+   "char": "値",
+   "source": "read"
+  },
+  "416": {
+   "char": "地",
+   "source": "read"
+  },
+  "417": {
+   "char": "着",
+   "source": "read"
+  },
+  "418": {
+   "char": "中",
+   "source": "read"
+  },
+  "419": {
+   "char": "仲",
+   "source": "read"
+  },
+  "420": {
+   "char": "虫",
+   "source": "read"
+  },
+  "421": {
+   "char": "調",
+   "source": "read"
+  },
+  "422": {
+   "char": "超",
+   "source": "read"
+  },
+  "423": {
+   "char": "長",
+   "source": "read"
+  },
+  "424": {
+   "char": "沈",
+   "source": "read"
+  },
+  "425": {
+   "char": "追",
+   "source": "read"
+  },
+  "426": {
+   "char": "通",
+   "source": "read"
+  },
+  "427": {
+   "char": "低",
+   "source": "read"
+  },
+  "428": {
+   "char": "定",
+   "source": "read"
+  },
+  "429": {
+   "char": "敵",
+   "source": "read"
+  },
+  "430": {
+   "char": "的",
+   "source": "read"
+  },
+  "431": {
+   "char": "徹",
+   "source": "read"
+  },
+  "432": {
+   "char": "撤",
+   "source": "read"
+  },
+  "433": {
+   "char": "鉄",
+   "source": "read"
+  },
+  "434": {
+   "char": "店",
+   "source": "read"
+  },
+  "435": {
+   "char": "転",
+   "source": "read"
+  },
+  "436": {
+   "char": "点",
+   "source": "read"
+  },
+  "437": {
+   "char": "電",
+   "source": "read"
+  },
+  "438": {
+   "char": "吐",
+   "source": "read"
+  },
+  "439": {
+   "char": "怒",
+   "source": "read"
+  },
+  "440": {
+   "char": "倒",
+   "source": "read"
+  },
+  "441": {
+   "char": "刀",
+   "source": "read"
+  },
+  "442": {
+   "char": "塔",
+   "source": "read"
+  },
+  "443": {
+   "char": "盗",
+   "source": "read"
+  },
+  "444": {
+   "char": "当",
+   "source": "read"
+  },
+  "445": {
+   "char": "等",
+   "source": "read"
+  },
+  "446": {
+   "char": "統",
+   "source": "read"
+  },
+  "447": {
+   "char": "逃",
+   "source": "read"
+  },
+  "448": {
+   "char": "頭",
+   "source": "read"
+  },
+  "449": {
+   "char": "闘",
+   "source": "read"
+  },
+  "450": {
+   "char": "動",
+   "source": "read"
+  },
+  "451": {
+   "char": "同",
+   "source": "read"
+  },
+  "452": {
+   "char": "特",
+   "source": "read"
+  },
+  "453": {
+   "char": "毒",
+   "source": "read"
+  },
+  "454": {
+   "char": "突",
+   "source": "read"
+  },
+  "455": {
+   "char": "内",
+   "source": "read"
+  },
+  "456": {
+   "char": "二",
+   "source": "read"
+  },
+  "457": {
+   "char": "入",
+   "source": "read"
+  },
+  "458": {
+   "char": "認",
+   "source": "read"
+  },
+  "459": {
+   "char": "能",
+   "source": "read"
+  },
+  "460": {
+   "char": "波",
+   "source": "read"
+  },
+  "461": {
+   "char": "敗",
+   "source": "read"
+  },
+  "462": {
+   "char": "倍",
+   "source": "read"
+  },
+  "463": {
+   "char": "買",
+   "source": "read"
+  },
+  "464": {
+   "char": "売",
+   "source": "read"
+  },
+  "465": {
+   "char": "爆",
+   "source": "read"
+  },
+  "466": {
+   "char": "発",
+   "source": "read"
+  },
+  "467": {
+   "char": "判",
+   "source": "read"
+  },
+  "468": {
+   "char": "半",
+   "source": "read"
+  },
+  "469": {
+   "char": "反",
+   "source": "read"
+  },
+  "470": {
+   "char": "班",
+   "source": "read"
+  },
+  "471": {
+   "char": "費",
+   "source": "read"
+  },
+  "472": {
+   "char": "避",
+   "source": "read"
+  },
+  "473": {
+   "char": "非",
+   "source": "read"
+  },
+  "474": {
+   "char": "飛",
+   "source": "read"
+  },
+  "475": {
+   "char": "備",
+   "source": "read"
+  },
+  "476": {
+   "char": "尾",
+   "source": "read"
+  },
+  "477": {
+   "char": "必",
+   "source": "read"
+  },
+  "478": {
+   "char": "不",
+   "source": "read"
+  },
+  "479": {
+   "char": "浮",
+   "source": "read"
+  },
+  "480": {
+   "char": "負",
+   "source": "read"
+  },
+  "481": {
+   "char": "武",
+   "source": "read"
+  },
+  "482": {
+   "char": "部",
+   "source": "read"
+  },
+  "483": {
+   "char": "風",
+   "source": "read"
+  },
+  "484": {
+   "char": "復",
+   "source": "read"
+  },
+  "485": {
+   "char": "物",
+   "source": "read"
+  },
+  "486": {
+   "char": "分",
+   "source": "read"
+  },
+  "487": {
+   "char": "兵",
+   "source": "read"
+  },
+  "488": {
+   "char": "平",
+   "source": "read"
+  },
+  "489": {
+   "char": "変",
+   "source": "read"
+  },
+  "490": {
+   "char": "返",
+   "source": "read"
+  },
+  "491": {
+   "char": "歩",
+   "source": "read"
+  },
+  "492": {
+   "char": "放",
+   "source": "read"
+  },
+  "493": {
+   "char": "方",
+   "source": "read"
+  },
+  "494": {
+   "char": "法",
+   "source": "read"
+  },
+  "495": {
+   "char": "砲",
+   "source": "read"
+  },
+  "496": {
+   "char": "防",
+   "source": "read"
+  },
+  "497": {
+   "char": "本",
+   "source": "read"
+  },
+  "498": {
+   "char": "魔",
+   "source": "read"
+  },
+  "499": {
+   "char": "味",
+   "source": "read"
+  },
+  "500": {
+   "char": "岬",
+   "source": "read"
+  },
+  "501": {
+   "char": "脈",
+   "source": "read"
+  },
+  "502": {
+   "char": "眠",
+   "source": "read"
+  },
+  "503": {
+   "char": "夢",
+   "source": "read"
+  },
+  "504": {
+   "char": "無",
+   "source": "read"
+  },
+  "505": {
+   "char": "名",
+   "source": "read"
+  },
+  "506": {
+   "char": "命",
+   "source": "read"
+  },
+  "507": {
+   "char": "明",
+   "source": "read"
+  },
+  "508": {
+   "char": "滅",
+   "source": "read"
+  },
+  "509": {
+   "char": "面",
+   "source": "read"
+  },
+  "510": {
+   "char": "黙",
+   "source": "read"
+  },
+  "511": {
+   "char": "目",
+   "source": "read"
+  },
+  "512": {
+   "char": "野",
+   "source": "read"
+  },
+  "513": {
+   "char": "薬",
+   "source": "read"
+  },
+  "514": {
+   "char": "与",
+   "source": "read"
+  },
+  "515": {
+   "char": "用",
+   "source": "read"
+  },
+  "516": {
+   "char": "要",
+   "source": "read"
+  },
+  "517": {
+   "char": "来",
+   "source": "read"
+  },
+  "518": {
+   "char": "雷",
+   "source": "read"
+  },
+  "519": {
+   "char": "落",
+   "source": "read"
+  },
+  "520": {
+   "char": "乱",
+   "source": "read"
+  },
+  "521": {
+   "char": "嵐",
+   "source": "read"
+  },
+  "522": {
+   "char": "理",
+   "source": "read"
+  },
+  "523": {
+   "char": "率",
+   "source": "read"
+  },
+  "524": {
+   "char": "流",
+   "source": "read"
+  },
+  "525": {
+   "char": "了",
+   "source": "read"
+  },
+  "526": {
+   "char": "料",
+   "source": "read"
+  },
+  "527": {
+   "char": "領",
+   "source": "read"
+  },
+  "528": {
+   "char": "力",
+   "source": "read"
+  },
+  "529": {
+   "char": "冷",
+   "source": "read"
+  },
+  "530": {
+   "char": "霊",
+   "source": "read"
+  },
+  "531": {
+   "char": "連",
+   "source": "read"
+  },
+  "532": {
+   "char": "狼",
+   "source": "read"
+  },
+  "534": {
+   "char": "差",
+   "source": "read"
+  },
+  "535": {
+   "char": "込",
+   "source": "read"
+  },
+  "536": {
+   "char": "決",
+   "source": "read"
+  },
+  "537": {
+   "char": "×",
+   "source": "read"
+  },
+  "538": {
+   "char": "東",
+   "source": "read"
+  },
+  "539": {
+   "char": "前",
+   "source": "read"
+  },
+  "540": {
+   "char": "禁",
+   "source": "read"
+  },
+  "541": {
+   "char": "道",
+   "source": "read"
+  },
+  "542": {
+   "char": "具",
+   "source": "read"
+  },
+  "543": {
+   "char": "系",
+   "source": "read"
+  },
+  "544": {
+   "char": "設",
+   "source": "read"
+  },
+  "546": {
+   "char": "肩",
+   "source": "uncertain",
+   "note": "뱅크0 원문(디스크1)에 실사용 0회 — 대사 문맥으로 검증 불가. 육안 대조도 12x12 픽셀 축약 탓에 확신 없음. 디스크2/3/4에서 이 인덱스가 쓰이면 그쪽 문맥으로 재검증 필요."
+  },
+  "547": {
+   "char": "身",
+   "source": "read"
+  },
+  "548": {
+   "char": "知",
+   "source": "read"
+  },
+  "549": {
+   "char": "欠",
+   "source": "read"
+  },
+  "550": {
+   "char": "殴",
+   "source": "read"
+  },
+  "551": {
+   "char": "牙",
+   "source": "read"
+  },
+  "552": {
+   "char": "苦",
+   "source": "read"
+  },
+  "553": {
+   "char": "進",
+   "source": "read"
+  },
+  "554": {
+   "char": "魂",
+   "source": "read"
+  },
+  "555": {
+   "char": "作",
+   "source": "read"
+  },
+  "556": {
+   "char": "帰",
+   "source": "read"
+  },
+  "557": {
+   "char": "思",
+   "source": "read"
+  },
+  "558": {
+   "char": "兄",
+   "source": "read"
+  },
+  "559": {
+   "char": "弟",
+   "source": "read"
+  },
+  "560": {
+   "char": "仁",
+   "source": "read"
+  },
+  "561": {
+   "char": "義",
+   "source": "read"
+  },
+  "562": {
+   "char": "刊",
+   "source": "read"
+  },
+  "563": {
+   "char": "処",
+   "source": "read"
+  },
+  "564": {
+   "char": "助",
+   "source": "read"
+  },
+  "565": {
+   "char": "怪",
+   "source": "read"
+  },
+  "566": {
+   "char": "勝",
+   "source": "read"
+  },
+  "567": {
+   "char": "種",
+   "source": "read"
+  },
+  "568": {
+   "char": "程",
+   "source": "read"
+  },
+  "569": {
+   "char": "度",
+   "source": "read"
+  },
+  "570": {
+   "char": "際",
+   "source": "read"
+  },
+  "571": {
+   "char": "影",
+   "source": "read"
+  },
+  "572": {
+   "char": "界",
+   "source": "read"
+  },
+  "573": {
+   "char": "画",
+   "source": "read"
+  },
+  "574": {
+   "char": "表",
+   "source": "read"
+  },
+  "575": {
+   "char": "響",
+   "source": "read"
+  },
+  "576": {
+   "char": "項",
+   "source": "read"
+  },
+  "577": {
+   "char": "各",
+   "source": "read"
+  },
+  "578": {
+   "char": "得",
+   "source": "read"
+  },
+  "579": {
+   "char": "世",
+   "source": "read"
+  },
+  "580": {
+   "char": "獲",
+   "source": "uncertain",
+   "note": "뱅크0 원문(디스크1)에 실사용 0회 — 대사 문맥으로 검증 불가. 육안 대조도 12x12 픽셀 축약 탓에 확신 없음. 디스크2/3/4에서 이 인덱스가 쓰이면 그쪽 문맥으로 재검증 필요."
+  },
+  "581": {
+   "char": "基",
+   "source": "read"
+  },
+  "582": {
+   "char": "有",
+   "source": "read"
+  },
+  "583": {
+   "char": "割",
+   "source": "read"
+  },
+  "584": {
+   "char": "意",
+   "source": "read"
+  },
+  "585": {
+   "char": "情",
+   "source": "read"
+  },
+  "586": {
+   "char": "存",
+   "source": "read"
+  },
+  "587": {
+   "char": "加",
+   "source": "read"
+  },
+  "588": {
+   "char": "可",
+   "source": "read"
+  },
+  "589": {
+   "char": "他",
+   "source": "read"
+  },
+  "590": {
+   "char": "多",
+   "source": "read"
+  },
+  "591": {
+   "char": "示",
+   "source": "read"
+  },
+  "592": {
+   "char": "欲",
+   "source": "read"
+  },
+  "593": {
+   "char": "話",
+   "source": "read"
+  },
+  "594": {
+   "char": "経",
+   "source": "read"
+  },
+  "595": {
+   "char": "偽",
+   "source": "read"
+  },
+  "596": {
+   "char": "『",
+   "source": "read"
+  },
+  "597": {
+   "char": "』",
+   "source": "read"
+  },
+  "598": {
+   "char": "神",
+   "source": "read"
+  },
+  "599": {
+   "char": "暴",
+   "source": "read"
+  },
+  "600": {
+   "char": "支",
+   "source": "read"
+  },
+  "601": {
+   "char": "型",
+   "source": "read"
+  },
+  "603": {
+   "char": "医",
+   "source": "read"
+  },
+  "604": {
+   "char": "育",
+   "source": "read"
+  },
+  "605": {
+   "char": "宇",
+   "source": "read"
+  },
+  "606": {
+   "char": "塩",
+   "source": "read"
+  },
+  "607": {
+   "char": "応",
+   "source": "read"
+  },
+  "0": {
+   "char": "バ",
+   "source": "read"
+  },
+  "1": {
+   "char": "ば",
+   "source": "read"
+  },
+  "2": {
+   "char": "ビ",
+   "source": "read"
+  },
+  "3": {
+   "char": "び",
+   "source": "read"
+  },
+  "4": {
+   "char": "ブ",
+   "source": "read"
+  },
+  "5": {
+   "char": "ぶ",
+   "source": "read"
+  },
+  "6": {
+   "char": "ベ",
+   "source": "read"
+  },
+  "7": {
+   "char": "べ",
+   "source": "read"
+  },
+  "8": {
+   "char": "ボ",
+   "source": "read"
+  },
+  "9": {
+   "char": "ぼ",
+   "source": "read"
+  },
+  "10": {
+   "char": "ガ",
+   "source": "read"
+  },
+  "11": {
+   "char": "が",
+   "source": "read"
+  },
+  "12": {
+   "char": "ギ",
+   "source": "read"
+  },
+  "13": {
+   "char": "ぎ",
+   "source": "read"
+  },
+  "15": {
+   "char": "ぐ",
+   "source": "read"
+  },
+  "16": {
+   "char": "ゲ",
+   "source": "read"
+  },
+  "17": {
+   "char": "げ",
+   "source": "read"
+  },
+  "18": {
+   "char": "ゴ",
+   "source": "read"
+  },
+  "19": {
+   "char": "ご",
+   "source": "read"
+  },
+  "20": {
+   "char": "ザ",
+   "source": "read"
+  },
+  "21": {
+   "char": "ざ",
+   "source": "read"
+  },
+  "22": {
+   "char": "ジ",
+   "source": "read"
+  },
+  "23": {
+   "char": "じ",
+   "source": "read"
+  },
+  "24": {
+   "char": "ズ",
+   "source": "read"
+  },
+  "25": {
+   "char": "ず",
+   "source": "read"
+  },
+  "26": {
+   "char": "ゼ",
+   "source": "read"
+  },
+  "27": {
+   "char": "ぜ",
+   "source": "read"
+  },
+  "28": {
+   "char": "ゾ",
+   "source": "read"
+  },
+  "29": {
+   "char": "ぞ",
+   "source": "read"
+  },
+  "30": {
+   "char": "ダ",
+   "source": "read"
+  },
+  "31": {
+   "char": "だ",
+   "source": "read"
+  },
+  "32": {
+   "char": "ヂ",
+   "source": "read"
+  },
+  "33": {
+   "char": "ぢ",
+   "source": "read"
+  },
+  "34": {
+   "char": "ヅ",
+   "source": "read"
+  },
+  "35": {
+   "char": "づ",
+   "source": "read"
+  },
+  "36": {
+   "char": "デ",
+   "source": "read"
+  },
+  "37": {
+   "char": "で",
+   "source": "read"
+  },
+  "39": {
+   "char": "ど",
+   "source": "read"
+  },
+  "40": {
+   "char": "ヴ",
+   "source": "read"
+  },
+  "41": {
+   "char": "パ",
+   "source": "confirmed",
+   "note": "o(반탁점) 마크 육안 확인 — 반탁음 パ행으로 확정."
+  },
+  "42": {
+   "char": "ぱ",
+   "source": "confirmed",
+   "note": "o(반탁점) 마크 육안 확인 — 반탁음 パ행으로 확정."
+  },
+  "43": {
+   "char": "ピ",
+   "source": "confirmed",
+   "note": "o(반탁점) 마크 육안 확인 — 반탁음 パ행으로 확정."
+  },
+  "44": {
+   "char": "ぴ",
+   "source": "confirmed",
+   "note": "o(반탁점) 마크 육안 확인 — 반탁음 パ행으로 확정."
+  },
+  "45": {
+   "char": "プ",
+   "source": "confirmed",
+   "note": "o(반탁점) 마크 육안 확인 — 반탁음 パ행으로 확정."
+  },
+  "46": {
+   "char": "ぷ",
+   "source": "confirmed",
+   "note": "o(반탁점) 마크 육안 확인 — 반탁음 パ행으로 확정."
+  },
+  "47": {
+   "char": "ペ",
+   "source": "confirmed",
+   "note": "o(반탁점) 마크 육안 확인 — 반탁음 パ행으로 확정."
+  },
+  "48": {
+   "char": "ぺ",
+   "source": "confirmed",
+   "note": "o(반탁점) 마크 육안 확인 — 반탁음 パ행으로 확정."
+  },
+  "49": {
+   "char": "ポ",
+   "source": "confirmed",
+   "note": "o(반탁점) 마크 육안 확인 — 반탁음 パ행으로 확정."
+  },
+  "50": {
+   "char": "ぽ",
+   "source": "confirmed",
+   "note": "o(반탁점) 마크 육안 확인 — 반탁음 パ행으로 확정."
+  },
+  "51": {
+   "char": "0",
+   "source": "confirmed",
+   "note": "폭테이블 실측 9(가나 11-12·확정한자 12-13보다 뚜렷이 좁음, 반각 라틴 평균과 동급) — 반각 숫자로 확정."
+  },
+  "52": {
+   "char": "1",
+   "source": "confirmed",
+   "note": "폭테이블 실측 9(가나 11-12·확정한자 12-13보다 뚜렷이 좁음, 반각 라틴 평균과 동급) — 반각 숫자로 확정."
+  },
+  "53": {
+   "char": "2",
+   "source": "confirmed",
+   "note": "폭테이블 실측 9(가나 11-12·확정한자 12-13보다 뚜렷이 좁음, 반각 라틴 평균과 동급) — 반각 숫자로 확정."
+  },
+  "54": {
+   "char": "3",
+   "source": "confirmed",
+   "note": "폭테이블 실측 9(가나 11-12·확정한자 12-13보다 뚜렷이 좁음, 반각 라틴 평균과 동급) — 반각 숫자로 확정."
+  },
+  "55": {
+   "char": "4",
+   "source": "confirmed",
+   "note": "폭테이블 실측 9(가나 11-12·확정한자 12-13보다 뚜렷이 좁음, 반각 라틴 평균과 동급) — 반각 숫자로 확정."
+  },
+  "56": {
+   "char": "5",
+   "source": "confirmed",
+   "note": "폭테이블 실측 9(가나 11-12·확정한자 12-13보다 뚜렷이 좁음, 반각 라틴 평균과 동급) — 반각 숫자로 확정."
+  },
+  "57": {
+   "char": "6",
+   "source": "confirmed",
+   "note": "폭테이블 실측 9(가나 11-12·확정한자 12-13보다 뚜렷이 좁음, 반각 라틴 평균과 동급) — 반각 숫자로 확정."
+  },
+  "58": {
+   "char": "7",
+   "source": "confirmed",
+   "note": "폭테이블 실측 9(가나 11-12·확정한자 12-13보다 뚜렷이 좁음, 반각 라틴 평균과 동급) — 반각 숫자로 확정."
+  },
+  "59": {
+   "char": "8",
+   "source": "confirmed",
+   "note": "폭테이블 실측 9(가나 11-12·확정한자 12-13보다 뚜렷이 좁음, 반각 라틴 평균과 동급) — 반각 숫자로 확정."
+  },
+  "60": {
+   "char": "9",
+   "source": "confirmed",
+   "note": "폭테이블 실측 9(가나 11-12·확정한자 12-13보다 뚜렷이 좁음, 반각 라틴 평균과 동급) — 반각 숫자로 확정."
+  },
+  "61": {
+   "char": "、",
+   "source": "read"
+  },
+  "62": {
+   "char": "。",
+   "source": "read"
+  },
+  "64": {
+   "char": "ハ",
+   "source": "read"
+  },
+  "65": {
+   "char": "は",
+   "source": "read"
+  },
+  "66": {
+   "char": "ヒ",
+   "source": "read"
+  },
+  "67": {
+   "char": "ひ",
+   "source": "read"
+  },
+  "68": {
+   "char": "フ",
+   "source": "read"
+  },
+  "69": {
+   "char": "ふ",
+   "source": "read"
+  },
+  "70": {
+   "char": "ヘ",
+   "source": "read"
+  },
+  "71": {
+   "char": "へ",
+   "source": "read"
+  },
+  "72": {
+   "char": "ホ",
+   "source": "read"
+  },
+  "73": {
+   "char": "ほ",
+   "source": "read"
+  },
+  "75": {
+   "char": "か",
+   "source": "read"
+  },
+  "77": {
+   "char": "き",
+   "source": "read"
+  },
+  "79": {
+   "char": "く",
+   "source": "read"
+  },
+  "81": {
+   "char": "け",
+   "source": "read"
+  },
+  "83": {
+   "char": "こ",
+   "source": "read"
+  },
+  "84": {
+   "char": "サ",
+   "source": "read"
+  },
+  "85": {
+   "char": "さ",
+   "source": "read"
+  },
+  "86": {
+   "char": "シ",
+   "source": "read"
+  },
+  "87": {
+   "char": "し",
+   "source": "read"
+  },
+  "88": {
+   "char": "ス",
+   "source": "read"
+  },
+  "89": {
+   "char": "す",
+   "source": "read"
+  },
+  "90": {
+   "char": "セ",
+   "source": "read"
+  },
+  "91": {
+   "char": "せ",
+   "source": "read"
+  },
+  "92": {
+   "char": "ソ",
+   "source": "read"
+  },
+  "93": {
+   "char": "そ",
+   "source": "read"
+  },
+  "94": {
+   "char": "タ",
+   "source": "read"
+  },
+  "95": {
+   "char": "た",
+   "source": "read"
+  },
+  "96": {
+   "char": "チ",
+   "source": "read"
+  },
+  "97": {
+   "char": "ち",
+   "source": "read"
+  },
+  "98": {
+   "char": "ツ",
+   "source": "read"
+  },
+  "99": {
+   "char": "つ",
+   "source": "read"
+  },
+  "100": {
+   "char": "テ",
+   "source": "read"
+  },
+  "101": {
+   "char": "て",
+   "source": "read"
+  },
+  "102": {
+   "char": "ト",
+   "source": "read"
+  },
+  "103": {
+   "char": "と",
+   "source": "read"
+  },
+  "104": {
+   "char": "ウ",
+   "source": "read"
+  },
+  "105": {
+   "char": "う",
+   "source": "read"
+  },
+  "107": {
+   "char": "あ",
+   "source": "read"
+  },
+  "108": {
+   "char": "イ",
+   "source": "read"
+  },
+  "109": {
+   "char": "い",
+   "source": "read"
+  },
+  "110": {
+   "char": "エ",
+   "source": "read"
+  },
+  "111": {
+   "char": "え",
+   "source": "read"
+  },
+  "112": {
+   "char": "オ",
+   "source": "read"
+  },
+  "113": {
+   "char": "お",
+   "source": "read"
+  },
+  "115": {
+   "char": "な",
+   "source": "read"
+  },
+  "116": {
+   "char": "ニ",
+   "source": "read"
+  },
+  "117": {
+   "char": "に",
+   "source": "read"
+  },
+  "118": {
+   "char": "ヌ",
+   "source": "read"
+  },
+  "119": {
+   "char": "ぬ",
+   "source": "read"
+  },
+  "120": {
+   "char": "ネ",
+   "source": "read"
+  },
+  "121": {
+   "char": "ね",
+   "source": "read"
+  },
+  "122": {
+   "char": "ノ",
+   "source": "read"
+  },
+  "123": {
+   "char": "の",
+   "source": "read"
+  },
+  "124": {
+   "char": "マ",
+   "source": "read"
+  },
+  "125": {
+   "char": "ま",
+   "source": "read"
+  },
+  "126": {
+   "char": "ミ",
+   "source": "read"
+  },
+  "127": {
+   "char": "み",
+   "source": "read"
+  },
+  "608": {
+   "char": "王",
+   "source": "read"
+  },
+  "609": {
+   "char": "家",
+   "source": "read"
+  },
+  "610": {
+   "char": "花",
+   "source": "read"
+  },
+  "611": {
+   "char": "階",
+   "source": "read"
+  },
+  "612": {
+   "char": "凱",
+   "source": "read"
+  },
+  "613": {
+   "char": "街",
+   "source": "read"
+  },
+  "614": {
+   "char": "官",
+   "source": "read"
+  },
+  "615": {
+   "char": "館",
+   "source": "read"
+  },
+  "616": {
+   "char": "記",
+   "source": "read"
+  },
+  "617": {
+   "char": "客",
+   "source": "read"
+  },
+  "618": {
+   "char": "教",
+   "source": "read"
+  },
+  "619": {
+   "char": "業",
+   "source": "read"
+  },
+  "620": {
+   "char": "局",
+   "source": "read"
+  },
+  "621": {
+   "char": "区",
+   "source": "read"
+  },
+  "622": {
+   "char": "掘",
+   "source": "read"
+  },
+  "623": {
+   "char": "窟",
+   "source": "read"
+  },
+  "624": {
+   "char": "渓",
+   "source": "read"
+  },
+  "625": {
+   "char": "計",
+   "source": "read"
+  },
+  "626": {
+   "char": "建",
+   "source": "read"
+  },
+  "627": {
+   "char": "研",
+   "source": "read"
+  },
+  "628": {
+   "char": "現",
+   "source": "read"
+  },
+  "629": {
+   "char": "庫",
+   "source": "read"
+  },
+  "630": {
+   "char": "湖",
+   "source": "read"
+  },
+  "631": {
+   "char": "工",
+   "source": "read"
+  },
+  "632": {
+   "char": "広",
+   "source": "read"
+  },
+  "633": {
+   "char": "構",
+   "source": "read"
+  },
+  "634": {
+   "char": "港",
+   "source": "read"
+  },
+  "635": {
+   "char": "荒",
+   "source": "read"
+  },
+  "636": {
+   "char": "講",
+   "source": "read"
+  },
+  "637": {
+   "char": "国",
+   "source": "read"
+  },
+  "638": {
+   "char": "査",
+   "source": "read"
+  },
+  "639": {
+   "char": "祭",
+   "source": "read"
+  },
+  "640": {
+   "char": "市",
+   "source": "read"
+  },
+  "641": {
+   "char": "室",
+   "source": "read"
+  },
+  "642": {
+   "char": "車",
+   "source": "read"
+  },
+  "643": {
+   "char": "住",
+   "source": "read"
+  },
+  "644": {
+   "char": "昇",
+   "source": "read"
+  },
+  "645": {
+   "char": "乗",
+   "source": "read"
+  },
+  "646": {
+   "char": "城",
+   "source": "read"
+  },
+  "647": {
+   "char": "森",
+   "source": "read"
+  },
+  "648": {
+   "char": "図",
+   "source": "read"
+  },
+  "649": {
+   "char": "正",
+   "source": "read"
+  },
+  "650": {
+   "char": "席",
+   "source": "read"
+  },
+  "651": {
+   "char": "跡",
+   "source": "read"
+  },
+  "652": {
+   "char": "接",
+   "source": "read"
+  },
+  "653": {
+   "char": "旋",
+   "source": "read"
+  },
+  "654": {
+   "char": "船",
+   "source": "read"
+  },
+  "655": {
+   "char": "層",
+   "source": "read"
+  },
+  "656": {
+   "char": "操",
+   "source": "read"
+  },
+  "657": {
+   "char": "造",
+   "source": "read"
+  },
+  "658": {
+   "char": "束",
+   "source": "read"
+  },
+  "659": {
+   "char": "族",
+   "source": "read"
+  },
+  "660": {
+   "char": "村",
+   "source": "read"
+  },
+  "661": {
+   "char": "谷",
+   "source": "read"
+  },
+  "662": {
+   "char": "探",
+   "source": "read"
+  },
+  "663": {
+   "char": "段",
+   "source": "read"
+  },
+  "664": {
+   "char": "宙",
+   "source": "read"
+  },
+  "665": {
+   "char": "柱",
+   "source": "read"
+  },
+  "666": {
+   "char": "駐",
+   "source": "read"
+  },
+  "667": {
+   "char": "庭",
+   "source": "read"
+  },
+  "668": {
+   "char": "艇",
+   "source": "read"
+  },
+  "669": {
+   "char": "邸",
+   "source": "read"
+  },
+  "670": {
+   "char": "島",
+   "source": "read"
+  },
+  "671": {
+   "char": "堂",
+   "source": "read"
+  },
+  "672": {
+   "char": "洞",
+   "source": "read"
+  },
+  "673": {
+   "char": "念",
+   "source": "read"
+  },
+  "674": {
+   "char": "拝",
+   "source": "read"
+  },
+  "675": {
+   "char": "白",
+   "source": "read"
+  },
+  "676": {
+   "char": "漠",
+   "source": "read"
+  },
+  "677": {
+   "char": "畑",
+   "source": "read"
+  },
+  "678": {
+   "char": "編",
+   "source": "read"
+  },
+  "679": {
+   "char": "墓",
+   "source": "read"
+  },
+  "680": {
+   "char": "宝",
+   "source": "read"
+  },
+  "681": {
+   "char": "民",
+   "source": "read"
+  },
+  "682": {
+   "char": "務",
+   "source": "read"
+  },
+  "683": {
+   "char": "門",
+   "source": "read"
+  },
+  "684": {
+   "char": "洋",
+   "source": "read"
+  },
+  "685": {
+   "char": "裏",
+   "source": "read"
+  },
+  "686": {
+   "char": "陸",
+   "source": "read"
+  },
+  "687": {
+   "char": "立",
+   "source": "read"
+  },
+  "688": {
+   "char": "寮",
+   "source": "read"
+  },
+  "689": {
+   "char": "礼",
+   "source": "read"
+  },
+  "690": {
+   "char": "列",
+   "source": "read"
+  },
+  "691": {
+   "char": "路",
+   "source": "read"
+  },
+  "692": {
+   "char": "廊",
+   "source": "read"
+  },
+  "693": {
+   "char": "牢",
+   "source": "read"
+  },
+  "694": {
+   "char": "問",
+   "source": "read"
+  },
+  "695": {
+   "char": "績",
+   "source": "confirmed"
+  },
+  "696": {
+   "char": "第",
+   "source": "read"
+  },
+  "697": {
+   "char": "退",
+   "source": "read"
+  },
+  "698": {
+   "char": "頼",
+   "source": "read"
+  },
+  "699": {
+   "char": "北",
+   "source": "read"
+  },
+  "700": {
+   "char": "砕",
+   "source": "read"
+  },
+  "701": {
+   "char": "究",
+   "source": "read"
+  },
+  "702": {
+   "char": "博",
+   "source": "read"
+  },
+  "703": {
+   "char": "書",
+   "source": "read"
+  },
+  "704": {
+   "char": "主",
+   "source": "read"
+  },
+  "705": {
+   "char": "々",
+   "source": "read"
+  },
+  "706": {
+   "char": "保",
+   "source": "read"
+  },
+  "707": {
+   "char": "健",
+   "source": "read"
+  },
+  "708": {
+   "char": "訓",
+   "source": "read"
+  },
+  "709": {
+   "char": "練",
+   "source": "read"
+  },
+  "710": {
+   "char": "施",
+   "source": "read"
+  },
+  "711": {
+   "char": "秘",
+   "source": "read"
+  },
+  "712": {
+   "char": "密",
+   "source": "read"
+  },
+  "713": {
+   "char": "向",
+   "source": "read"
+  },
+  "714": {
+   "char": "質",
+   "source": "read"
+  },
+  "715": {
+   "char": "配",
+   "source": "read"
+  },
+  "716": {
+   "char": "直",
+   "source": "read"
+  },
+  "717": {
+   "char": "利",
+   "source": "read"
+  },
+  "718": {
+   "char": "単",
+   "source": "read"
+  },
+  "719": {
+   "char": "数",
+   "source": "read"
+  },
+  "720": {
+   "char": "照",
+   "source": "read"
+  },
+  "721": {
+   "char": "指",
+   "source": "read"
+  },
+  "722": {
+   "char": "類",
+   "source": "read"
+  },
+  "723": {
+   "char": "注",
+   "source": "read"
+  },
+  "724": {
+   "char": "置",
+   "source": "read"
+  },
+  "725": {
+   "char": "最",
+   "source": "read"
+  },
+  "726": {
+   "char": "参",
+   "source": "read"
+  },
+  "727": {
+   "char": "交",
+   "source": "read"
+  },
+  "728": {
+   "char": "換",
+   "source": "read"
+  },
+  "729": {
+   "char": "号",
+   "source": "read"
+  },
+  "730": {
+   "char": "粉",
+   "source": "read"
+  },
+  "731": {
+   "char": "羽",
+   "source": "read"
+  },
+  "732": {
+   "char": "竜",
+   "source": "read"
+  },
+  "733": {
+   "char": "糸",
+   "source": "read"
+  },
+  "734": {
+   "char": "爪",
+   "source": "read"
+  },
+  "735": {
+   "char": "極",
+   "source": "read"
+  },
+  "736": {
+   "char": "南",
+   "source": "read"
+  },
+  "737": {
+   "char": "札",
+   "source": "read"
+  },
+  "738": {
+   "char": "英",
+   "source": "read"
+  },
+  "739": {
+   "char": "雄",
+   "source": "read"
+  },
+  "740": {
+   "char": "万",
+   "source": "read"
+  },
+  "741": {
+   "char": "彦",
+   "source": "read"
+  },
+  "742": {
+   "char": "骨",
+   "source": "read"
+  },
+  "743": {
+   "char": "筆",
+   "source": "read"
+  },
+  "744": {
+   "char": "習",
+   "source": "read"
+  },
+  "745": {
+   "char": "創",
+   "source": "read"
+  },
+  "746": {
+   "char": "雑",
+   "source": "read"
+  },
+  "747": {
+   "char": "誌",
+   "source": "read"
+  },
+  "748": {
+   "char": "題",
+   "source": "read"
+  },
+  "749": {
+   "char": "後",
+   "source": "read"
+  },
+  "750": {
+   "char": "改",
+   "source": "read"
+  },
+  "751": {
+   "char": "犯",
+   "source": "read"
+  },
+  "752": {
+   "char": "破",
+   "source": "read"
+  },
+  "753": {
+   "char": "壊",
+   "source": "read"
+  },
+  "754": {
+   "char": "導",
+   "source": "read"
+  },
+  "755": {
+   "char": "草",
+   "source": "read"
+  },
+  "756": {
+   "char": "菜",
+   "source": "read"
+  },
+  "757": {
+   "char": "球",
+   "source": "read"
+  },
+  "758": {
+   "char": "更",
+   "source": "read"
+  },
+  "759": {
+   "char": "偉",
+   "source": "read"
+  },
+  "760": {
+   "char": "未",
+   "source": "read"
+  },
+  "761": {
+   "char": "隠",
+   "source": "read"
+  },
+  "762": {
+   "char": "円",
+   "source": "read"
+  },
+  "763": {
+   "char": "輪",
+   "source": "read"
+  },
+  "764": {
+   "char": "触",
+   "source": "read"
+  },
+  "765": {
+   "char": "賢",
+   "source": "read"
+  },
+  "766": {
+   "char": "者",
+   "source": "read"
+  },
+  "767": {
+   "char": "虎",
+   "source": "read"
+  },
+  "768": {
+   "char": "溶",
+   "source": "read"
+  },
+  "769": {
+   "char": "解",
+   "source": "read"
+  },
+  "770": {
+   "char": "活",
+   "source": "read"
+  },
+  "771": {
+   "char": "角",
+   "source": "read"
+  },
+  "772": {
+   "char": "楽",
+   "source": "read"
+  },
+  "773": {
+   "char": "腕",
+   "source": "read"
+  },
+  "774": {
+   "char": "赤",
+   "source": "read"
+  },
+  "775": {
+   "char": "守",
+   "source": "read"
+  },
+  "776": {
+   "char": "鈴",
+   "source": "read"
+  },
+  "777": {
+   "char": "救",
+   "source": "read"
+  },
+  "778": {
+   "char": "師",
+   "source": "read"
+  },
+  "779": {
+   "char": "星",
+   "source": "read"
+  },
+  "780": {
+   "char": "忘",
+   "source": "read"
+  },
+  "781": {
+   "char": "信",
+   "source": "read"
+  },
+  "782": {
+   "char": "件",
+   "source": "read"
+  },
+  "783": {
+   "char": "結",
+   "source": "read"
+  },
+  "784": {
+   "char": "晶",
+   "source": "read"
+  },
+  "785": {
+   "char": "謎",
+   "source": "read"
+  },
+  "786": {
+   "char": "休",
+   "source": "read"
+  },
+  "787": {
+   "char": "燃",
+   "source": "read"
+  },
+  "788": {
+   "char": "古",
+   "source": "read"
+  },
+  "789": {
+   "char": "鳥",
+   "source": "read"
+  },
+  "790": {
+   "char": "銃",
+   "source": "read"
+  },
+  "791": {
+   "char": "原",
+   "source": "read"
+  },
+  "792": {
+   "char": "丘",
+   "source": "read"
+  },
+  "793": {
+   "char": "陵",
+   "source": "read"
+  },
+  "794": {
+   "char": "番",
+   "source": "read"
+  },
+  "795": {
+   "char": "諸",
+   "source": "read"
+  },
+  "796": {
+   "char": "雪",
+   "source": "read"
+  },
+  "797": {
+   "char": "天",
+   "source": "read"
+  },
+  "798": {
+   "char": "封",
+   "source": "read"
+  },
+  "799": {
+   "char": "鎖",
+   "source": "read"
+  },
+  "800": {
+   "char": "初",
+   "source": "read"
+  },
+  "801": {
+   "char": "記",
+   "source": "read"
+  },
+  "802": {
+   "char": "憶",
+   "source": "read"
+  },
+  "803": {
+   "char": "位",
+   "source": "read"
+  },
+  "804": {
+   "char": "期",
+   "source": "read"
+  },
+  "805": {
+   "char": "移",
+   "source": "read"
+  },
+  "806": {
+   "char": "足",
+   "source": "read"
+  },
+  "807": {
+   "char": "在",
+   "source": "read"
+  },
+  "808": {
+   "char": "報",
+   "source": "read"
+  },
+  "809": {
+   "char": "優",
+   "source": "read"
+  },
+  "810": {
+   "char": "写",
+   "source": "read"
+  },
+  "811": {
+   "char": "真",
+   "source": "read"
+  },
+  "812": {
+   "char": "順",
+   "source": "read"
+  },
+  "813": {
+   "char": "象",
+   "source": "read"
+  },
+  "814": {
+   "char": "帯",
+   "source": "read"
+  },
+  "815": {
+   "char": "議",
+   "source": "read"
+  },
+  "816": {
+   "char": "聞",
+   "source": "read"
+  },
+  "817": {
+   "char": "視",
+   "source": "read"
+  },
+  "818": {
+   "char": "走",
+   "source": "read"
+  },
+  "819": {
+   "char": "魚",
+   "source": "read"
+  },
+  "820": {
+   "char": "式",
+   "source": "read"
+  },
+  "821": {
+   "char": "俺",
+   "source": "read"
+  },
+  "822": {
+   "char": "騎",
+   "source": "read"
+  },
+  "823": {
+   "char": "鬼",
+   "source": "read"
+  },
+  "824": {
+   "char": "開",
+   "source": "read"
+  },
+  "825": {
+   "char": "外",
+   "source": "read"
+  },
+  "826": {
+   "char": "威",
+   "source": "read"
+  },
+  "827": {
+   "char": "君",
+   "source": "read"
+  },
+  "828": {
+   "char": "素",
+   "source": "confirmed"
+  },
+  "829": {
+   "char": "比",
+   "source": "read"
+  },
+  "830": {
+   "char": "劣",
+   "source": "confirmed"
+  },
+  "831": {
+   "char": "難",
+   "source": "read"
+  },
+  "832": {
+   "char": "遠",
+   "source": "read"
+  },
+  "833": {
+   "char": "愛",
+   "source": "read"
+  },
+  "834": {
+   "char": "皆",
+   "source": "read"
+  },
+  "835": {
+   "char": "紹",
+   "source": "read"
+  },
+  "836": {
+   "char": "介",
+   "source": "read"
+  },
+  "837": {
+   "char": "犬",
+   "source": "read"
+  },
+  "838": {
+   "char": "満",
+   "source": "read"
+  },
+  "839": {
+   "char": "枚",
+   "source": "read"
+  },
+  "840": {
+   "char": "字",
+   "source": "read"
+  },
+  "841": {
+   "char": "辺",
+   "source": "read"
+  },
+  "842": {
+   "char": "引",
+   "source": "read"
+  },
+  "843": {
+   "char": "小",
+   "source": "read"
+  },
+  "844": {
+   "char": "別",
+   "source": "read"
+  },
+  "845": {
+   "char": "除",
+   "source": "read"
+  },
+  "846": {
+   "char": "限",
+   "source": "read"
+  },
+  "847": {
+   "char": "両",
+   "source": "read"
+  },
+  "848": {
+   "char": "功",
+   "source": "read"
+  },
+  "849": {
+   "char": "良",
+   "source": "read"
+  },
+  "850": {
+   "char": "継",
+   "source": "read"
+  },
+  "851": {
+   "char": "伝",
+   "source": "read"
+  },
+  "852": {
+   "char": "過",
+   "source": "read"
+  },
+  "853": {
+   "char": "側",
+   "source": "read"
+  },
+  "854": {
+   "char": "重",
+   "source": "read"
+  },
+  "855": {
+   "char": "複",
+   "source": "read"
+  },
+  "856": {
+   "char": "係",
+   "source": "read"
+  },
+  "857": {
+   "char": "打",
+   "source": "read"
+  },
+  "858": {
+   "char": "語",
+   "source": "read"
+  },
+  "859": {
+   "char": "圏",
+   "source": "read"
+  },
+  "860": {
+   "char": "条",
+   "source": "read"
+  },
+  "861": {
+   "char": "互",
+   "source": "read"
+  },
+  "862": {
+   "char": "末",
+   "source": "read"
+  },
+  "863": {
+   "char": "倉",
+   "source": "read"
+  },
+  "865": {
+   "char": "私",
+   "source": "read"
+  },
+  "866": {
+   "char": "圧",
+   "source": "read"
+  },
+  "867": {
+   "char": "縮",
+   "source": "read"
+  },
+  "868": {
+   "char": "子",
+   "source": "read"
+  },
+  "869": {
+   "char": "供",
+   "source": "read"
+  },
+  "870": {
+   "char": "頃",
+   "source": "read"
+  },
+  "871": {
+   "char": "感",
+   "source": "read"
+  },
+  "872": {
+   "char": "葉",
+   "source": "read"
+  },
+  "873": {
+   "char": "残",
+   "source": "read"
+  },
+  "874": {
+   "char": "待",
+   "source": "read"
+  },
+  "875": {
+   "char": "離",
+   "source": "read"
+  },
+  "876": {
+   "char": "元",
+   "source": "read"
+  },
+  "877": {
+   "char": "否",
+   "source": "read"
+  },
+  "878": {
+   "char": "線",
+   "source": "read"
+  },
+  "879": {
+   "char": "約",
+   "source": "read"
+  },
+  "129": {
+   "char": "む",
+   "source": "read"
+  },
+  "130": {
+   "char": "メ",
+   "source": "read"
+  },
+  "131": {
+   "char": "め",
+   "source": "read"
+  },
+  "132": {
+   "char": "モ",
+   "source": "read"
+  },
+  "133": {
+   "char": "も",
+   "source": "read"
+  },
+  "134": {
+   "char": "ラ",
+   "source": "read"
+  },
+  "135": {
+   "char": "ら",
+   "source": "read"
+  },
+  "137": {
+   "char": "り",
+   "source": "read"
+  },
+  "139": {
+   "char": "る",
+   "source": "read"
+  },
+  "140": {
+   "char": "レ",
+   "source": "read"
+  },
+  "141": {
+   "char": "れ",
+   "source": "read"
+  },
+  "142": {
+   "char": "ロ",
+   "source": "read"
+  },
+  "143": {
+   "char": "ろ",
+   "source": "read"
+  },
+  "144": {
+   "char": "ヤ",
+   "source": "read"
+  },
+  "145": {
+   "char": "や",
+   "source": "read"
+  },
+  "146": {
+   "char": "ユ",
+   "source": "read"
+  },
+  "147": {
+   "char": "ゆ",
+   "source": "read"
+  },
+  "148": {
+   "char": "ヨ",
+   "source": "read"
+  },
+  "149": {
+   "char": "よ",
+   "source": "read"
+  },
+  "151": {
+   "char": "わ",
+   "source": "read"
+  },
+  "152": {
+   "char": "ン",
+   "source": "read"
+  },
+  "153": {
+   "char": "ん",
+   "source": "read"
+  },
+  "154": {
+   "char": "ヲ",
+   "source": "read"
+  },
+  "155": {
+   "char": "を",
+   "source": "read"
+  },
+  "156": {
+   "char": "ッ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "157": {
+   "char": "っ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "158": {
+   "char": "ャ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "159": {
+   "char": "ゃ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "160": {
+   "char": "ュ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "161": {
+   "char": "ゅ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "162": {
+   "char": "ョ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "163": {
+   "char": "ょ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "164": {
+   "char": "ァ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "165": {
+   "char": "ぁ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "166": {
+   "char": "ィ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "167": {
+   "char": "ぃ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "168": {
+   "char": "ゥ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "169": {
+   "char": "ぅ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "170": {
+   "char": "ェ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "171": {
+   "char": "ぇ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "172": {
+   "char": "ォ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "173": {
+   "char": "ぉ",
+   "source": "confirmed",
+   "note": "잉크 바운딩박스 실측이 정자 짝보다 한 단계씩 작음(예: ヨ 9x10 vs ョ 8x8, ツ 10x10 vs ッ 8x8) — 작은 글자(촉음·요음)로 확정."
+  },
+  "174": {
+   "char": "A",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "175": {
+   "char": "B",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "176": {
+   "char": "C",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "177": {
+   "char": "D",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "178": {
+   "char": "E",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "179": {
+   "char": "F",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "180": {
+   "char": "G",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "181": {
+   "char": "H",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "182": {
+   "char": "I",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "183": {
+   "char": "J",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "184": {
+   "char": "K",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "185": {
+   "char": "L",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "186": {
+   "char": "M",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "187": {
+   "char": "N",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "188": {
+   "char": "O",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "189": {
+   "char": "P",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "190": {
+   "char": "Q",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "191": {
+   "char": "R",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "192": {
+   "char": "S",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "193": {
+   "char": "T",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "194": {
+   "char": "U",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "195": {
+   "char": "V",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "196": {
+   "char": "W",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "197": {
+   "char": "X",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "198": {
+   "char": "Y",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "199": {
+   "char": "Z",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "200": {
+   "char": "!",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "201": {
+   "char": "?",
+   "source": "confirmed",
+   "note": "폭테이블 실측이 글자마다 7~11로 들쭉날쭉(I=7,J=8,M=11,W=11) — 전각이면 폭이 균일해야 하는데 아니므로 반각 라틴으로 확정."
+  },
+  "202": {
+   "char": "…",
+   "source": "read"
+  },
+  "203": {
+   "char": "+",
+   "source": "confirmed",
+   "note": "폭테이블 실측 4~12로 가나 셀 폭(11~13)보다 뚜렷이 좁음, 특히 .,:「」()・는 4~6 — 반각 기호로 확정."
+  },
+  "204": {
+   "char": "-",
+   "source": "confirmed",
+   "note": "폭테이블 실측 4~12로 가나 셀 폭(11~13)보다 뚜렷이 좁음, 특히 .,:「」()・는 4~6 — 반각 기호로 확정."
+  },
+  "205": {
+   "char": "=",
+   "source": "confirmed",
+   "note": "폭테이블 실측 4~12로 가나 셀 폭(11~13)보다 뚜렷이 좁음, 특히 .,:「」()・는 4~6 — 반각 기호로 확정."
+  },
+  "206": {
+   "char": "※",
+   "source": "confirmed",
+   "note": "폭테이블 실측 4~12로 가나 셀 폭(11~13)보다 뚜렷이 좁음, 특히 .,:「」()・는 4~6 — 반각 기호로 확정."
+  },
+  "207": {
+   "char": "/",
+   "source": "confirmed",
+   "note": "폭테이블 실측 4~12로 가나 셀 폭(11~13)보다 뚜렷이 좁음, 특히 .,:「」()・는 4~6 — 반각 기호로 확정."
+  },
+  "208": {
+   "char": "%",
+   "source": "confirmed",
+   "note": "폭테이블 실측 4~12로 가나 셀 폭(11~13)보다 뚜렷이 좁음, 특히 .,:「」()・는 4~6 — 반각 기호로 확정."
+  },
+  "209": {
+   "char": "&",
+   "source": "confirmed",
+   "note": "폭테이블 실측 4~12로 가나 셀 폭(11~13)보다 뚜렷이 좁음, 특히 .,:「」()・는 4~6 — 반각 기호로 확정."
+  },
+  "210": {
+   "char": "「",
+   "source": "confirmed",
+   "note": "폭테이블 실측 4~12로 가나 셀 폭(11~13)보다 뚜렷이 좁음, 특히 .,:「」()・는 4~6 — 반각 기호로 확정."
+  },
+  "211": {
+   "char": "」",
+   "source": "confirmed",
+   "note": "폭테이블 실측 4~12로 가나 셀 폭(11~13)보다 뚜렷이 좁음, 특히 .,:「」()・는 4~6 — 반각 기호로 확정."
+  },
+  "212": {
+   "char": "(",
+   "source": "confirmed",
+   "note": "폭테이블 실측 4~12로 가나 셀 폭(11~13)보다 뚜렷이 좁음, 특히 .,:「」()・는 4~6 — 반각 기호로 확정."
+  },
+  "213": {
+   "char": ")",
+   "source": "confirmed",
+   "note": "폭테이블 실측 4~12로 가나 셀 폭(11~13)보다 뚜렷이 좁음, 특히 .,:「」()・는 4~6 — 반각 기호로 확정."
+  },
+  "214": {
+   "char": "収",
+   "source": "read"
+  },
+  "215": {
+   "char": "容",
+   "source": "read"
+  },
+  "216": {
+   "char": "所",
+   "source": "read"
+  },
+  "217": {
+   "char": "駅",
+   "source": "read"
+  },
+  "218": {
+   "char": "・",
+   "source": "confirmed",
+   "note": "폭테이블 실측 4~12로 가나 셀 폭(11~13)보다 뚜렷이 좁음, 특히 .,:「」()・는 4~6 — 반각 기호로 확정."
+  },
+  "219": {
+   "char": ".",
+   "source": "confirmed",
+   "note": "폭테이블 실측 4~12로 가나 셀 폭(11~13)보다 뚜렷이 좁음, 특히 .,:「」()・는 4~6 — 반각 기호로 확정."
+  },
+  "220": {
+   "char": ",",
+   "source": "confirmed",
+   "note": "폭테이블 실측 4~12로 가나 셀 폭(11~13)보다 뚜렷이 좁음, 특히 .,:「」()・는 4~6 — 반각 기호로 확정."
+  },
+  "221": {
+   "char": ":",
+   "source": "confirmed",
+   "note": "폭테이블 실측 4~12로 가나 셀 폭(11~13)보다 뚜렷이 좁음, 특히 .,:「」()・는 4~6 — 반각 기호로 확정."
+  },
+  "222": {
+   "char": "～",
+   "source": "read"
+  },
+  "533": {
+   "char": "嘯",
+   "source": "confirmed"
+  },
+  "545": {
+   "char": "翼",
+   "source": "uncertain",
+   "note": "뱅크0 원문(디스크1)에 실사용 0회 — 대사 문맥으로 검증 불가. 육안 대조도 12x12 픽셀 축약 탓에 확신 없음. 디스크2/3/4에서 이 인덱스가 쓰이면 그쪽 문맥으로 재검증 필요."
+  },
+  "602": {
+   "char": "遺",
+   "source": "read"
+  },
+  "864": {
+   "char": "敷",
+   "source": "read"
+  },
+  "63": {
+   "char": " ",
+   "source": "read"
+  }
+ }
+}
