@@ -90,6 +90,25 @@ def counts(field_root: Path, menu: Path) -> collections.Counter:
 
 BANK0 = 756                     # 슬롯 756 부터는 뱅크1 이다
 
+# **절대 쓰면 안 되는 18칸.** 메뉴 항목 이름은 텍스처 폰트가 아니라 EXE 안의
+# 벡터 폰트 루틴(`0x8002c540`)이 그린다. 그 루틴은 표 `0x800528a8` 에서 글자의
+# 파트 수를 상위 16비트로 읽어 그만큼 20바이트 프리미티브를 찍는데, 색인
+# 484~511 자리는 쓰레기 항목이라 파트 수가 49,312 로 나온다. 한 글자에 약 1MB 다.
+#
+#     8002c5e8  addiu v1, v1, 0xe0     색인 = 둘째바이트 + 448  (선두 0x19)
+#     8002c60c  srl   t1, v0, 16       파트 수를 그대로 믿는다
+#     8002c6a0  addiu a1, a1, 0x14     **경계 검사가 없다**
+#
+# 두 글자면 RAM 2MB 를 넘겨 0 으로 되감기고 BIOS 예외 벡터를 깔아뭉갠다. 그
+# 뒤로는 인터럽트마다 쓰레기를 실행해 「없는 명령」 예외가 무한 반복된다 —
+# 아이템·마법 메뉴가 멈추던 것이 이것이다. `つかう` 를 `사용` 으로 옮겼는데
+# `용` 이 하필 색인 228 이었다.
+#
+# 색인 256 이상은 둘째 바이트가 0x40 을 넘어 `v1 >= 512` 가 되고, 루틴이
+# 스스로 빠져나가므로 안전하다. 위험한 것은 이 18칸뿐이다.
+VECTOR_BOMB = frozenset({228, 230, 232, 234, 236, 238, 240, 241, 242,
+                         244, 246, 248, 250, 251, 252, 253, 254, 255})
+
 
 def build(tally: collections.Counter, pins: dict[int, str],
           keyboard: list[str], menu_chars: set[str]) -> list[str]:
@@ -126,7 +145,8 @@ def build(tally: collections.Counter, pins: dict[int, str],
     rest = [c for c in ordered if c not in need and c not in menu_only]
     fill(free_single, need + menu_only + rest[:])
     # 뱅크0 의 남은 자리: 아직 안 놓인 메뉴 글자를 먼저 넣는다
-    free_bank0 = [i for i in range(SINGLE, BANK0) if i not in pins]
+    free_bank0 = [i for i in range(SINGLE, BANK0)
+                  if i not in pins and i not in VECTOR_BOMB]
     queue = ([c for c in menu_only if c not in placed]
              + [c for c in ordered if c not in placed])
     fill(free_bank0, queue)
