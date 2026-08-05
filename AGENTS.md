@@ -6,7 +6,9 @@
 인코딩은 `docs/font-analysis.md`, 한글 폰트 판정은
 `docs/korean-font-feasibility.md`, 번역 경로는 `docs/translation-pipeline.md`,
 **밟은 함정과 예방책은 `docs/lessons.md`가 정본이다 — 착수 전에 그 문서의
-체크리스트부터 본다.** 외부 자료 대조는 `docs/external-sources.md`, 도구 운용은
+체크리스트부터 본다.** 반대로 새로 겪은 실수·시행착오는 커밋하기 전에
+그 문서에 남긴다(`docs/git-workflow.md`의 병합 전 확인 목록 참고) — 성공만
+기록하고 착각을 누락하면 다음 세션이 같은 값을 다시 치른다. 외부 자료 대조는 `docs/external-sources.md`, 도구 운용은
 `docs/reverse-engineering-mcp.md`, 브랜치와 커밋 규칙은
 `docs/git-workflow.md`를 정본으로 삼는다.
 
