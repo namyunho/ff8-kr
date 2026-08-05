@@ -160,7 +160,10 @@ def main() -> int:
         link.sock.sendall(frame("c"))
         link.sock.settimeout(args.wait)
         try:
+            # 'O...' 는 타깃 콘솔 출력이다 — 진짜 정지 응답(S/T)이 올 때까지 건너뛴다.
             stop = link._read()
+            while stop.startswith("O"):
+                stop = link._read()
         except (TimeoutError, OSError):
             print("시간 안에 안 걸렸다. 재현이 안 됐거나 다른 경로다.")
             link.sock.settimeout(args.timeout)
