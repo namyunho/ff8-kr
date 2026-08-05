@@ -470,6 +470,10 @@ python3 scripts/patch_font_4plane.py --show
 # 사본에 설치 — 폰트는 LBA 849 제자리, TOC 는 크기 4바이트만
 python3 scripts/install_font_4plane.py --font work/font-all/font.bin
 
+# 오버레이(메뉴 모듈)가 자기 코드로 그린다 — EXE 패치만으로는 옛 CLUT 자리를
+# 그대로 가리켜 메뉴 글자가 안 보이거나 깨진다. 반드시 같이 돌린다
+python3 scripts/patch_overlay_clut.py
+
 # 번역 삽입. **--apply 는 한 번만 돌린다** (사본을 다시 뜨지 않고 두 번 돌리면
 # 섹션이 두 번 밀린다)
 python3 scripts/build_apply_plan.py work/translate work/apply-plan.json
