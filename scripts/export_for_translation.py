@@ -200,13 +200,29 @@ def export(db_path: Path, out: Path, skip_debug: bool) -> int:
     widths = DE.glyph_widths(FT.SYSFNT.read_bytes())
     out.mkdir(parents=True, exist_ok=True)
 
-    manifest, files, total, holes = [], 0, 0, 0
+    manifest, files, total, holes, preserved = [], 0, 0, 0, 0
     skip = ["field,id,ja,reason"]
     for field in document["fields"]:
         name = field["name"] or f"field{field['field']}"
         debug = bool(DEBUG_NAME.match(name))
         if debug and skip_debug:
             continue
+        stem = f"{field['field']:03d}-{name}"
+        path = out / f"{stem}.json"
+
+        # 이미 번역된 파일이 있으면 사람이 채운 `ko`/`note`를 아이디로 맞춰
+        # 그대로 들고 온다. `ja` 등 원문에서 뽑는 값만 최신 글리프 표 기준으로
+        # 다시 낸다 — 재추출한다고 번역이 날아가면 안 된다.
+        done: dict[int, tuple[str, str]] = {}
+        if path.exists():
+            try:
+                prev = json.loads(path.read_text(encoding="utf-8"))
+                for old in prev.get("entries", []):
+                    if old.get("ko") or old.get("note"):
+                        done[old["id"]] = (old.get("ko", ""), old.get("note", ""))
+            except (json.JSONDecodeError, OSError):
+                pass
+
         entries = []
         for entry in field["entries"]:
             if not entry["translate"]:
@@ -217,11 +233,14 @@ def export(db_path: Path, out: Path, skip_debug: bool) -> int:
                 skip.append(f'{field["field"]},{entry["id"]},'
                             f'"{text}",{reason}')
                 continue
+            ko, note = done.get(entry["id"], ("", ""))
+            if ko or note:
+                preserved += 1
             entries.append({
                 "id": entry["id"],
                 "ja": text,
-                "ko": "",
-                "note": "",
+                "ko": ko,
+                "note": note,
                 "speaker": speaker_of(text),
                 "byte_budget": entry["byte_budget"],
                 "lines": entry["lines"],
@@ -231,8 +250,6 @@ def export(db_path: Path, out: Path, skip_debug: bool) -> int:
             holes += text.count("{b1:")
         if not entries:
             continue
-        stem = f"{field['field']:03d}-{name}"
-        path = out / f"{stem}.json"
         path.write_text(json.dumps(
             {"field": field["field"], "name": name, "debug": debug,
              "count": len(entries), "entries": entries},
@@ -253,6 +270,7 @@ def export(db_path: Path, out: Path, skip_debug: bool) -> int:
         indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
     print(f"필드 {files}개 / 메시지 {total:,}건 → {out}")
+    print(f"  기존 번역(ko/note) 유지 {preserved:,}건")
     print(f"  아직 못 읽은 원문 글자 {{b1:N}} {holes:,}개 "
           f"(메시지당 평균 {holes / max(total, 1):.2f}개)")
     print(f"  지침 {out / 'README.md'}")
