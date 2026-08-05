@@ -4,575 +4,4103 @@
   "entries": {
     "4dd31bcaf996": {
       "char": "】",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "6ce3c8d6ad61": {
       "char": "【",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "d845e89829a9": {
       "char": "戻",
-      "source": "read"
+      "source": "confirmed",
+      "note": "문맥 전부 \"▮る\"/\"▮って\" 패턴(戻る·戻って — 돌아가다/돌아오다) — 흔한 동사라 戾가 아니라 戻로 확정."
     },
     "2514b6c58c9e": {
       "char": "日",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "c8247c68d06a": {
       "char": "■",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "f2c4ec627e43": {
       "char": "徒",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "e0b37d82aba0": {
       "char": "a",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "5f1186936a69": {
       "char": "様",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "7365fec09b35": {
       "char": "旅",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "a0f9dd56944c": {
       "char": "委",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "f9092957d0da": {
       "char": "o",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "2b385f70083a": {
       "char": "年",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "6185aa965c05": {
       "char": "t",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "f6415d84bc45": {
       "char": "送",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "2dd2b0a5e62b": {
       "char": "令",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "13338247785b": {
       "char": "張",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "867aac903783": {
       "char": "任",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "c39d1285a5a0": {
       "char": "◎",
-      "source": "read"
+      "source": "confirmed",
+      "note": "한자가 아니라 고유 기호(◎). 모양 그대로 보존."
     },
     "3e5685807272": {
       "char": "服",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "8859296328c2": {
       "char": "仕",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "41fbbf9b3774": {
       "char": "i",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "50a2b7d762ce": {
       "char": "s",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "f4f2c328a291": {
       "char": "奴",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "58bc73303ad5": {
       "char": "考",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "3b7617643a73": {
       "char": "派",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "5d762c8350b1": {
       "char": "n",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "9927efedfe4c": {
       "char": "到",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "9f686a8c338c": {
       "char": "彼",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "d9b3ce3be515": {
       "char": "夫",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "02567fa97c13": {
       "char": "僕",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "21e450c22889": {
       "char": "坊",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "84fa0ee74c29": {
       "char": "護",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "c17c341d4175": {
       "char": "丈",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "c5a89346088b": {
       "char": "r",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "36d440cda7c6": {
       "char": "u",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "d9a4a7249624": {
       "char": "衛",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "93841316e47e": {
       "char": "替",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "d5635be20eea": {
       "char": "父",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "9a903cd71b36": {
       "char": "観",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "84b3a1d867ac": {
       "char": "□",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "8bb0ca5b5cfa": {
       "char": "登",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "e024059afd6b": {
       "char": "拡",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "40a987c769aa": {
       "char": "飲",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "6ebc75548bea": {
       "char": "緒",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "7fa007bc1f42": {
       "char": "若",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "c56936d53f76": {
       "char": "輩",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "c7adbdbee68d": {
       "char": "◆",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "e75db7697ab5": {
       "char": "然",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "517e279bde4d": {
       "char": "痛",
-      "source": "original"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "d287c690ddb7": {
       "char": "絡",
-      "source": "original"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "2b0734aed368": {
       "char": "絶",
-      "source": "original"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "8afeca1eb368": {
       "char": "悩",
-      "source": "original"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "1c6dbaff1933": {
       "char": "純",
-      "source": "original"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "87a55a09d586": {
       "char": "読",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "316ece956d46": {
       "char": "酒",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "fc64c93aaa9d": {
       "char": "母",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "b019a47a3528": {
       "char": "起",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "33bb3f662d6e": {
       "char": "夜",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "99755a1cc97f": {
       "char": "付",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "aa59da926e79": {
       "char": "遊",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "72fd9806629b": {
       "char": "盛",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "1fe4787e04e3": {
       "char": "屈",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "b6a81bce4e3a": {
       "char": "昔",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "1b3cf2a3cd60": {
       "char": "案",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "7d365e4d182c": {
       "char": "親",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "05ba12e9242d": {
       "char": "色",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "ae7b46b8bd14": {
       "char": "娘",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "b27a84f46a7d": {
       "char": "勉",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "7222f0687778": {
       "char": "嫌",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "768ec84021f2": {
       "char": "従",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "fc1baadeda54": {
       "char": "絵",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "1f2a5b80db2f": {
       "char": "腹",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "2cc261c5474c": {
       "char": "達",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "5b978b1e65a3": {
       "char": "危",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "bde57e618e35": {
       "char": "困",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "c851731170b1": {
       "char": "描",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "8c6b88a0b96b": {
       "char": "険",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "54fccc7a3e25": {
       "char": "勢",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "2f4c782e6f53": {
       "char": "噂",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "c999b7ca1598": {
       "char": "和",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "d9e1012eef84": {
       "char": "払",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "1e68c6c73265": {
       "char": "途",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "7eb32b651603": {
       "char": "答",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "aa2e1ab5b953": {
       "char": "納",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "dddc0cd499cf": {
       "char": "担",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "4aa84b49a60b": {
       "char": "熱",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "63b52f1b49d2": {
       "char": "朝",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "bab011f78d09": {
       "char": "拾",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "722889265c8d": {
       "char": "悲",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "8514116e30e4": {
       "char": "遅",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "9b4fb9e1fb38": {
       "char": "慮",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "f1c6ae3af254": {
       "char": "頂",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "5f418fd4436b": {
       "char": "汚",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "72ffaeed2a1a": {
       "char": "酔",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "9fedb08c4697": {
       "char": "病",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "a430579b45ff": {
       "char": "夏",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "d6cf46563959": {
       "char": "省",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "d6ff3b87cfcc": {
       "char": "冒",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "dae31b9198f7": {
       "char": "雇",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "deba871dc5e8": {
       "char": "嬢",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "fc759cd3eadb": {
       "char": "央",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "25a47b4591a8": {
       "char": "監",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "512f579acefd": {
       "char": "趣",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "51e4102fe254": {
       "char": "域",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "84c086020b46": {
       "char": "杯",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "98c930d6b6a2": {
       "char": "謝",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "b51fb8d06eeb": {
       "char": "品",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "cff8ac4f37e4": {
       "char": "為",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "e3d1c0378d3c": {
       "char": "魅",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "f31791901b92": {
       "char": "勇",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "30aea12173d2": {
       "char": "脇",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "3e1152fc8797": {
       "char": "怯",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "4c895b749a6a": {
       "char": "週",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "7491744e5dd7": {
       "char": "採",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "dbfda857357d": {
       "char": "慢",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "fad075929b9e": {
       "char": "春",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "0a7fa846017d": {
       "char": "卑",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "836de7173bb7": {
       "char": "惜",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "ceb6b23c10fb": {
       "char": "泳",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "fa02c3b03900": {
       "char": "産",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "19e183b82bf3": {
       "char": "臆",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "1af5c39d3a79": {
       "char": "妻",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "1cb25c9f2d16": {
       "char": "券",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "28c5724ae53c": {
       "char": "孝",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "9a9afd82c491": {
       "char": "秋",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "ca0f43559e4d": {
       "char": "崖",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "dd7751f8b607": {
       "char": "暖",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "de39289a539b": {
       "char": "晩",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "17d43b0b6886": {
       "char": "涯",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "27dd535c13bb": {
       "char": "貯",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "2fbddb3e8c01": {
       "char": "溺",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "447e3672517e": {
       "char": "冊",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "5f99a59f154d": {
       "char": "旨",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "60db0dcbacad": {
       "char": "孫",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "7437cd44f800": {
       "char": "尻",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "82a01e079167": {
       "char": "漬",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "87151b65270d": {
       "char": "財",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "b15053e2cb07": {
       "char": "貰",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "0e3369063001": {
       "char": "標",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "bf388b7532c9": {
       "char": "勘",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "5aa1b4ff1c21": {
       "char": "静",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "a7e93e39cd4e": {
       "char": "狩",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     },
     "b9c9aef0e4f3": {
       "char": "似",
-      "source": "read"
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3db6efaab60c": {
+      "char": "脱",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9b62edecb33a": {
+      "char": "想",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "106781cdf079": {
+      "char": "般",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b8da61dafe67": {
+      "char": "l",
+      "source": "uncertain",
+      "note": "반각 l/I 구분 불가 — ROM 비트맵이 위아래 꽉 찬 단순 세로줄이라 시각적으로도 l·I 둘 다와 동일하게 보임. 문맥도 자연어 문장이 아니라 ▪(미판독)와 단일 문자가 뒤섞인 표/스탯성 문자열이라 의미로도 못 가른다. 재확인 보류."
+    },
+    "f87b62711e7a": {
+      "char": "d",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "16734a038779": {
+      "char": "声",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ce7f02056876": {
+      "char": "g",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "25b72c07f7f3": {
+      "char": "去",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2dcd7ab58fcd": {
+      "char": "刑",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1f79b864c07a": {
+      "char": "奥",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4d53d148f46d": {
+      "char": "m",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "690380c37d8b": {
+      "char": "友",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9658326d2f15": {
+      "char": "準",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9f07d5eaf817": {
+      "char": "公",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d542e7568f0b": {
+      "char": "閉",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "dd0c640316fd": {
+      "char": "h",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d79740db3692": {
+      "char": "狙",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "77c321381cb8": {
+      "char": "→",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b1fc642bd421": {
+      "char": "再",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b30b378f1ed2": {
+      "char": "争",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "354ef7380b48": {
+      "char": "由",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "103b6170293d": {
+      "char": "抜",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1eda802c76ba": {
+      "char": "座",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "748a88c4b7e4": {
+      "char": "普",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7ad83937ec90": {
+      "char": "致",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1cc9f2ae0b3e": {
+      "char": "亡",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5af756cf3154": {
+      "char": "拉",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6cd5dfa742cc": {
+      "char": "b",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ea6850fa6faa": {
+      "char": "済",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "09a770e80e2a": {
+      "char": "_",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "14dfaee6eff6": {
+      "char": "予",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4395bc35cad1": {
+      "char": "扉",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "edb7e4835ffe": {
+      "char": "組",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "124c0d0d1344": {
+      "char": "首",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "36f9fb0d4bca": {
+      "char": "壁",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "150d610d9424": {
+      "char": "迷",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1e9e96b39bc0": {
+      "char": "貴",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "29f4fe67e1a3": {
+      "char": "模",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7a38edce964d": {
+      "char": "岩",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a141f7d62f5c": {
+      "char": "恋",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a5c3689dfd82": {
+      "char": "願",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "57c2a75c4c9b": {
+      "char": "都",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "dc44fce14ad5": {
+      "char": "郎",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "dce454976bb1": {
+      "char": "頑",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0c4957c11dd0": {
+      "char": "揮",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1e5b004afb44": {
+      "char": "邪",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2a7ac88d1dc5": {
+      "char": "管",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2e318b428318": {
+      "char": "故",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5d228dd47673": {
+      "char": "c",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "736797f82a06": {
+      "char": "印",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8f5ca7b034b8": {
+      "char": "談",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a260c0bb6a89": {
+      "char": "泊",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "acd4d8f45273": {
+      "char": "政",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f8c27716978d": {
+      "char": "★",
+      "source": "confirmed",
+      "note": "한자가 아니라 고유 기호(★). 모양 그대로 보존."
+    },
+    "1a32d3a465e1": {
+      "char": "占",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2f77d23aa305": {
+      "char": "資",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "45971d4e3a47": {
+      "char": "",
+      "source": "confirmed",
+      "note": "빈 칸(공백/잉크 없음) 도형으로 확인."
+    },
+    "4c1a5eebc7e1": {
+      "char": "景",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8ef81508e397": {
+      "char": "団",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3986f4e5e1d4": {
+      "char": "猫",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "99c13e86e6ef": {
+      "char": "授",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a2ca113591f6": {
+      "char": "怖",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ab0c8a63aa25": {
+      "char": "映",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b4bf1cc35b07": {
+      "char": "疲",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "bfc38ebf8a85": {
+      "char": "停",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "102f20b53698": {
+      "char": "卒",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3474abb42636": {
+      "char": "役",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "52441597b7c4": {
+      "char": "独",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8d430d134a21": {
+      "char": "囲",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b8a2a6a8b6b7": {
+      "char": "幸",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f2503d7adaa6": {
+      "char": "甘",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "05ba8c759e51": {
+      "char": "v",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "17af20e1d99c": {
+      "char": "許",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "355374d872c8": {
+      "char": "窓",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "357d91d12a85": {
+      "char": "緊",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4cf5d6f1cb73": {
+      "char": "働",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6af0d6d7df22": {
+      "char": "歌",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "843ebf0ee8c1": {
+      "char": "郷",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "876b9ab1fb54": {
+      "char": "紙",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "96a52224fa7a": {
+      "char": "寝",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9b9914d5ad05": {
+      "char": "簡",
+      "source": "confirmed",
+      "note": "문맥 6건 전부 \"▮単\"(간단·かんたん) 패턴인데 問単은 없는 말, 簡単만 성립. 롬 비트맵이 12x12에서 竹(대나무) 상단 획이 뭉개져 問처럼 보였을 뿐 — 문맥으로 정정."
+    },
+    "d04525d78414": {
+      "char": "遣",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "22455e9c5700": {
+      "char": "ν",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "52a579009b08": {
+      "char": "幕",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5a5611e43e30": {
+      "char": "美",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a603358f8a8b": {
+      "char": "k",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b7a8f6c79dc5": {
+      "char": "労",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "bc2ad2a36035": {
+      "char": "揺",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d82e8cdd8ee7": {
+      "char": "西",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f1951c64c06a": {
+      "char": "歳",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "092931550ddf": {
+      "char": "冗",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0dec7b255b14": {
+      "char": "毎",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "266c420e37c6": {
+      "char": "鍵",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "40a0de69e9c6": {
+      "char": "望",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4cee09a79704": {
+      "char": "興",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5571f07b321a": {
+      "char": "惑",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "613c0ee38f26": {
+      "char": "文",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7b2a710d2e2a": {
+      "char": "騒",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "87660d9c107e": {
+      "char": "規",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ab96a05ab414": {
+      "char": "害",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "be9586c20fa7": {
+      "char": "契",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e63fdccb48e8": {
+      "char": "才",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "fca213ea7456": {
+      "char": "紀",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0249df1652bf": {
+      "char": "募",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0515d27258cb": {
+      "char": "幻",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "274b4583ae62": {
+      "char": "総",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4f1fb23357ba": {
+      "char": "例",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5ec0ff3feca3": {
+      "char": "涙",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "62fcab548339": {
+      "char": "吹",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8d287a361764": {
+      "char": "木",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a67de75538d3": {
+      "char": "補",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b850c404bd68": {
+      "char": "根",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "cf6cc1b73406": {
+      "char": "昼",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d5b3af67cdaf": {
+      "char": "府",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e5b020021d8d": {
+      "char": "☆",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e6db11e9578d": {
+      "char": "演",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f78670c756a4": {
+      "char": "留",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0471b0329e5a": {
+      "char": "踊",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "30dd96902229": {
+      "char": "捜",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3ec74fbbe2fe": {
+      "char": "歴",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4fe8271290de": {
+      "char": "雰",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "69c33bed5839": {
+      "char": "投",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6cb335961ce9": {
+      "char": "短",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9f65e75ba05e": {
+      "char": "迎",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a9e10613793a": {
+      "char": "周",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "acac04f4994b": {
+      "char": "録",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ad1777cbabad": {
+      "char": "♪",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c87d4d0fbfde": {
+      "char": "z",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "de13f4c976ff": {
+      "char": "並",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f6dc9b22933d": {
+      "char": "侵",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0558874729ec": {
+      "char": "駄",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0c9b261c4232": {
+      "char": "況",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1220a0feb4de": {
+      "char": "渡",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "141e448fb97c": {
+      "char": "板",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2187e84b175e": {
+      "char": "縦",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "348b908996f2": {
+      "char": "織",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "49bf17499931": {
+      "char": "拷",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4e129a6002e6": {
+      "char": "捕",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "53613b694270": {
+      "char": "識",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5b85565b476f": {
+      "char": "四",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7c82c1542ebf": {
+      "char": "鳴",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8072f27e9493": {
+      "char": "証",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "963cb7e44d17": {
+      "char": "候",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a333c138aaa8": {
+      "char": "端",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "aeb30e43cdb0": {
+      "char": "床",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ba6a727504db": {
+      "char": "泣",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d5ea273c2078": {
+      "char": "拠",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e638b4b7aa82": {
+      "char": "深",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e79c13a94595": {
+      "char": "踏",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f7356590c2a5": {
+      "char": "姉",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "fdf423520065": {
+      "char": "宿",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "09c45b001094": {
+      "char": "裁",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0c8438fa9ecc": {
+      "char": "訪",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "14717aedaf5b": {
+      "char": "詳",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "159967bf67f7": {
+      "char": "課",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1a9805a9d71b": {
+      "char": "傷",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "294ada90d733": {
+      "char": "史",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "38d88583dadf": {
+      "char": "灯",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "45023a76bbb3": {
+      "char": "f",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4f9e5d21c6df": {
+      "char": "傭",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6cf1232b14fd": {
+      "char": "茶",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7f7d952d4bcf": {
+      "char": "貸",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8f39dff1042b": {
+      "char": "像",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9423768dc0e5": {
+      "char": "協",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9f3c73a88966": {
+      "char": "児",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a4e181645b1d": {
+      "char": "刻",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ab3ef3af1c98": {
+      "char": "抗",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ab80296c100d": {
+      "char": "穴",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b99e607f82a2": {
+      "char": "ω",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "bcdc99ad86a2": {
+      "char": "掛",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c11a1feb52cc": {
+      "char": "削",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "edc954e11b10": {
+      "char": "久",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f4f997ba73ab": {
+      "char": "希",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "01c2999ad166": {
+      "char": "誇",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "07f38198c749": {
+      "char": "志",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0c20bc89f6b0": {
+      "char": "寄",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "158c30a208ac": {
+      "char": "障",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1b4d0e8a33a1": {
+      "char": "慕",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2803c1412a5f": {
+      "char": "検",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2df38ee80554": {
+      "char": "土",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "31782bd6e0b5": {
+      "char": "繰",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "33096878bb78": {
+      "char": "察",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3331575af793": {
+      "char": "杉",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3b90e38dc277": {
+      "char": "慎",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3bca2319b6cf": {
+      "char": "駆",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3bf4becca504": {
+      "char": "悔",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "42423b4c8c9b": {
+      "char": "潜",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4260904fad16": {
+      "char": "肉",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "42d77953370f": {
+      "char": "緑",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4345129fe8dc": {
+      "char": "社",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "43d4a30963e1": {
+      "char": "専",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "495e774c81cd": {
+      "char": "巻",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "541d0a66e549": {
+      "char": "挺",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "649b5baf0325": {
+      "char": "求",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "74b3975db663": {
+      "char": "就",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "762634cad699": {
+      "char": "愚",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7d0580b8ca2f": {
+      "char": "隣",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "84c28e753804": {
+      "char": "善",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8569dedbd6da": {
+      "char": "借",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8fdbba8b1fc2": {
+      "char": "瞬",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9569dfe10ef2": {
+      "char": "拍",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9ba57c860262": {
+      "char": "余",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a2df82ad4d3d": {
+      "char": "操",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a632e3c0fe59": {
+      "char": "舎",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a791e60adbce": {
+      "char": "還",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ac5ea9ff9b6f": {
+      "char": "被",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "bcf107a3e3e6": {
+      "char": "忙",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d81d6572fa8f": {
+      "char": "訳",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "dcadc6ed9faa": {
+      "char": "台",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e5d1373ef46c": {
+      "char": "挑",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e6ff061087a6": {
+      "char": "縛",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f01c9428b984": {
+      "char": "油",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "fbccad101765": {
+      "char": "ｐ",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ff3179e26c67": {
+      "char": "婦",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ff8892695029": {
+      "char": "夕",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1f75b4094c0e": {
+      "char": "脅",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "21fba1445471": {
+      "char": "晴",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2af925abefb9": {
+      "char": "飼",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2cfdcc6e5cc6": {
+      "char": "横",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "317ab50c4567": {
+      "char": "鐘",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "31b52b47446e": {
+      "char": "町",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "31c4a6ebc3a8": {
+      "char": "背",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "33304be6a348": {
+      "char": "老",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "33d8e9e8c17e": {
+      "char": "仮",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "379ae064e32e": {
+      "char": "馬",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3c8dd77cd57d": {
+      "char": "昨",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3cd4d353d40e": {
+      "char": "底",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "476709eca7b3": {
+      "char": "棺",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4ab90c98ddec": {
+      "char": "衣",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "50e19f20e8a1": {
+      "char": "温",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6ddeaba7c8bf": {
+      "char": "田",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "767aaf21a85b": {
+      "char": "逆",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7ec520dd439f": {
+      "char": "排",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8266a48a91ad": {
+      "char": "責",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8629dea53039": {
+      "char": "疑",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "869eb01e5bed": {
+      "char": "申",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "86bfd66a839e": {
+      "char": "暇",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "874b40c75fcd": {
+      "char": "釣",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8791754f0a6c": {
+      "char": "聴",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "943653d43425": {
+      "char": "嬉",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a295377fb305": {
+      "char": "姫",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b4ca976950f1": {
+      "char": "哀",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b885d865f71f": {
+      "char": "罰",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "be24d6ea4069": {
+      "char": "屍",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c52034357603": {
+      "char": "価",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "cfce53ec8e8b": {
+      "char": "節",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d7ab2250d2c6": {
+      "char": "胸",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d8ee28365a4b": {
+      "char": "秀",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "df09c31536ba": {
+      "char": "悟",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e11a4c34a26c": {
+      "char": "妹",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e4cb4805fc07": {
+      "char": "則",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f011cf1b84d4": {
+      "char": "裕",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "004760e4f977": {
+      "char": "衝",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "00c06ca161f0": {
+      "char": "討",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0a50200a5412": {
+      "char": "科",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0c4cc781eba7": {
+      "char": "菓",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "11d39851675f": {
+      "char": "j",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1601c98fa782": {
+      "char": "賢",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1906d44ffc24": {
+      "char": "乙",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1c47d9b371e8": {
+      "char": "便",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1e1bae67b4d4": {
+      "char": "値",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1e89740d2222": {
+      "char": "坂",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "201597205ee5": {
+      "char": "永",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2b8209841cda": {
+      "char": "漂",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "383e8f320559": {
+      "char": "因",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3e1293bf4ae1": {
+      "char": "源",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3ff6990ea005": {
+      "char": "距",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "47e8795b49be": {
+      "char": ";",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4bf20a15b70c": {
+      "char": "黄",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "510bf899d67e": {
+      "char": "適",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "51a091802894": {
+      "char": "秒",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "51d5aae93e23": {
+      "char": "只",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5df16521fa93": {
+      "char": "挨",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5fefb0033051": {
+      "char": "舞",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6773fe6965bd": {
+      "char": "拶",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "73ad3585315a": {
+      "char": "営",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "744a956c9524": {
+      "char": "※",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "78f46dc4d624": {
+      "char": "栄",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "79737038e018": {
+      "char": "繰",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7c4bc2a87d6f": {
+      "char": "譜",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7cf542ac5e0a": {
+      "char": "鎧",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "830c0dc91d40": {
+      "char": "厳",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "860e464b5d91": {
+      "char": "凍",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8f2f4999f52c": {
+      "char": "這",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "94a671a8bbcd": {
+      "char": "締",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9796073fb2ef": {
+      "char": "誓",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "99d5f735b2a6": {
+      "char": "喜",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9c4eb57a2982": {
+      "char": "腰",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a014974e7990": {
+      "char": "丙",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b95fd76bcae3": {
+      "char": "曲",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c52ce92f2499": {
+      "char": "匹",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c6fa10406805": {
+      "char": "房",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e206beec466a": {
+      "char": "算",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e6aed72a75a8": {
+      "char": "姿",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e8f3cfdb9b94": {
+      "char": "拘",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e8f62a1eb99e": {
+      "char": "ˆ",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f2ccf860d001": {
+      "char": "至",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f8cf8723a4c8": {
+      "char": "却",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "02c372c5a740": {
+      "char": "午",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "07f60b2592c4": {
+      "char": "副",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "09a19c041aee": {
+      "char": "璧",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "14ad067840d9": {
+      "char": "秩",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "20a32c0b3db7": {
+      "char": "鈍",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2176288e6e23": {
+      "char": "歓",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "24fe53679c12": {
+      "char": "慣",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2bc4e2e1fe73": {
+      "char": "狂",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2e4c3a4330b1": {
+      "char": "序",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "32ff1fd705e1": {
+      "char": "硬",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "383a5c085c5b": {
+      "char": "凄",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3e0f6c79bd99": {
+      "char": "充",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "40b3400fd07c": {
+      "char": "珍",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "42cf334166b7": {
+      "char": "矢",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4a7084497a4d": {
+      "char": "嘘",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4be7a1ce55bc": {
+      "char": "開",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4cd8644aa636": {
+      "char": "唱",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "57e7fc458501": {
+      "char": "析",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5807b0c68b20": {
+      "char": "俺",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5936477040aa": {
+      "char": "十",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5f375e7bd5b8": {
+      "char": "耐",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "60e6245c5040": {
+      "char": "遂",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6265a28c4954": {
+      "char": "依",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "630ea323c6e1": {
+      "char": "宅",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "64d73155bab6": {
+      "char": "儀",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "68d8c09c510a": {
+      "char": "職",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "69b422046f71": {
+      "char": "唯",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6a404c16cb18": {
+      "char": "棄",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6a69d994952d": {
+      "char": "請",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6c8be906867f": {
+      "char": "柄",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6cf35e54f0f7": {
+      "char": "髪",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6ed087eb7f8c": {
+      "char": "塗",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6ed46fbe17ee": {
+      "char": "噴",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "706b792a99a8": {
+      "char": "提",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7166f4c23fff": {
+      "char": "恥",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7637ecf75269": {
+      "char": "脳",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "78788761279b": {
+      "char": "預",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "79f3c25c81d2": {
+      "char": "細",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8c8897ad5142": {
+      "char": "営",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8ecd412416a5": {
+      "char": "包",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "90029a302bd8": {
+      "char": "蛇",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "913511fe9dd0": {
+      "char": "誘",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "97c2092c35ba": {
+      "char": "評",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9860d50e1dfe": {
+      "char": "橋",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a00c9d975f35": {
+      "char": "遇",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a33aca27528b": {
+      "char": "範",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a3c288b76dd2": {
+      "char": "版",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b551497a0d3d": {
+      "char": "筋",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "bffc039fbea2": {
+      "char": "憎",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c082e51fd05a": {
+      "char": "閲",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c28824af4abf": {
+      "char": "展",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c62a49ec9c5e": {
+      "char": "抵",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c72e61b7ce65": {
+      "char": "遭",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "cc3b5391b872": {
+      "char": "潮",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "cf94ba9b0545": {
+      "char": "滞",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "da3fbb37ede0": {
+      "char": "論",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "db8d9f069a2a": {
+      "char": "軽",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "dcdcb8c4d864": {
+      "char": "耳",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "dd8424639f94": {
+      "char": "棚",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e7922d6148b7": {
+      "char": "控",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ea744a56738c": {
+      "char": "扱",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f077cdb36376": {
+      "char": "阻",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f23d15306604": {
+      "char": "忠",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f34f187e4f7b": {
+      "char": "香",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f87f139bed05": {
+      "char": "辱",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f8ca76c17d44": {
+      "char": "努",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "fde36018faec": {
+      "char": "華",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "fee857e99772": {
+      "char": "微",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ff6fb8575b53": {
+      "char": "川",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "02dce5daeb76": {
+      "char": "犠",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "039433df0e3f": {
+      "char": "寂",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "04fb0fc896c9": {
+      "char": "権",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "05ab85a1ac03": {
+      "char": "歯",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "05d6d0c8717b": {
+      "char": "稼",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0b9d41ef5ba5": {
+      "char": "詞",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0e3962cbc0b4": {
+      "char": "丸",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0f3fd36add87": {
+      "char": "列",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "10c413e37a6b": {
+      "char": "孤",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "12b013491b3f": {
+      "char": "詰",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "149193087115": {
+      "char": "易",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "14c3a1353a70": {
+      "char": "尋",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "17f0948d8f17": {
+      "char": "瀬",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "19160d8c8183": {
+      "char": "蓋",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1bf942015473": {
+      "char": "祈",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1c35aa45858e": {
+      "char": "妨",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "20eda9a95479": {
+      "char": "寄",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2416d9180ee6": {
+      "char": "猛",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "26055c4a0baf": {
+      "char": "牲",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "268a8bd7de89": {
+      "char": "軋",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2909cb7ddf99": {
+      "char": "刺",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "29baa5c180da": {
+      "char": "拳",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2ab4d489e34b": {
+      "char": "獣",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2af1ea5701b0": {
+      "char": "妙",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2b6e1133e357": {
+      "char": "弐",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2bf0697b4107": {
+      "char": "瞳",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2fb088387e1a": {
+      "char": "井",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "31e311ca5341": {
+      "char": "厚",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "334496015afb": {
+      "char": "没",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "33ad7ab6ce80": {
+      "char": "躍",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "33eb6246f935": {
+      "char": "伺",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "35dbda1a20dd": {
+      "char": "僧",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "370a6b49ec1f": {
+      "char": "棒",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "39341550496b": {
+      "char": "汎",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3a21295a8991": {
+      "char": "須",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3a2d89d2d4ec": {
+      "char": "舵",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3c2ba61c3ae6": {
+      "char": "司",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "414e0d6147cf": {
+      "char": "誠",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4419288d1a91": {
+      "char": "幽",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "47826f704db1": {
+      "char": "枕",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "47e92e0631d0": {
+      "char": "蹴",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "49b80de6334a": {
+      "char": "積",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4ea5051aba37": {
+      "char": "臓",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4fc37e488b08": {
+      "char": "篤",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "51c8c7923c74": {
+      "char": "茂",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5a098425e158": {
+      "char": "笛",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5f9e7a2e3cc3": {
+      "char": "匠",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6155ee5b8426": {
+      "char": "鶏",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "61ac2deba152": {
+      "char": "量",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "62287a3df65b": {
+      "char": "往",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "623e5e3ea42d": {
+      "char": "酷",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "670e146dc0aa": {
+      "char": "環",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "68315ab85af5": {
+      "char": "彫",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6a52da9f1b2a": {
+      "char": "輝",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6a6c7c7242b1": {
+      "char": "含",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6d2901395e53": {
+      "char": "辛",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6fb7272bf9fa": {
+      "char": "洗",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6fd90271f8b6": {
+      "char": "購",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "70b8a0df4e77": {
+      "char": "迫",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7387c2ecf57c": {
+      "char": "額",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "748e4d1d374a": {
+      "char": "看",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7538725789b7": {
+      "char": "託",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "755337050143": {
+      "char": "盾",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "79a60041e1b7": {
+      "char": "麗",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7b8e5d5a178e": {
+      "char": "商",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7f3f9f167c6a": {
+      "char": "江",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "829f73c387d2": {
+      "char": "鮮",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "83699462b2b3": {
+      "char": "壱",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8436de519f95": {
+      "char": "潰",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8768539c08b5": {
+      "char": "略",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8841212352e1": {
+      "char": "輩",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "88cd41570117": {
+      "char": "賭",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "89dc23006712": {
+      "char": "累",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8b7c429861e7": {
+      "char": "緩",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8be2fe626ab8": {
+      "char": "駒",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "94bda4b408f6": {
+      "char": "律",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "959a10657ff7": {
+      "char": "厠",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9ae47151aa4f": {
+      "char": "太",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9e98d17c801e": {
+      "char": "伐",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a56a7e53cd0c": {
+      "char": "促",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a9f9401caa99": {
+      "char": "阿",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ac3d2778cd3d": {
+      "char": "鼻",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b191c473932e": {
+      "char": "奮",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b2303eca53cc": {
+      "char": "荷",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b5c4a5fa9798": {
+      "char": "懲",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b8bb43104a1f": {
+      "char": "雨",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "bad48d1356d2": {
+      "char": "詮",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c1a42db2165c": {
+      "char": "肢",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c3d555a864d1": {
+      "char": "赦",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c9b4d050bd47": {
+      "char": "叩",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "cc22d29a314b": {
+      "char": "京",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "cca149ac9385": {
+      "char": "↑",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "cca36b04c749": {
+      "char": "企",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d0483a91a560": {
+      "char": "維",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d055df716895": {
+      "char": "宗",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d06f0d6aab49": {
+      "char": "傘",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d1372d3a1eba": {
+      "char": "咲",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d23e5ab8a472": {
+      "char": "狭",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d45057ae2a4b": {
+      "char": "幼",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d748bb626d4e": {
+      "char": "喋",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "de2cbc809d3b": {
+      "char": "句",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e0bef0bdb2a3": {
+      "char": "章",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e0d275d23ca1": {
+      "char": "車",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e18ba9063b87": {
+      "char": "滴",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e215f59ee175": {
+      "char": "施",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e35c200a2bad": {
+      "char": "恵",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e55292eea60c": {
+      "char": "辟",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e9095ab2574c": {
+      "char": "莫",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e9bc8162cf37": {
+      "char": "梱",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ed705c00da81": {
+      "char": "繁",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f089599cde9e": {
+      "char": "鑑",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f105cb3b5edf": {
+      "char": "焼",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f41a4f3ae20f": {
+      "char": "福",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f5b191b90fdc": {
+      "char": "枠",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f94329b26518": {
+      "char": "盤",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f9a181f3a0d5": {
+      "char": "税",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "fd2cfa1537bd": {
+      "char": "訴",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0b9174ea7713": {
+      "char": "乏",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0cc8d8c0d560": {
+      "char": "院",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0ce81d5b7360": {
+      "char": "届",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "0d448a7db459": {
+      "char": "彰",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "101f0fa4a87b": {
+      "char": "丁",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "10a765a85c5d": {
+      "char": "箇",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "11ae18e7405a": {
+      "char": "濃",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "11ccaea53b0b": {
+      "char": "免",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1261140136a6": {
+      "char": "洪",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "133a4aadf98f": {
+      "char": "腐",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "134d1b88d87e": {
+      "char": "瞳",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1733b3e529f9": {
+      "char": "烈",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1b509e45cdea": {
+      "char": "煮",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "1c59cd51042e": {
+      "char": "勃",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "20c9923ab74c": {
+      "char": "童",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "20cdfdaf9e51": {
+      "char": "八",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "217abf62a31d": {
+      "char": "伏",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2221d7f7ee6a": {
+      "char": "遮",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "23995852a4ff": {
+      "char": "机",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "24dbc1393ee6": {
+      "char": "推",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "252de0f3fde0": {
+      "char": "憾",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "264b5c6886cc": {
+      "char": "浅",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2657f570c7d3": {
+      "char": "較",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "274a40dc3968": {
+      "char": "載",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "276d43d29636": {
+      "char": "巡",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2825d6e2cdeb": {
+      "char": "俗",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "28508270709e": {
+      "char": "肝",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2a8516fe4ec2": {
+      "char": "墜",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "2f80e5011346": {
+      "char": "祝",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3048f67feff6": {
+      "char": "塞",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "31f45dc8d64f": {
+      "char": "醜",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "35424487935c": {
+      "char": "屑",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3547c5cfaa9f": {
+      "char": "干",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "378c878b5537": {
+      "char": "陰",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3b0c98bdc53a": {
+      "char": "奏",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3bf5f26ba359": {
+      "char": "競",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "3f2928df06ad": {
+      "char": "注",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "42e0b202ca89": {
+      "char": "婚",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "44054c3909ac": {
+      "char": "薄",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "44b1a15af918": {
+      "char": "枯",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "451d0650fae4": {
+      "char": "捉",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "457dfa709502": {
+      "char": "械",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "47a92b48f9d3": {
+      "char": "抱",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "485e3428974b": {
+      "char": "焦",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4901b1a34a03": {
+      "char": "氏",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4923778c2ccd": {
+      "char": "旧",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "49f4346fdcb6": {
+      "char": "貌",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4a5dabf472c0": {
+      "char": "楽",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4cd81fb177cc": {
+      "char": "冴",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4d37cda7f43c": {
+      "char": "呂",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4e21faf4ae4f": {
+      "char": "築",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "4e94f9279859": {
+      "char": "楊",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "50b58e70e585": {
+      "char": "幾",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5249ec613ba4": {
+      "char": "梅",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "54a386440f82": {
+      "char": "痕",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "552b924d623d": {
+      "char": "桃",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5596c6b161c4": {
+      "char": "礎",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5605ed230273": {
+      "char": "署",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5719787ea08c": {
+      "char": "渉",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "5ef46d43699c": {
+      "char": "奪",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "61a87b3ed0f9": {
+      "char": "編",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "64697b3b1c30": {
+      "char": "境",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6b48a56fa25a": {
+      "char": "枝",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6d85716aed6d": {
+      "char": "叫",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "6f1ff55eee9a": {
+      "char": "弁",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "719e750112f5": {
+      "char": "寸",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "745f3c5b6e62": {
+      "char": "肌",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "75807eedfcde": {
+      "char": "計",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "789636f9aca5": {
+      "char": "康",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7a324c328f86": {
+      "char": "埋",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7b32459e4dc1": {
+      "char": "践",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7be20beb6001": {
+      "char": "述",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7cdf9a92ab13": {
+      "char": "汝",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "7dd2771c6a29": {
+      "char": "祖",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "80148c487162": {
+      "char": "雅",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8020604d79bf": {
+      "char": "劫",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "81388ffa33a2": {
+      "char": "戒",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "84195f84739f": {
+      "char": "飯",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "860e85927116": {
+      "char": "貧",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "866ceb4e221f": {
+      "char": "片",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "868447dc8d87": {
+      "char": "綺",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "868dc365761a": {
+      "char": "廃",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8aa9a1b4889e": {
+      "char": "崩",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8ad3f171bff8": {
+      "char": "湯",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8d712a9388ed": {
+      "char": "挙",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8db82136e30b": {
+      "char": "旦",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "8f5dfe14c666": {
+      "char": "弔",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "90eb869a9b70": {
+      "char": "濯",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9108349ee814": {
+      "char": "灰",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9146b277c153": {
+      "char": "慰",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "922f9060d38b": {
+      "char": "臨",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9243def3be4b": {
+      "char": "詩",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "92563dc5ed74": {
+      "char": "蒙",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "95a2e07144e5": {
+      "char": "乾",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "96545fd14248": {
+      "char": "紛",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "96d2c7190762": {
+      "char": "慄",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9802d4f76459": {
+      "char": "衆",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9974b584509d": {
+      "char": "那",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "99e1bdff8e01": {
+      "char": "眉",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9bcfe1c4936b": {
+      "char": "飾",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9d59ac2e9f95": {
+      "char": "囚",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9d7defb10bf6": {
+      "char": "染",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "9f4e42671bf4": {
+      "char": "励",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a0a375225f0c": {
+      "char": "眺",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a10989136206": {
+      "char": "蓄",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a14614905e42": {
+      "char": "捻",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a1700d0e0fcc": {
+      "char": "汽",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a19db3e04f6d": {
+      "char": "徴",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a5ae621ae7eb": {
+      "char": "鹿",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a61266e9212b": {
+      "char": "沢",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a6461599f169": {
+      "char": "掴",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "a7758e1f2a15": {
+      "char": "執",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ab7a05ca1aad": {
+      "char": "箱",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ac7985829d56": {
+      "char": "掃",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ad2ada981bd4": {
+      "char": "式",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ae90eb11ee68": {
+      "char": "紅",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "af34593a63b8": {
+      "char": "虚",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "af8bf1910429": {
+      "char": "膨",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b0222a774426": {
+      "char": "抑",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b0a15a987c2a": {
+      "char": "叱",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b3be69782416": {
+      "char": "滑",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b3f9420d4bad": {
+      "char": "勤",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b40e8dec124d": {
+      "char": "斜",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b4910e281dd6": {
+      "char": "視",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b537ed674e8c": {
+      "char": "批",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b60ddcafa75f": {
+      "char": "巣",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b6625869a28f": {
+      "char": "冬",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b80c84a13ca9": {
+      "char": "恩",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "b8656dff7e23": {
+      "char": "勧",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ba3afc6cf551": {
+      "char": "浪",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "bdac69ff787c": {
+      "char": "尽",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "be888d5b01a9": {
+      "char": "清",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "bf7c0a34968d": {
+      "char": "沼",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c02c5b00b698": {
+      "char": "訂",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c05cf8a0b3f7": {
+      "char": "双",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c0ab712ce3d8": {
+      "char": "猿",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c2149e3ab6b1": {
+      "char": "傑",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c23040db7047": {
+      "char": "務",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c26f781a8fef": {
+      "char": "ヶ",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c3dffffd5f47": {
+      "char": "誕",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c525b1a6424b": {
+      "char": "股",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c5df2a9fe91e": {
+      "char": "敢",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c7fea5f5bb9b": {
+      "char": "戸",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "c9d9b18581f8": {
+      "char": "隙",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ca6ee348a003": {
+      "char": "賞",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ca7348c5654b": {
+      "char": "偏",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "cc375c8ce763": {
+      "char": "郎",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "cc4fd05fd295": {
+      "char": "痴",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ccc53e0e3bc5": {
+      "char": "融",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "cd7610112181": {
+      "char": "贄",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "cdad24b9cfb7": {
+      "char": "磨",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "cf85a83b2ecd": {
+      "char": "伸",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d0474e15820c": {
+      "char": "森",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d21893b8e5aa": {
+      "char": "罪",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d3beba4fff51": {
+      "char": "慈",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d4fdc9882453": {
+      "char": "堵",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d64e2499cb1d": {
+      "char": "俊",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "d801ec866236": {
+      "char": "隕",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "dc7014fed7d0": {
+      "char": "豆",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "dcfafd6038f2": {
+      "char": "林",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "dd5deae6deca": {
+      "char": "窮",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "dd7952d54b2d": {
+      "char": "尊",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ddc751a2ca9e": {
+      "char": "噌",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "dee81ec8a883": {
+      "char": "逮",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "df544b27b2ee": {
+      "char": "兼",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "dfa18b683b17": {
+      "char": "延",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e2ff5510885e": {
+      "char": "暑",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e3aeb5b0cb3f": {
+      "char": "鍛",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e3b7d0a9ee3b": {
+      "char": "侮",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e52708df724f": {
+      "char": "足",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e56e260e0842": {
+      "char": "局",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e6905e7944e3": {
+      "char": "爺",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e7e27af73f76": {
+      "char": "索",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "e8d60cb6c2af": {
+      "char": "固",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ea50cc9dadaf": {
+      "char": "愕",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "eb00f9a86a6a": {
+      "char": "及",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ebed937fff8a": {
+      "char": "後",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ec14cfd257da": {
+      "char": "刷",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ed0e5acf4a39": {
+      "char": "毛",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "edf17548d1e6": {
+      "char": "懸",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "eed2556faf52": {
+      "char": "承",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f16f61bd1279": {
+      "char": "賛",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f1bffebafd6e": {
+      "char": "功",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f28d6dc63878": {
+      "char": "昆",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f37db798d1df": {
+      "char": "髪",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f65820581b7e": {
+      "char": "贈",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f6db9cab9506": {
+      "char": "幅",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "f792529c5e0d": {
+      "char": "基",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "fa892f670382": {
+      "char": "憂",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "fae4c70502f3": {
+      "char": "督",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "fea216b8b445": {
+      "char": "冥",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ff1a92f8c853": {
+      "char": "符",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
+    },
+    "ff4285019fa3": {
+      "char": "直",
+      "source": "confirmed",
+      "note": "사용자 1차 판독 + 롬 비트맵/후보 렌더 육안 대조(820칸 전수) 일치."
     }
   }
 }
