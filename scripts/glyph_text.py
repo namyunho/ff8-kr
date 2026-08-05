@@ -109,7 +109,11 @@ def decode(data: bytes, glyphs: GlyphMap, bank1: Bank1Map | None = None) -> str:
         if index & BANK1:
             slot = index & ~BANK1
             char = bank1.char.get(slot) if bank1 else None
-            out.append(char if char else f"{{b1:{slot}}}")
+            # 같은 문자를 내는 도형이 이 필드에 둘 이상이면(중복 셀),
+            # index 가 그 문자의 정본 슬롯이 아닐 수 있다 — 되돌릴 수 있게
+            # 번호로 남긴다. 뱅크0 의 `is_canonical` 과 같은 이유다.
+            canonical = bool(char) and bank1.index.get(char) == slot
+            out.append(char if canonical else f"{{b1:{slot}}}")
         elif glyphs.is_canonical(index):
             out.append(glyphs.char[index])
         elif index in glyphs.char:
