@@ -132,9 +132,25 @@ def main() -> int:
         rep.check(False, "못 박은 자리 검사", f"{pins} 가 없다", soft=True)
 
     # 3. 크래시 자리
-    occupied = sorted(i for i in VECTOR_BOMB if i < len(chars) and chars[i].strip())
+    # 금지 색인은 **게임 인덱스** 공간이다. 슬롯으로 보면 엉뚱한 자리를 본다.
+    import build_hangul_font as _BF
+    occupied = sorted((i, chars[i]) for i in range(len(chars))
+                      if chars[i].strip() and _BF.game_index(i) in VECTOR_BOMB)
     rep.check(not occupied, "벡터 폰트 크래시 자리 비어 있음",
-              "글자가 놓임: " + " ".join(f"{i}:{chars[i]}" for i in occupied[:10]))
+              "글자가 놓임: " + " ".join(f"{c}(슬롯{i})" for i, c in occupied[:10]))
+
+    # 3-1. 텍스처 칸을 넘지 않는가
+    #
+    # **리스트 위치는 게임 인덱스가 아니라 슬롯이다.**
+    # `게임인덱스 = (슬롯 // 756) * 882 + (슬롯 % 756)`. 이것을 게임 인덱스로
+    # 잘못 보고 「756~881 은 가리킬 셀이 없다」는 없는 결함을 고치려다 리스트를
+    # 1,638슬롯으로 늘려 빌드를 깨뜨리고 글자까지 잃었다. 슬롯 쪽 제약은
+    # 「텍스처 1,512칸을 넘지 않는다」 하나뿐이다.
+    import build_hangul_font as BF
+
+    rep.check(len(chars) <= BF.PER_TEXTURE,
+              f"슬롯 {len(chars):,} / 텍스처 {BF.PER_TEXTURE:,}칸",
+              f"{len(chars) - BF.PER_TEXTURE:,}칸 넘는다")
 
     # 4. 구워 둔 폰트가 정본에서 나왔는가
     font = ROOT / "work" / "font-all" / "font.bin"
@@ -159,7 +175,7 @@ def main() -> int:
     names_path = ROOT / "data" / "nameable-entities.json"
     if names_path.exists():
         names = json.loads(names_path.read_text(encoding="utf-8"))
-        index = {c: i for i, c in enumerate(chars)}
+        index = {c: _BF.game_index(i) for i, c in enumerate(chars)}
         need = {c for key in names["order"] for c in names["korean"][key]}
         absent = sorted(c for c in need if c not in index)
         over = sorted(c for c in need if c in index and index[c] >= BATTLE_CELLS)
@@ -184,7 +200,7 @@ def main() -> int:
     if menu_json.exists():
         rows = json.loads(menu_json.read_text(encoding="utf-8"))
         used = {c for row in rows for c in (row.get("ko") or "") if "가" <= c <= "힣"}
-        where = {c: i for i, c in enumerate(chars)}
+        where = {c: _BF.game_index(i) for i, c in enumerate(chars)}
         stray = sorted((where[c], c) for c in used if where.get(c, 0) >= BANK0)
         rep.check(not stray, f"메뉴 글자가 모두 뱅크0(<{BANK0}) 안에 있음",
                   " ".join(f"{c}({i})" for i, c in stray[:8]))
