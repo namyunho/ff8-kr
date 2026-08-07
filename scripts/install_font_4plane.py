@@ -44,8 +44,11 @@ def set_toc_entry(path: Path, index: int, lba: int, size: int) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    # `build_font_4plane.py` 의 출력과 같은 자리를 가리켜야 한다. 한때 여기가
+    # work/font-4plane/font.bin (옛 배치로 구운 것) 을 가리켜, 새 배치로 구운
+    # 폰트를 두고도 옛 폰트를 설치할 뻔했다 — `docs/lessons.md` 16번과 같은 부류다.
     parser.add_argument("--font", type=Path,
-                        default=Path("work/font-4plane/font.bin"))
+                        default=Path("work/font-all/font.bin"))
     parser.add_argument("--exe", type=Path,
                         default=Path("work/patch-4plane/SLPS_018.80"))
     parser.add_argument("--dry-run", action="store_true")
