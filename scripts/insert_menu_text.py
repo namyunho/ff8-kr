@@ -211,7 +211,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--layout", type=Path,
-                        default=Path("work/hangul-layout-all.json"))
+                        default=Path("data/glyph-layout.json"))
     parser.add_argument("--messages", type=Path,
                         default=Path("work/text/menu-messages.json"))
     parser.add_argument("--dry-run", action="store_true")

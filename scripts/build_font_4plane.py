@@ -27,12 +27,13 @@
     CLUT     (960,472)  16 x 32
 
     python3 scripts/build_font_4plane.py
-    python3 scripts/build_font_4plane.py --layout work/hangul-layout-all.json
+    python3 scripts/build_font_4plane.py --layout data/glyph-layout.json
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -74,7 +75,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--layout", type=Path,
-                        default=Path("work/hangul-layout-all.json"))
+                        default=Path("data/glyph-layout.json"))
     parser.add_argument("--ttf", type=Path, default=BF.DEFAULT_TTF)
     parser.add_argument("--size", type=int, default=12)
     parser.add_argument("--output", type=Path,
@@ -95,6 +96,14 @@ def main() -> int:
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_bytes(data)
+
+    # 어느 배치로 구웠는지 각인한다. 폰트와 텍스트가 서로 다른 배치를 따르면
+    # 화면이 통째로 다른 글자가 되는데 크래시가 아니라서 조용히 지나간다.
+    # `scripts/verify_layout.py` 가 이 각인을 대조해 관문 역할을 한다.
+    stamp = hashlib.sha256(
+        json.dumps(chars, ensure_ascii=False).encode("utf-8")).hexdigest()
+    (args.output.parent / "layout.sha256").write_text(stamp + "\n", encoding="utf-8")
+    print(f"  배치각인 {stamp[:16]}…")
     for key, value in stats.items():
         print(f"  {key:<4} {value:>8,}")
     print(f"  텍스처  VRAM{TEXTURE_VRAM}  {BF.TEX_W}x{BF.TEX_H_USED}")

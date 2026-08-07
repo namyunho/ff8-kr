@@ -13,7 +13,7 @@
 앞자리에 놓으면 본문이 작아지므로 배치 후보도 함께 낸다.
 
     python3 scripts/count_korean_syllables.py work/translate
-    python3 scripts/count_korean_syllables.py work/translate --layout work/hangul-layout.json --banks 2
+    python3 scripts/count_korean_syllables.py work/translate --layout data/glyph-layout.json --banks 2
 """
 
 from __future__ import annotations

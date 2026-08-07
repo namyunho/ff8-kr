@@ -44,7 +44,7 @@ import text_metrics as TM                   # noqa: E402
 ENDPOINT = "http://127.0.0.1:1234/v1/chat/completions"
 HOLE = re.compile(r"\{b1:(\d+)\}")
 KANA = re.compile(r"[぀-ヿ一-鿿]")
-LAYOUT = Path("work/hangul-layout-all.json")
+LAYOUT = Path("data/glyph-layout.json")
 FONT = Path("work/font-all/font.bin")
 
 SYSTEM = """당신은 게임 대사 번역가다. 파이널 판타지 8(PS1)의 일본어 대사를

@@ -23,7 +23,7 @@
 훑을 수 없으므로 고칠 자리를 기계로 다시 돌리는 데 쓴다.
 
     python3 scripts/check_translation.py work/translate
-    python3 scripts/check_translation.py work/translate --layout work/hangul-layout.json
+    python3 scripts/check_translation.py work/translate --layout data/glyph-layout.json
     python3 scripts/check_translation.py work/translate --report work/translate-check.json
 """
 
@@ -221,7 +221,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("root", type=Path, help="번역 내보내기 디렉터리")
-    parser.add_argument("--layout", type=Path, help="한글 배치 JSON")
+    parser.add_argument("--layout", type=Path, default=Path("data/glyph-layout.json"),
+                        help="한글 배치 JSON (정본)")
     parser.add_argument("--line-pixels", type=int, default=DEFAULT_LINE_PIXELS,
                         help=f"줄 폭 상한 (기본 {DEFAULT_LINE_PIXELS})")
     parser.add_argument("--report", type=Path,

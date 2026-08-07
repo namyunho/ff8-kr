@@ -88,7 +88,7 @@ def load() -> list[dict]:
     return json.loads(SOURCE.read_text(encoding="utf-8"))
 
 
-LAYOUT = Path("work/hangul-layout-4plane.json")
+LAYOUT = Path("data/glyph-layout.json")
 FONT = Path("work/font-4plane/font.bin")
 _METRICS: tuple[list[int], dict[str, int]] | None = None
 

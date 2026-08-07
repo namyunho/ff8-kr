@@ -45,7 +45,7 @@ import glyph_text as GT                      # noqa: E402
 import psx_disc as PSX                       # noqa: E402
 
 TOC_INDEX = 132
-LAYOUT = Path("work/hangul-layout-all.json")
+LAYOUT = Path("data/glyph-layout.json")
 
 # 실측 원문(디스크에서 직접 읽은 것) -> 초벌 한글. 0~5 는 확정 용어집
 # (work/text/glossary-additions.csv)을 따랐고, 나머지는 표준 FF8 표기를

@@ -182,8 +182,12 @@ def main() -> int:
                         default=Path("work/text/menu-messages.json"))
     parser.add_argument("--names", type=Path,
                         default=Path("data/nameable-entities.json"))
+    # **정본(data/glyph-layout.json)을 절대 기본값으로 두지 않는다.** 배치는
+    # 디스크 1~4 가 공유하는 계약이라, 빈도표가 바뀔 때마다 재생성되면 이미
+    # 인코딩한 텍스트가 전부 어긋난다. 이 도구는 '제안'만 내고, 정본 반영은
+    # 사람이 diff 를 보고 결정한다. `scripts/verify_layout.py` 가 관문이다.
     parser.add_argument("--output", type=Path,
-                        default=Path("work/hangul-layout-all.json"))
+                        default=Path("work/glyph-layout-proposed.json"))
     parser.add_argument("--measure", action="store_true",
                         help="현재 배치와 견주기만 하고 쓰지 않는다")
     args = parser.parse_args()

@@ -1,0 +1,191 @@
+#!/usr/bin/env python3
+"""글리프 배치가 계약을 지키는지 검사한다. **디스크에 쓰기 전 관문이다.**
+
+## 왜 필요한가
+
+배치(인덱스 -> 글자)는 폰트와 텍스트가 **동시에** 따라야 하는 계약이다. 둘이
+어긋나면 화면 전체가 다른 글자로 나오는데, 크래시가 아니라서 조용히 지나간다.
+실제로 이 저장소에는 한때 배치 파일이 여섯 개 있었고 서로 882칸 중 880칸이
+달랐다. 폰트는 새 배치로 굽고 `patch_disc.py` 는 옛 배치를 기본값으로 읽고
+있었다 — 매번 `--layout` 을 직접 넘겨서 안 터졌을 뿐이다.
+
+디스크 2~4 를 아직 번역하지 않았으므로 이 계약은 **앞으로 더 오래** 지켜야 한다.
+번역문이 늘면 빈도표가 바뀌고, 배치를 다시 생성하면 이미 넣은 것이 전부
+어긋난다. 그래서 배치는 산출물이 아니라 **입력**이어야 한다.
+
+## 무엇을 보는가
+
+    1. 정본이 자기 sha256 과 맞는가
+    2. 못 박은 자리(영문자 페이지)가 원본 글리프 그대로인가
+    3. 크래시 자리(벡터 폰트 구간)에 글자를 놓지 않았는가
+    4. 구워 둔 폰트가 정본으로 구운 것인가
+    5. 번역문이 쓰는 음절이 모두 배치에 있는가
+    6. 전투 이름 글꼴의 칸 번호가 정본 인덱스와 맞는가
+    7. 어떤 스크립트도 정본 아닌 배치를 읽지 않는가
+
+    python3 scripts/verify_layout.py
+    python3 scripts/verify_layout.py --strict      # 경고도 실패로 본다
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+CANON = ROOT / "data" / "glyph-layout.json"
+SINGLE = 224                      # 여기부터 두 바이트
+BATTLE_CELLS = 231                # 전투 이름 글꼴이 담는 칸 수 (21 x 11)
+
+# `AGENTS.md` 불변식 21 — EXE 의 벡터 폰트 루틴 `0x8002c540` 은 경계 검사를
+# 하지 않는다. 이 자리에 글자를 놓으면 그리는 순간 쓰레기를 읽는다.
+#
+# **베껴 적지 않는다.** 한 번 베껴 적었다가 안전한 네 칸(243·245·247·249)을
+# 위험으로 잘못 신고했다. 위험 목록도 정본이 하나여야 한다.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from build_layout_all import VECTOR_BOMB          # noqa: E402
+
+# 폐기된 도구. 배치를 읽지 않고 자기 스냅샷을 쓸 뿐이라 검사에서 뺀다.
+DEPRECATED = {"inject_hangul_font.py"}
+
+
+class Report:
+    def __init__(self) -> None:
+        self.fail: list[str] = []
+        self.warn: list[str] = []
+        self.ok: list[str] = []
+
+    def check(self, good: bool, title: str, detail: str = "", soft: bool = False) -> bool:
+        if good:
+            self.ok.append(title)
+        elif soft:
+            self.warn.append(f"{title} — {detail}" if detail else title)
+        else:
+            self.fail.append(f"{title} — {detail}" if detail else title)
+        return good
+
+
+def load_canon() -> dict:
+    if not CANON.exists():
+        print(f"정본이 없다: {CANON}", file=sys.stderr)
+        raise SystemExit(2)
+    return json.loads(CANON.read_text(encoding="utf-8"))
+
+
+def digest_of(chars: list[str]) -> str:
+    return hashlib.sha256(json.dumps(chars, ensure_ascii=False).encode("utf-8")).hexdigest()
+
+
+def korean_syllables(root: Path) -> set[str]:
+    found: set[str] = set()
+    if not root.exists():
+        return found
+    for path in root.rglob("*.json"):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        stack = [data]
+        while stack:
+            item = stack.pop()
+            if isinstance(item, str):
+                found.update(c for c in item if "가" <= c <= "힣")
+            elif isinstance(item, dict):
+                stack.extend(item.values())
+            elif isinstance(item, list):
+                stack.extend(item)
+    return found
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--strict", action="store_true", help="경고도 실패로 본다")
+    parser.add_argument("--text", type=Path, default=ROOT / "work" / "translate")
+    args = parser.parse_args()
+
+    canon = load_canon()
+    chars = canon["chars"]
+    rep = Report()
+
+    # 1. 자기 해시
+    actual = digest_of(chars)
+    rep.check(actual == canon.get("sha256"), "정본 sha256 일치",
+              f"기록 {canon.get('sha256','?')[:16]}… vs 실제 {actual[:16]}…")
+
+    # 2. 못 박은 자리 — 영문자 페이지는 원본 글리프를 그대로 둔다
+    pins = ROOT / "work" / "keyboard-pins.json"
+    if pins.exists():
+        pinned = json.loads(pins.read_text(encoding="utf-8"))
+        bad = [(int(i), c, chars[int(i)]) for i, c in pinned.items()
+               if int(i) < len(chars) and chars[int(i)] != c]
+        rep.check(not bad, f"못 박은 자리 {len(pinned)}칸 보존",
+                  "어긋남 " + ", ".join(f"{i}:{want}->{got}" for i, want, got in bad[:6]))
+    else:
+        rep.check(False, "못 박은 자리 검사", f"{pins} 가 없다", soft=True)
+
+    # 3. 크래시 자리
+    occupied = sorted(i for i in VECTOR_BOMB if i < len(chars) and chars[i].strip())
+    rep.check(not occupied, "벡터 폰트 크래시 자리 비어 있음",
+              "글자가 놓임: " + " ".join(f"{i}:{chars[i]}" for i in occupied[:10]))
+
+    # 4. 구워 둔 폰트가 정본에서 나왔는가
+    font = ROOT / "work" / "font-all" / "font.bin"
+    stamp = ROOT / "work" / "font-all" / "layout.sha256"
+    if font.exists():
+        recorded = stamp.read_text(encoding="utf-8").strip() if stamp.exists() else None
+        rep.check(recorded == actual, "구워 둔 폰트가 정본에서 나옴",
+                  "각인이 없다 — build_font_4plane.py 를 다시 돌려라"
+                  if recorded is None else f"각인 {recorded[:16]}… != 정본 {actual[:16]}…",
+                  soft=recorded is None)
+    else:
+        rep.check(False, "폰트 산출물 존재", f"{font} 가 없다", soft=True)
+
+    # 5. 번역문이 쓰는 음절이 모두 배치에 있는가
+    have = {c for c in chars}
+    used = korean_syllables(args.text)
+    missing = sorted(used - have)
+    rep.check(not missing, f"번역문 음절 {len(used)}자 모두 배치에 있음",
+              f"{len(missing)}자 없음: {' '.join(missing[:20])}")
+
+    # 6. 전투 이름 글꼴 — 이름 음절이 231칸 안에 있는가
+    names_path = ROOT / "data" / "nameable-entities.json"
+    if names_path.exists():
+        names = json.loads(names_path.read_text(encoding="utf-8"))
+        index = {c: i for i, c in enumerate(chars)}
+        need = {c for key in names["order"] for c in names["korean"][key]}
+        absent = sorted(c for c in need if c not in index)
+        over = sorted(c for c in need if c in index and index[c] >= BATTLE_CELLS)
+        rep.check(not absent, f"이름 음절 {len(need)}자 모두 배치에 있음",
+                  "없음: " + " ".join(absent))
+        rep.check(not over, f"이름 음절이 전투 글꼴 {BATTLE_CELLS}칸 안에 있음",
+                  "범위 밖: " + " ".join(f"{c}({index[c]})" for c in over))
+
+    # 7. 정본 아닌 배치를 읽는 스크립트가 있는가
+    stray = []
+    for path in sorted((ROOT / "scripts").glob("*.py")):
+        if path.name in DEPRECATED or path.name == "verify_layout.py":
+            continue
+        text = path.read_text(encoding="utf-8")
+        for hit in re.findall(r"[\w/.-]*hangul-layout[\w.-]*\.json", text):
+            stray.append(f"{path.name}: {hit}")
+    rep.check(not stray, "모든 스크립트가 정본만 읽음", "; ".join(stray[:6]))
+
+    for line in rep.ok:
+        print(f"  통과  {line}")
+    for line in rep.warn:
+        print(f"  경고  {line}")
+    for line in rep.fail:
+        print(f"  실패  {line}")
+    print(f"\n통과 {len(rep.ok)} / 경고 {len(rep.warn)} / 실패 {len(rep.fail)}")
+    if rep.fail or (args.strict and rep.warn):
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

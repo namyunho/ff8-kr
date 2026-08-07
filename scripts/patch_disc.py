@@ -423,7 +423,7 @@ def main() -> int:
     parser.add_argument("--apply", type=Path, metavar="JSON",
                         help="{필드: {메시지 id: 문자열}} 을 적용한다")
     parser.add_argument("--layout", type=Path,
-                        default=PATCH_DIR / "hangul-layout.json",
+                        default=PROJECT_ROOT / "data/glyph-layout.json",
                         help="한글 배치 JSON (inject_hangul_font.py 가 낸다)")
     parser.add_argument("--fit", type=Path, metavar="워크시트",
                         help="번역문이 원본 MSD 크기에 들어가는지 잰다")
