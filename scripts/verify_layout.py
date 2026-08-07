@@ -165,7 +165,28 @@ def main() -> int:
         rep.check(not over, f"이름 음절이 전투 글꼴 {BATTLE_CELLS}칸 안에 있음",
                   "범위 밖: " + " ".join(f"{c}({index[c]})" for c in over))
 
-    # 7. 정본 아닌 배치를 읽는 스크립트가 있는가
+    # 7. 고정폭 슬롯이 아직 들어가는가
+    #
+    # **이 검사가 없어서 한 번 깨뜨렸다.** 이름 입력 화면의 글자판은 한 줄이
+    # 5바이트 고정이다(게임이 줄을 바이트로 센다). 배치를 바꾸며 어떤 음절을
+    # 2바이트 구간으로 밀어냈는데, 하필 그 음절이 글자판에 있어서 줄이 6바이트가
+    # 되고 이름이 통째로 깨졌다. 인코딩 자체는 성공하므로 「실패 0건」으로 보인다.
+    # 손으로 슬롯 목록을 적지 않는다. **삽입기 자신이 정본이다** — 처음에는
+    # 이름 글자판(그룹1)만 확인했다가, 같은 사고를 메뉴 그룹7 '재배열' 에서 또
+    # 냈다. 고정폭 슬롯은 메뉴 전반에 흩어져 있고 목록은 도구 안에 있다.
+    menu = ROOT / "work" / "text" / "menu-messages.json"
+    if menu.exists():
+        import subprocess
+        done = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "insert_menu_text.py"), "--dry-run"],
+            capture_output=True, text=True)
+        tail = (done.stderr or done.stdout).strip().splitlines()
+        rep.check(done.returncode == 0, "메뉴 고정폭 슬롯 전부 들어감",
+                  tail[-1] if tail else f"종료코드 {done.returncode}")
+    else:
+        rep.check(False, "메뉴 슬롯 검사", f"{menu} 가 없다", soft=True)
+
+    # 8. 정본 아닌 배치를 읽는 스크립트가 있는가
     stray = []
     for path in sorted((ROOT / "scripts").glob("*.py")):
         if path.name in DEPRECATED or path.name == "verify_layout.py":
