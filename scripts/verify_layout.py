@@ -21,7 +21,9 @@
     4. 구워 둔 폰트가 정본으로 구운 것인가
     5. 번역문이 쓰는 음절이 모두 배치에 있는가
     6. 전투 이름 글꼴의 칸 번호가 정본 인덱스와 맞는가
-    7. 어떤 스크립트도 정본 아닌 배치를 읽지 않는가
+    7. 메뉴가 쓰는 글자가 뱅크0 안에 있는가 (뱅크1 은 평면이 어긋난다)
+    8. 메뉴의 고정폭 슬롯이 아직 들어가는가 (삽입기를 그대로 돌린다)
+    9. 어떤 스크립트도 정본 아닌 배치를 읽지 않는가
 
     python3 scripts/verify_layout.py
     python3 scripts/verify_layout.py --strict      # 경고도 실패로 본다
@@ -39,6 +41,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CANON = ROOT / "data" / "glyph-layout.json"
 SINGLE = 224                      # 여기부터 두 바이트
+BANK0 = 882                       # 여기부터 뱅크1 — 메뉴는 못 쓴다
 BATTLE_CELLS = 231                # 전투 이름 글꼴이 담는 칸 수 (21 x 11)
 
 # `AGENTS.md` 불변식 21 — EXE 의 벡터 폰트 루틴 `0x8002c540` 은 경계 검사를
@@ -171,6 +174,21 @@ def main() -> int:
     # 5바이트 고정이다(게임이 줄을 바이트로 센다). 배치를 바꾸며 어떤 음절을
     # 2바이트 구간으로 밀어냈는데, 하필 그 음절이 글자판에 있어서 줄이 6바이트가
     # 되고 이름이 통째로 깨졌다. 인코딩 자체는 성공하므로 「실패 0건」으로 보인다.
+    # 7-1. 메뉴가 쓰는 글자는 뱅크0 에 있어야 한다
+    #
+    # 메뉴를 그리는 오버레이는 **뱅크 비트를 안 더한다**(`build_layout_all.py`).
+    # 뱅크1(인덱스 >= 882) 글자를 쓰면 그 글자만 엉뚱한 평면으로 나온다.
+    # **인코딩은 성공하므로 `--dry-run` 관문에 안 걸린다** — 렌더링 제약이라
+    # 따로 봐야 한다. 실제로 이걸 안 봐서 화면에서 '결' 이 깨졌다.
+    menu_json = ROOT / "work" / "text" / "menu-messages.json"
+    if menu_json.exists():
+        rows = json.loads(menu_json.read_text(encoding="utf-8"))
+        used = {c for row in rows for c in (row.get("ko") or "") if "가" <= c <= "힣"}
+        where = {c: i for i, c in enumerate(chars)}
+        stray = sorted((where[c], c) for c in used if where.get(c, 0) >= BANK0)
+        rep.check(not stray, f"메뉴 글자가 모두 뱅크0(<{BANK0}) 안에 있음",
+                  " ".join(f"{c}({i})" for i, c in stray[:8]))
+
     # 손으로 슬롯 목록을 적지 않는다. **삽입기 자신이 정본이다** — 처음에는
     # 이름 글자판(그룹1)만 확인했다가, 같은 사고를 메뉴 그룹7 '재배열' 에서 또
     # 냈다. 고정폭 슬롯은 메뉴 전반에 흩어져 있고 목록은 도구 안에 있다.
