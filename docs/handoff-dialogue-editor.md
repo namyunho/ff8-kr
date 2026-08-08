@@ -30,6 +30,31 @@ FF8 한국어화 저장소의 대사·용어 편집기 작업을 한다. 브랜�
 - 배치(data/glyph-layout.json)는 계약이다. 편집기가 건드리지 않는다
 - 작업이 끝나면 python3 scripts/verify_layout.py 가 통과해야 한다
 
+편집 대상은 대사만이 아니다. **우리가 고칠 수 있는 글자 전부**를 한 편집기에서
+다루는 것을 전제로 설계해라. 자료가 흩어져 있으니 먼저 경로를 확인한다.
+
+  필드 대사          work/translate/*.json
+                     (워크시트: work/text/*worksheet*.csv — 지금 편집기가 쓰는 것)
+  메뉴 문구          work/text/menu-messages.json
+  캐릭터·GF 이름     data/nameable-entities.json   <- 정본. 글자판 배열도 여기
+  아이템·마법·어빌리티·전투커맨드·전투결과·
+  이름을 못 바꾸는 캐릭터 이름
+                     work/text/kernel-text-ko.json
+  지명 19개          scripts/patch_location_table.py 의 NAMES 리스트
+                     <- **코드 안에 박혀 있다.** 자료로 빼내는 것도 이 작업에 포함
+  튜토리얼           work/tutorial-bundle/bundle-*.md  (삽입 도구 없음)
+
+python3 scripts/tower.py --where <주제> 가 각 자료의 위치와 반영 순서를 알려 준다.
+
+자료마다 제약이 다르다 — 하나로 뭉뚱그리지 말고 각각 확인해라.
+  필드 대사   바이트 예산 + 줄 픽셀 폭(최대 302px) + 줄 수
+  kernel      자리 바이트만. NUL 위치를 못 옮긴다
+  이름 글자판 한 줄 5바이트 고정, 음절이 1바이트 구간에 있어야 한다
+  메뉴        제자리 그룹(insert_menu_text.STRICT_GROUPS)은 원래 길이를 못 넘는다
+
+편집기가 자료를 직접 쓰되, **정본(data/ 아래)은 함부로 덮지 않는다.**
+정본과 화면이 어긋나면 어느 쪽이 새것인지 먼저 가린다 (AGENTS.md 불변식 26).
+
 먼저 계획을 말하고, 내가 확인한 뒤에 코드를 쓴다.
 ```
 
