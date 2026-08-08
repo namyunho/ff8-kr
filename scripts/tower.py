@@ -86,11 +86,10 @@ STAGES: list[Stage] = [
           ["scripts/patch_battle_font.py"],
           "TOC#26 안의 TIM 을 갈아 끼우고 다시 압축한다", writes_disc=True),
     Stage("kernel", "kernel 텍스트",
-          ["scripts/insert_kernel_text.py", "--repack", "all"],
+          ["scripts/insert_kernel_text.py"],
           "아이템·마법·어빌리티·전투커맨드·결과창과 **이름을 못 바꾸는 캐릭터 이름**. "
-          "글자 섹션을 **처음부터 다시 짠다**(--repack) — 게임이 널을 세어 문자열을 "
-          "찾으므로 크기·널 개수·차례만 지키면 길이는 바꿔도 된다. "
-          "**실기 확인 대기 중이다** — 깨지면 --repack 을 빼면 제자리 삽입으로 돌아간다",
+          "제자리 삽입. **자리보다 긴 번역은 안 넣고 세어서 알려 준다**. "
+          "--repack 은 실기에서 깨졌다 — 문자열이 절대 위치로 가리켜진다",
           writes_disc=True),
     Stage("field", "필드 대사",
           ["scripts/patch_disc.py", "--apply", "work/apply-plan.json"],
@@ -120,8 +119,8 @@ CONSUMERS = [
     ("전투 이름 글꼴", "patch_battle_font.py", True,
      "TOC#26 안의 TIM. **칸 번호가 곧 글리프 인덱스**라 배치와 직접 묶인다"),
     ("kernel — 아이템·마법·GF어빌리티·전투커맨드·결과창·못 바꾸는 캐릭터 이름",
-     "insert_kernel_text.py --repack all", True,
-     "글자 섹션을 다시 짠다. **크기·널 개수·차례만 지키고 길이는 바꾼다** — "
+     "insert_kernel_text.py", True,
+     "제자리 삽입. **자리보다 긴 번역은 안 넣고 세어서 알려 준다** — "
      "남은 수는 --status 가 자료에서 직접 잰다"),
     ("튜토리얼", None, False,
      "번역 꾸러미만 있다(work/tutorial-bundle). **삽입 도구가 없다**"),
