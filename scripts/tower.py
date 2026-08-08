@@ -86,11 +86,11 @@ STAGES: list[Stage] = [
           ["scripts/patch_battle_font.py"],
           "TOC#26 안의 TIM 을 갈아 끼우고 다시 압축한다", writes_disc=True),
     Stage("kernel", "kernel 텍스트",
-          ["scripts/insert_kernel_text.py", "--repack", "all"],
+          ["scripts/insert_kernel_text.py", "--repack", "all", "--grow"],
           "아이템·마법·어빌리티·전투커맨드·결과창과 **이름을 못 바꾸는 캐릭터 이름**. "
-          "글자 섹션을 다시 짜면서 **오프셋 표까지 함께 고친다**(--repack). "
+          "글자 섹션을 다시 짜면서 **오프셋 표까지 함께 고치고**, 모자라면 **섹션을 밀어 파일을 늘린다**(--repack --grow). "
           "표는 kernel_offset_tables 가 찾고, kernel_repack 이 항등·밀기 검산을 "
-          "통과한 뒤에만 쓴다. 섹션 크기·파일 크기는 그대로다",
+          "통과한 뒤에만 쓴다. 늘어난 만큼 머리의 56칸 오프셋 표와 IMG TOC 크기를 함께 고친다 — kernel.bin 자기 마지막 섹터의 888B 안이라 다른 파일은 안 민다",
           writes_disc=True),
     Stage("field", "필드 대사",
           ["scripts/patch_disc.py", "--apply", "work/apply-plan.json"],
@@ -120,7 +120,7 @@ CONSUMERS = [
     ("전투 이름 글꼴", "patch_battle_font.py", True,
      "TOC#26 안의 TIM. **칸 번호가 곧 글리프 인덱스**라 배치와 직접 묶인다"),
     ("kernel — 아이템·마법·GF어빌리티·전투커맨드·결과창·못 바꾸는 캐릭터 이름",
-     "insert_kernel_text.py --repack all", True,
+     "insert_kernel_text.py --repack all --grow", True,
      "글자 섹션을 다시 짜고 **오프셋 표를 함께 고친다** — "
      "남은 수는 --status 가 자료에서 직접 잰다"),
     ("튜토리얼", None, False,

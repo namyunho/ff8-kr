@@ -153,6 +153,11 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true")
     # **자리를 옮겨도 되는지는 실기로 가린다.** 그래서 섹션을 하나씩 켠다.
     # `--repack 34,38` 처럼 쓰고, `all` 이면 되는 섹션 전부.
+    # **섹션이 자라도 되게 한다.** 뒤 섹션이 밀리고 파일이 커지므로 머리의
+    # 56칸 오프셋 표와 IMG TOC 의 크기 항목을 함께 고친다. kernel.bin 은 자기
+    # 마지막 섹터에 888B 가 놀고 있어 다른 파일을 안 밀어도 된다.
+    parser.add_argument("--grow", action="store_true",
+                        help="섹션이 자라도 되게 한다 (파일 크기와 TOC 를 고친다)")
     parser.add_argument("--repack", default="",
                         help="이 섹션은 제자리가 아니라 처음부터 다시 짠다 "
                              "(쉼표로 구분, 'all' 이면 되는 것 전부)")
@@ -190,16 +195,16 @@ def main() -> int:
             fresh, changed, failed = encode_section(plan, index, korean, glyphs, bank1)
             replace[index] = fresh
             total_failed += failed
-        merged, refused = KR.apply(plan, replace)
-        for index in sorted(replace):
-            if index in refused:
-                a, b = plan.secs[index]
-                need = sum(len(p) + 1 for p in replace[index])
-                repacked.append(f"#{index}  **{need - (b - a - plan.pad[index])}B "
-                                f"모자라 제자리로 되돌림**")
-            else:
-                total_changed += sum(1 for p in replace[index] if p)
+        if args.grow:
+            room = -(-size // PD.SECTOR_USER) * PD.SECTOR_USER
+            merged, grown_at = KR.grow(plan, replace, limit=room)
+            refused = []
+            for index in sorted(replace):
                 repacked.append(f"#{index}  다시 짬  넣음 {len(replace[index]):>3}")
+                total_changed += sum(1 for p in replace[index] if p)
+        else:
+            merged, refused = KR.apply(plan, replace)
+            grown_at = None
         raw = bytearray(merged)
         want -= set(refused)
         skip = set(replace) - set(refused)
@@ -238,7 +243,17 @@ def main() -> int:
         print("\n--dry-run 이라 쓰지 않았다")
         return 0
 
-    PD.write_user(PD.PATCH_BIN, lba, bytes(raw))
+    fresh_size = len(raw)
+    room = -(-max(size, fresh_size) // PD.SECTOR_USER) * PD.SECTOR_USER
+    PD.write_user(PD.PATCH_BIN, lba, bytes(raw) + b"\x00" * (room - fresh_size))
+    if fresh_size != size:
+        # **IMG TOC 의 크기 항목도 고친다.** 안 고치면 게임이 뒷부분을 안 읽는다.
+        toc = bytearray(PD.read_user(PD.PATCH_BIN, OC.TOC_LBA, 2048))
+        struct.pack_into("<II", toc, TOC_INDEX * 8, lba, fresh_size)
+        PD.write_user(PD.PATCH_BIN, OC.TOC_LBA, bytes(toc))
+        print(f"  파일 {size:,}B -> {fresh_size:,}B  ({fresh_size - size:+,}B), "
+              f"섹터 {room // PD.SECTOR_USER}개 안. TOC 크기도 고쳤다")
+    size = fresh_size
     back = PD.read_user(PD.PATCH_BIN, lba, size)
     if back != bytes(raw):
         print("  **쓴 대로 안 읽힌다**", file=sys.stderr)
@@ -250,7 +265,7 @@ def main() -> int:
     if want:
         wrong = 0
         for index in sorted(want):
-            got = KR.deref(plan, back, index)
+            got = KR.deref(plan, back, index, grown_at)
             for k, (piece, expect) in enumerate(zip(got, replace[index])):
                 if piece.rstrip(bytes([SPACE])) != expect.rstrip(bytes([SPACE])):
                     wrong += 1

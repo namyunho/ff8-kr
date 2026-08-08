@@ -97,6 +97,71 @@ def lay_out(plan: Plan, index: int, fresh: list[bytes]) -> tuple[bytes, dict[int
     return body, move
 
 
+SECTORS = 2048
+ALIGN = 4
+
+
+def grow(plan: Plan, replace: dict[int, list[bytes]],
+         limit: int | None = None) -> tuple[bytes, dict[int, int]]:
+    """**섹션이 자라도 되는** 재배치. `(바이트, 섹션 -> 새 시작)`.
+
+    글자 섹션이 필요한 만큼 커지고 뒤 섹션이 밀린다. 그러면 고칠 것이 둘 는다.
+
+        머리의 56칸 섹션 오프셋 표    섹션이 어디서 시작하는지
+        표가 들어 있는 자리          구조체 섹션도 함께 밀리므로
+
+    문자열 오프셋 표의 **값**은 섹션 기준 상대라 안 바뀐다 — 바뀌는 것은 그
+    표가 파일 어디에 있느냐다.
+
+    **섹션 주소를 절대값으로 들고 있는 곳이 없는지 미리 셌다.** 머리 표 밖에
+    4바이트 정렬 u32 로 섹션 시작을 가리키는 자리는 0곳이다.
+    """
+    bodies: list[bytes] = []
+    moves: dict[int, dict[int, int]] = {}
+    for index, (a, b) in enumerate(plan.secs):
+        if index not in plan.tables:
+            bodies.append(plan.raw[a:b])
+            continue
+        fresh = list(replace.get(index, plan.strings[index]))
+        need = sum(len(p) + 1 for p in fresh)
+        size = (need + ALIGN - 1) // ALIGN * ALIGN
+        move: dict[int, int] = {}
+        at = old = 0
+        for new_piece, old_piece in zip(fresh, plan.strings[index]):
+            move[old] = at
+            old += len(old_piece) + 1
+            at += len(new_piece) + 1
+        moves[index] = move
+        bodies.append(b"".join(p + b"\x00" for p in fresh) + b"\x00" * (size - need))
+
+    head = 4 + 4 * len(plan.secs)
+    offsets: list[int] = []
+    at = head
+    for body in bodies:
+        offsets.append(at)
+        at += len(body)
+    if limit is not None and at > limit:
+        raise ValueError(f"{at:,}B 가 되어 {limit:,}B 를 넘는다")
+
+    out = bytearray(struct.pack("<I", len(plan.secs)))
+    for value in offsets:
+        out += struct.pack("<I", value)
+    for body in bodies:
+        out += body
+
+    # 표는 구조체 섹션 안에 있고 그 섹션도 밀렸다 — 새 자리에서 값을 고친다
+    for index, move in moves.items():
+        for table in plan.tables[index]:
+            was_host = plan.secs[table.host][0]
+            shift = offsets[table.host] - was_host
+            for k in range(table.count):
+                spot = table.start + k * table.stride
+                value = struct.unpack_from("<H", plan.raw, spot)[0]
+                if value in move:
+                    struct.pack_into("<H", out, spot + shift, move[value])
+    return bytes(out), {i: o for i, o in enumerate(offsets)}
+
+
 def apply(plan: Plan, replace: dict[int, list[bytes]]) -> tuple[bytes, list[int]]:
     """새 문자열을 넣고 표까지 고친 파일. `(바이트, 못 넣은 섹션들)`."""
     raw = bytearray(plan.raw)
@@ -160,17 +225,50 @@ def selftest(plan: Plan) -> int:
     print(f"  {'통과' if ok == moved and moved else '**실패**'}  밀기 검산 — "
           f"섹션 {ok}/{moved}개가 표를 따라가도 같은 글자를 낸다")
     bad += ok != moved or not moved
+
+    # 3) 자라기 항등 — **섹션을 밀 수 있는 길로도** 안 바꾸면 파일이 그대로여야 한다
+    same, offsets = grow(plan, {})
+    if same == plan.raw:
+        print("  통과  자라기 항등 검산 — 섹션을 미는 길로도 파일이 그대로다")
+    else:
+        bad += 1
+        where = [i for i in range(min(len(same), len(plan.raw)))
+                 if same[i] != plan.raw[i]]
+        print(f"  **실패**  자라기 항등 검산 — 크기 {len(plan.raw):,}->{len(same):,}, "
+              f"{len(where)}바이트 다르다 (처음 {where[:6]})")
+
+    # 4) 자라기 — 한 섹션을 늘리면 뒤가 밀리고, 그래도 표가 같은 글자를 낸다
+    grew = fine = 0
+    for index, parts in plan.strings.items():
+        if not parts:
+            continue
+        fresh = list(parts)
+        fresh[0] = fresh[0] + bytes([SPACE]) * 8       # 8바이트 늘려 본다
+        data, offsets = grow(plan, {index: fresh})
+        grew += 1
+        want = [p.rstrip(bytes([SPACE])) for p in fresh]
+        got = [g.rstrip(bytes([SPACE])) for g in deref(plan, data, index, offsets)]
+        if got == want:
+            fine += 1
+        else:
+            print(f"  **실패**  자라기 검산 #{index} — 민 뒤 표가 다른 글자를 낸다")
+    print(f"  {'통과' if fine == grew and grew else '**실패**'}  자라기 검산 — "
+          f"섹션 {fine}/{grew}개가 8바이트 늘려도 표가 같은 글자를 낸다")
+    bad += fine != grew or not grew
     return bad
 
 
-def deref(plan: Plan, data: bytes, index: int) -> list[bytes]:
-    """**게임이 하듯** 표를 따라가 문자열을 꺼낸다. 차례는 원본 기준.
+def deref(plan: Plan, data: bytes, index: int,
+          offsets: dict[int, int] | None = None) -> list[bytes]:
+    """**게임이 하듯** 표를 따라가 문자열을 꺼낸다.
 
-    표의 칸 순서가 곧 문자열 차례는 아니므로(빈칸이 섞이고, 이름·설명이 다른
-    필드에 있다), 원본에서 「이 칸은 몇 번째 문자열」인지 먼저 배운 뒤 새
-    파일에서 같은 칸을 따라간다.
+    차례는 **원본에서 배우고**(어느 칸이 몇 번째 문자열인지), 값은 **새
+    파일에서 읽는다.** 이 둘을 안 가르면 새 파일에서 옛 값을 읽으려 든다 —
+    실제로 그렇게 짰다가 25개 섹션이 전부 틀렸다고 나왔다.
+
+    `offsets` 는 섹션이 밀렸을 때의 새 시작. 없으면 안 밀린 것이다.
     """
-    a, _ = plan.secs[index]
+    base = plan.secs[index][0] if offsets is None else offsets[index]
     order: dict[int, int] = {}               # 옛 상대오프셋 -> 문자열 차례
     at = 0
     for k, piece in enumerate(plan.strings[index]):
@@ -179,14 +277,15 @@ def deref(plan: Plan, data: bytes, index: int) -> list[bytes]:
 
     out: list[bytes | None] = [None] * len(plan.strings[index])
     for table in plan.tables[index]:
+        shift = 0 if offsets is None else offsets[table.host] - plan.secs[table.host][0]
         for k in range(table.count):
-            spot = table.start + k * table.stride
-            was = struct.unpack_from("<H", plan.raw, spot)[0]
+            old_spot = table.start + k * table.stride
+            was = struct.unpack_from("<H", plan.raw, old_spot)[0]
             if was not in order:
                 continue
-            now = struct.unpack_from("<H", data, spot)[0]
-            end = data.find(b"\x00", a + now)
-            out[order[was]] = data[a + now:end]
+            now = struct.unpack_from("<H", data, old_spot + shift)[0]
+            end = data.find(b"\x00", base + now)
+            out[order[was]] = data[base + now:end]
     return [b"" if v is None else v for v in out]
 
 

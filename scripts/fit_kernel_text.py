@@ -81,6 +81,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--dry-run", action="store_true")
+    # 자라기 모드에서는 예산이 **섹션이 아니라 파일 전체**다. 섹션은 필요한
+    # 만큼 커지고 뒤가 밀리므로, 총합이 섹터 한도 안에만 들면 축약이 필요 없다.
+    parser.add_argument("--grow", action="store_true",
+                        help="섹션이 자라도 되는 경우 (예산이 파일 전체다)")
     args = parser.parse_args()
 
     plan = KR.survey()
@@ -132,6 +136,8 @@ def main() -> int:
 
         choice: dict[int, str] = {}
         need = total(choice)
+        if args.grow:
+            budget = need                    # 섹션 예산이 없다 — 총합으로 따로 본다
         # **설명만** 후보로 둔다. 아낀 바이트가 큰 것부터 — 손대는 줄을 줄인다
         cand = []
         for offset, draft, cut, k, _ in items:
@@ -163,6 +169,16 @@ def main() -> int:
         print(f"{index:>5}{budget:>7,}B{full:>7,}B{now:>7,}B{used:>7}{cand:>6}{mark}")
     total_cut = sum(r[4] for r in report)
     print(f"\n줄인 줄 {total_cut}건 (전에는 396건) · 자리가 모자란 섹션 {stuck}개")
+    if args.grow:
+        # 섹션이 자란 뒤의 파일 크기. 글자 섹션은 필요한 만큼, 나머지는 그대로.
+        need = {r[0]: r[3] for r in report}
+        whole = 4 + 4 * len(plan.secs)
+        for index, (lo, hi) in enumerate(plan.secs):
+            whole += ((need[index] + 3) // 4 * 4) if index in need else hi - lo
+        room = -(-whole // 2048) * 2048
+        limit = 18 * 2048
+        print(f"파일 전체 {whole:,}B (섹터 {room // 2048}개) / 한도 {limit:,}B"
+              f"  {'여유 ' + format(limit - whole, ',') + 'B' if whole <= limit else '**넘친다**'}")
 
     if args.dry_run:
         print("\n--dry-run 이라 쓰지 않았다")
