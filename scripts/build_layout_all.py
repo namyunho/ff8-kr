@@ -39,6 +39,7 @@ from __future__ import annotations
 
 import argparse
 import collections
+import os
 import json
 import re
 import sys
@@ -360,7 +361,7 @@ def main() -> int:
         # **밀려나는 음절이 있고, 그것이 멀쩡하던 줄을 새로 넘치게 한다.**
         # `'용'` 을 올렸더니 397줄로 줄어들 것이 428줄로 늘었다. 그래서 후보를
         # 몇 개만 추린 뒤 각각 실제로 배치해서 넘치는 줄을 다시 센다.
-        PROBES = 15
+        PROBES = 150   # 후보를 좁게 재면 '메' 같은 것이 순위 밖에 남는다
         base, _ = cost(tally, chars)
         budget = int(base * args.relieve / 100)
         over = kernel_over(chars)
@@ -372,12 +373,15 @@ def main() -> int:
         for _ in range(64):
             if not over:
                 break
-            # 혼자 올려서 그 줄을 통째로 들여보내는 음절만 후보로 본다
+            # 후보는 **넘치는 줄에 있는 2바이트 음절 전부**다. 「혼자 올려서
+            # 그 줄을 통째로 들여보내는 것」만 보면 `엔젤 윙`(엔·윙 둘 다
+            # 2바이트, 자리 4B 에 +2)처럼 **둘을 함께 올려야 들어가는 줄**을
+            # 영영 못 고른다. 한 음절씩 줄여 나가다 마지막에 들어가면 된다.
             gain = collections.Counter()
             for row in over:
                 for char, n in row["two"].items():
-                    if char not in keyboard and n >= row["need"]:
-                        gain[char] += 1
+                    if char not in keyboard:
+                        gain[char] += min(n, row["need"])   # 이 줄에서 아낄 바이트
             chosen, probed, cramped = None, 0, False
             for char, _predicted in gain.most_common():
                 if probed >= PROBES:
@@ -392,18 +396,33 @@ def main() -> int:
                     continue
                 probed += 1
                 after = kernel_over(trial)
-                if len(after) < len(over) and (chosen is None
-                                               or len(after) < len(chosen[2])):
-                    chosen = (char, trial, after, paid)
+                # 줄 수가 먼저, 같으면 넘치는 바이트로 가린다 — 부분 진전을 받는다
+                score = (len(after), sum(r["need"] for r in after))
+                now = (len(over), sum(r["need"] for r in over))
+                if score < now and (chosen is None or score < chosen[4]):
+                    chosen = (char, trial, after, paid, score)
             if chosen is None:
+                if os.environ.get("RELIEVE_DEBUG"):
+                    print(f"    [디버그] 후보 {len(gain)}개 중 {probed}개를 재 봤다. "
+                          f"지금 {(len(over), sum(r['need'] for r in over))}")
+                    for ch2, pred in gain.most_common(8):
+                        try:
+                            tr = build(tally, pins, keyboard + [ch2], menu_chars)
+                        except ValueError:
+                            print(f"      '{ch2}' 자리 없음"); continue
+                        pd = cost(tally, tr)[0] - base
+                        af = kernel_over(tr)
+                        print(f"      '{ch2}' 예측{pred} -> "
+                              f"{(len(af), sum(r['need'] for r in af))} 본문{pd:+,}B "
+                              f"{'예산초과' if pd > budget else ''}")
                 if cramped:
                     stop = "1바이트 구간에 빈자리가 없다"
                 elif not probed:
                     stop = f"예산 {budget:,}바이트를 다 썼다"
                 break
-            char, chars, over, spent = chosen
+            char, chars, over, spent, _ = chosen
             keyboard.append(char)
-            print(f"  '{char}' 올려 초과 {len(over)}줄 "
+            print(f"  '{char}' 올려 초과 {len(over)}줄 {sum(r['need'] for r in over)}B "
                   f"(본문 {spent:+,}바이트)")
         else:
             stop = "64번을 다 돌았다 — 더 돌리려면 상한을 올린다"
