@@ -205,6 +205,17 @@ def main() -> int:
         rep.check(not stray, f"메뉴 글자가 모두 뱅크0(<{BANK0}) 안에 있음",
                   " ".join(f"{c}({i})" for i, c in stray[:8]))
 
+        # kernel 도 같은 제약을 받는다. **이 검사가 없어서 '닉'(피닉스의 꼬리)이
+        # 뱅크1 로 가 깨졌다.** 메뉴만 보고 kernel 을 안 봤다.
+        kernel = ROOT / "work" / "text" / "kernel-text-ko.json"
+        if kernel.exists():
+            kused = {c for row in json.loads(kernel.read_text(encoding="utf-8"))
+                     for c in (row.get("ko") or "") if "가" <= c <= "힣"}
+            kstray = sorted((where[c], c) for c in kused if where.get(c, 0) >= BANK0)
+            rep.check(not kstray, f"kernel 글자가 모두 뱅크0(<{BANK0}) 안에 있음",
+                      f"{len(kstray)}자: "
+                      + " ".join(f"{c}({i})" for i, c in kstray[:10]))
+
     # 7-2. 이름 글자판은 한 줄이 5바이트 고정이고, 쓰는 음절은 전부 1바이트여야 한다
     #
     # **이 검사를 「더 일반적」이라며 --dry-run 으로 바꿨다가 다시 깨뜨렸다.**
