@@ -119,6 +119,173 @@ CONSUMERS = [
 ]
 
 
+# ── 링크 등록소 ────────────────────────────────────────────────────────────
+#
+# **관제탑은 자료를 갖지 않는다.** 자료는 각자의 파일에 있고, 여기에는 그
+# 파일들이 **어떻게 이어져 있는지**만 둔다. 이어짐이 끊기면 화면이 조용히
+# 깨지므로, 링크마다 「이어져 있는지 보는 법」을 함께 적는다.
+#
+#     from  ──(via)──▶  to        check() 가 이 화살표의 상태를 본다
+#
+# 링크를 늘릴 때는 자료를 여기 복사하지 말고 **경로와 확인법만** 적는다.
+
+@dataclass
+class Link:
+    src: str
+    dst: str
+    via: str
+    why: str
+    check: "callable"
+
+
+def _names_to_menu() -> tuple[bool, str]:
+    lines = canon_freshness()
+    ok = all("어긋남" not in x for x in lines)
+    return ok, "; ".join(x for x in lines if "어긋남" in x) or "이름 21칸·글자판 36칸 일치"
+
+
+def _layout_to_font() -> tuple[bool, str]:
+    stamp = FONT_STAMP.read_text(encoding="utf-8").strip() if FONT_STAMP.exists() else None
+    if stamp is None:
+        return False, "각인이 없다"
+    return stamp == canon_digest(), f"각인 {stamp[:12]}…"
+
+
+def _text_into_layout(path: Path, label: str):
+    """그 번역이 쓰는 음절이 배치에 다 있는가. **배치로 들어가는 화살표다.**"""
+    def check() -> tuple[bool, str]:
+        if not path.exists():
+            return False, f"{path} 가 없다"
+        chars = {c for c in json.loads(CANON.read_text(encoding="utf-8"))["chars"] if c.strip()}
+        used: set[str] = set()
+        for row in json.loads(path.read_text(encoding="utf-8")):
+            used.update(c for c in (row.get("ko") or "") if "가" <= c <= "힣")
+        missing = sorted(used - chars)
+        return (not missing,
+                f"{len(used)}자 중 {len(missing)}자 없음: {' '.join(missing[:12])}"
+                if missing else f"음절 {len(used)}자 전부 있음")
+    return check
+
+
+def _layout_to_battlefont() -> tuple[bool, str]:
+    done = subprocess.run([sys.executable, str(ROOT / "scripts" / "verify_layout.py")],
+                          capture_output=True, text=True, cwd=ROOT)
+    hit = [l for l in done.stdout.splitlines() if "전투 글꼴" in l]
+    return ("실패" not in " ".join(hit)), (hit[-1].strip() if hit else "확인 못 함")
+
+
+LINKS: list[Link] = [
+    Link("data/nameable-entities.json", "work/text/menu-messages.json",
+         "build_name_screen.py",
+         "이름 정본이 화면 문구·글자판으로 간다. **정본이 낡으면 생성기가 새 작업을 지운다**",
+         _names_to_menu),
+    Link("work/translate/*.json", "data/glyph-layout.json",
+         "build_layout_all.py",
+         "필드 번역이 쓰는 음절이 배치에 있어야 한다",
+         _text_into_layout(ROOT / "work" / "text" / "menu-messages.json", "메뉴")),
+    Link("work/text/kernel-text-ko.json", "data/glyph-layout.json",
+         "build_layout_all.py --also",
+         "**kernel(아이템·마법·어빌리티·전투커맨드·결과창·못 바꾸는 캐릭터 이름)**"
+         "이 쓰는 음절이 배치에 있어야 한다",
+         _text_into_layout(ROOT / "work" / "text" / "kernel-text-ko.json", "kernel")),
+    Link("data/glyph-layout.json", "work/font-all/font.bin",
+         "build_font_4plane.py",
+         "배치로 폰트를 굽는다. 각인이 어긋나면 화면 전체가 다른 글자가 된다",
+         _layout_to_font),
+    Link("data/glyph-layout.json", "battle-name-font-patched.tim",
+         "patch_battle_font.py",
+         "전투 이름 글꼴은 **칸 번호가 곧 글리프 인덱스**다",
+         _layout_to_battlefont),
+]
+
+
+# ── 글자 작업의 순서 ───────────────────────────────────────────────────────
+#
+# **관제 -> 자료 위치 -> 작업 -> 정본 갱신.** 이 순서를 어겨서 두 번 크게 데었다.
+# 정본이 낡은 줄 모르고 생성기를 돌려 사용자 작업을 지웠고(불변식 26),
+# kernel 을 배치 입력에서 빠뜨려 음절 47자가 없었다.
+#
+# 관제탑은 자료를 갖지 않는다. **어디에 있는지와 무엇을 거쳐 반영되는지**만 안다.
+TOPICS = {
+    "이름": ("data/nameable-entities.json",
+             "캐릭터·GF 이름과 이름 입력 글자판. **여기가 정본이다**",
+             ["tower.py --stage names", "tower.py --build"]),
+    "배치": ("data/glyph-layout.json",
+             "글리프 인덱스 <-> 글자. 폰트와 모든 텍스트가 동시에 따른다",
+             ["build_layout_all.py (제안만)", "사람이 diff 검토 후 정본 갱신",
+              "tower.py --build"]),
+    "필드대사": ("work/translate/*.json",
+                 "302개 필드의 MSD 번역",
+                 ["build_apply_plan.py", "tower.py --stage field"]),
+    "메뉴": ("work/text/menu-messages.json",
+             "메뉴 문구. **이름 화면 문구는 이름 정본에서 생성된다** — 여기를 직접 고치지 않는다",
+             ["tower.py --stage names", "tower.py --stage menu"]),
+    "kernel": ("work/text/kernel-text-ko.json",
+               "아이템·마법·GF어빌리티·전투커맨드·결과창, 그리고 **이름을 못 바꾸는 "
+               "캐릭터 이름**(젤·어바인·키스티스·셀피·사이퍼·이데아·라그나·키로스·워드)",
+               ["번역 수정", "build_layout_all.py 로 음절 반영", "정본 갱신",
+                "tower.py --build  (※ 삽입 단계는 아직 없다)"]),
+    "지명": ("data/? (patch_location_table.py 안)",
+             "IMG TOC#132 지명 19개",
+             ["tower.py --stage location"]),
+    "전투이름글꼴": ("work/analysis/battle-font/",
+                     "TOC#26 안의 TIM. **칸 번호가 곧 글리프 인덱스**",
+                     ["inject_battle_font.py 로 그림->인덱스",
+                      "tower.py --stage battlefont"]),
+}
+
+
+def where(topic: str | None) -> int:
+    if topic and topic not in TOPICS:
+        print(f"모르는 주제: {topic}\n아는 것: {', '.join(TOPICS)}", file=sys.stderr)
+        return 2
+    print("글자 작업의 순서 — 관제 → 자료 위치 → 작업 → **정본 갱신**\n")
+    for key, (path, why, how) in TOPICS.items():
+        if topic and key != topic:
+            continue
+        print(f"  {key}")
+        print(f"    자료  {path}")
+        print(f"    무엇  {why}")
+        for step in how:
+            print(f"    →     {step}")
+        print()
+    return 0
+
+
+# **아직 화면에 안 들어간 것.** 관제탑이 이것을 알고 있어야 「다 됐다」고
+# 착각하지 않는다. 번역이 끝났다고 들어간 것이 아니다.
+PENDING = [
+    ("kernel 삽입", "work/text/kernel-text-ko.json",
+     "번역 1,320건 완료 · 음절은 배치 v13 에 반영됨 · **디스크에 쓰는 도구가 없다**. "
+     "문자열 풀을 다시 짜면 들어간다(원본 15,965B -> 한국어 16,222B, 섹터 여유 888B)"),
+    ("튜토리얼 삽입", "work/tutorial-bundle/",
+     "번역 꾸러미만 있다 · **삽입 도구가 없다**"),
+    ("전투 이름 글꼴 출처", "work/analysis/battle-font/",
+     "디스크의 TOC#26 에 넣고 있지만, 게임이 전투마다 **다시 싣는 원본 아카이브**는 "
+     "아직 못 찾았다 (docs/roadmap.md 항목 6)"),
+]
+
+
+def pending_report() -> None:
+    for title, where, why in PENDING:
+        print(f"  [ 미반영 ] {title}")
+        print(f"             {where}")
+        print(f"             {why}")
+
+
+def links_report() -> int:
+    bad = 0
+    for link in LINKS:
+        ok, detail = link.check()
+        mark = "이어짐" if ok else "**끊김**"
+        print(f"  [{mark:^8}] {link.src}")
+        print(f"             ──({link.via})──▶ {link.dst}")
+        print(f"             {detail}")
+        if not ok:
+            bad += 1
+    return bad
+
+
 def canon_freshness() -> list[str]:
     """정본이 파생물보다 낡지 않았는지 본다.
 
@@ -183,9 +350,13 @@ def status() -> int:
     else:
         print("사본  **없다** — patch_disc.py --init 이 먼저다")
 
-    print(f"\n{'정본 최신성 — 파생물이 정본보다 앞서 있지는 않은가':^0}")
-    for line in canon_freshness():
-        print("  " + line)
+    print("\n링크 — 관제탑은 자료를 갖지 않고 이어짐만 본다")
+    broken = links_report()
+    if broken:
+        print(f"  ** 끊긴 링크 {broken}개. 화살표 방향으로 다시 만든다 **")
+
+    print("\n아직 안 들어간 것 — 관제가 알고 있어야 「다 됐다」고 착각하지 않는다")
+    pending_report()
 
     print("\n관문:")
     done = subprocess.run([sys.executable, str(ROOT / "scripts" / "verify_layout.py")],
@@ -258,6 +429,8 @@ def main() -> int:
     group.add_argument("--build", action="store_true", help="처음부터 끝까지")
     group.add_argument("--stage", metavar="키", help="한 단계만 (관문은 함께 돈다)")
     group.add_argument("--list", action="store_true", help="단계·폐기 도구 목록")
+    group.add_argument("--where", nargs="?", const=None, metavar="주제",
+                       help="그 글자 자료가 어디 있고 어떤 순서로 반영되는가")
     args = parser.parse_args()
 
     if args.list:
@@ -275,6 +448,8 @@ def main() -> int:
         for name, why in RETIRED.items():
             print(f"  {name:<26} {why}")
         return 0
+    if args.where is not None or "--where" in sys.argv:
+        return where(args.where)
     if args.status:
         return status()
     if args.stage:

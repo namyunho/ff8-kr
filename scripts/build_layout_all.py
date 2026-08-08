@@ -73,8 +73,15 @@ def pinned(japanese: GT.GlyphMap) -> dict[int, str]:
     return out
 
 
-def counts(field_root: Path, menu: Path) -> collections.Counter:
-    """번역문에 실제로 그려지는 글자를 센다. 필드와 메뉴를 합친다."""
+def counts(field_root: Path, menu: Path,
+           extra: list[Path] | None = None) -> collections.Counter:
+    """번역문에 실제로 그려지는 글자를 센다.
+
+    **화면에 글자를 내보내는 자료는 빠짐없이 여기에 넣는다.** 한때 필드와
+    메뉴만 세다가 `kernel.bin`(아이템·마법·GF어빌리티·전투커맨드·결과창,
+    그리고 **이름을 못 바꾸는 캐릭터의 이름**)을 빠뜨려, 그 번역이 쓰는 음절
+    47자가 배치에 없었다. 빠뜨린 자료는 넣는 날 조용히 깨진다.
+    """
     tally: collections.Counter = collections.Counter()
     for path in sorted(field_root.glob("*.json")):
         if path.name == "manifest.json":
@@ -85,6 +92,13 @@ def counts(field_root: Path, menu: Path) -> collections.Counter:
     if menu.exists():
         for row in json.loads(menu.read_text(encoding="utf-8")):
             tally.update(TOKEN.sub("", row.get("ko", "")))
+    for path in extra or []:
+        if not path.exists():
+            print(f"  경고: {path} 가 없다 — 그 자료의 음절이 배치에서 빠진다",
+                  file=sys.stderr)
+            continue
+        for row in json.loads(path.read_text(encoding="utf-8")):
+            tally.update(TOKEN.sub("", row.get("ko", "") or ""))
     return tally
 
 
@@ -188,6 +202,10 @@ def main() -> int:
     # 사람이 diff 를 보고 결정한다. `scripts/verify_layout.py` 가 관문이다.
     parser.add_argument("--output", type=Path,
                         default=Path("work/glyph-layout-proposed.json"))
+    # 화면에 글자를 내보내는 다른 자료. 빠지면 그 음절이 배치에 없다.
+    parser.add_argument("--also", type=Path, nargs="*",
+                        default=[Path("work/text/kernel-text-ko.json")],
+                        help="함께 셀 번역 JSON (기본: kernel)")
     parser.add_argument("--measure", action="store_true",
                         help="현재 배치와 견주기만 하고 쓰지 않는다")
     args = parser.parse_args()
@@ -203,7 +221,33 @@ def main() -> int:
             if char not in keyboard:
                 keyboard.append(char)
 
-    tally = counts(args.fields, args.menu)
+    tally = counts(args.fields, args.menu, args.also)
+
+    # **고정폭 슬롯이 쓰는 음절은 1바이트 구간에 있어야 한다.** 글자판(5바이트
+    # 고정)뿐 아니라 메뉴의 제자리 그룹(insert_menu_text.STRICT_GROUPS)도 원래
+    # 길이를 못 넘는다. 한국어가 원문보다 짧아 대개 남지만, 어떤 음절이
+    # 2바이트로 밀리는 순간 그 줄만 넘친다 — 실제로 그룹7 `재배열` 의 `열` 이
+    # 두 번 그랬다. 그래서 이름 음절과 같은 등급으로 보호한다.
+    # 전부 보호하면 자주 쓰는 필드 음절이 밀려나 본문이 4% 늘었다. **넘칠
+    # 위험이 있는 줄만** 잡는다 — 한국어를 전부 1바이트로 봐도 여유가 2바이트
+    # 미만인 줄이다. 그런 줄의 음절 하나가 2바이트가 되면 바로 넘친다.
+    import insert_menu_text as IM
+    if args.menu.exists():
+        for row in json.loads(args.menu.read_text(encoding="utf-8")):
+            if row.get("sub") != 1 or row.get("group") not in IM.STRICT_GROUPS:
+                continue
+            ko = TOKEN.sub("", row.get("ko", "") or "")
+            if not ko:
+                continue
+            try:
+                room = len(GT.encode(row.get("ja", ""), japanese, None))
+            except Exception:                                # noqa: BLE001
+                continue
+            if room - len(ko) >= 2:                          # 여유가 넉넉하다
+                continue
+            for char in ko:
+                if char not in keyboard:
+                    keyboard.append(char)
     menu_chars: set[str] = set()
     if args.menu.exists():
         for row in json.loads(args.menu.read_text(encoding="utf-8")):
