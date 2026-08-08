@@ -13,16 +13,19 @@
 사이퍼·이데아·라그나·키로스·워드)의 이름이 여기 있다. 전투 화면의 이름도
 이것을 쓴다.
 
-## 왜 제자리에만 쓰는가
+## 자리를 절대 밀지 않는다
 
-문자열은 섹션 안에서 **NUL 로 끊어 순서대로** 읽힌다 — 섹션 안 오프셋 표가
-없다(u16 이 문자열 시작을 가리키는 횟수를 세 보면 0~23 으로 우연 수준이다).
-그래서 길이가 달라져도 순서와 개수만 지키면 된다. **다만 섹션 크기가 바뀌면
-파일 머리의 u32 오프셋 56개를 다시 써야 하고, 그때부터 위험이 커진다.**
+처음엔 섹션을 다시 짜서 짧아진 만큼 당겨 썼다. **캐릭터 이름이 통째로 공백이
+됐다.** 구조체 섹션이 문자열을 **절대 오프셋으로 가리키기 때문이다**(파일
+앞부분에 문자열 풀을 가리키는 u32 가 234개 있다). 당기는 순간 전부 어긋난다.
 
-그래서 기본은 **원래 크기 안에 들어가는 섹션만** 쓴다. 남는 자리는 NUL 로
-메워 뒤 문자열의 시작이 안 밀리게 한다. 넘치는 섹션은 건드리지 않고
-**목록으로 알려 준다** — 번역을 줄이거나 섹션을 옮기는 판단은 사람이 한다.
+그래서 **문자열마다 원래 자리와 원래 NUL 위치를 그대로 둔다.**
+
+    [한국어 바이트][공백 0x5f 로 메움][원래 자리의 NUL]
+
+남는 자리를 NUL 로 메우면 **널 개수가 늘어** 문자열을 널로 세는 코드가 어긋난다
+— 그래서 공백(`0x5f`)으로 메운다. `insert_menu_text.py` 가 같은 이유로 같은
+방법을 쓴다. 자리보다 긴 번역은 **넣지 않고 세어서 알려 준다.**
 
     python3 scripts/insert_kernel_text.py --dry-run
     python3 scripts/insert_kernel_text.py
@@ -63,31 +66,48 @@ def sections(raw: bytes) -> list[tuple[int, int]]:
     return [(offsets[i], offsets[i + 1]) for i in range(count)]
 
 
+SPACE = 0x5F                    # 원본이 빈칸에 쓰는 글리프
+
+
 def rebuild(body: bytes, base: int, korean: dict[int, str],
-            glyphs, bank1) -> tuple[bytes, int, int]:
-    """섹션 하나를 다시 짠다. `(새 몸통, 바꾼 건수, 실패 건수)`."""
-    out = bytearray()
-    changed = failed = 0
+            glyphs, bank1) -> tuple[bytes, int, int, int]:
+    """섹션 하나를 **자리마다 제자리에서** 갈아 끼운다.
+
+    `(새 몸통, 바꾼 건수, 실패 건수, 길어서 못 넣은 건수)`.
+
+    **섹션을 압축하지 않는다.** 처음엔 짧아진 만큼 당겨 쓰고 꼬리를 NUL 로
+    메웠는데, 그러면 모든 문자열의 시작이 앞으로 밀린다. 구조체 섹션이
+    **절대 오프셋으로 이름을 가리키므로**(파일 앞부분에 그런 u32 가 234개
+    있다) 캐릭터 이름이 통째로 공백이 됐다.
+
+    그래서 문자열마다 **원래 자리와 원래 NUL 위치를 그대로 둔다.** 짧아진
+    나머지는 공백(`0x5f`)으로 메운다 — NUL 로 메우면 널 개수가 늘어 문자열을
+    널로 세는 코드가 어긋난다(`insert_menu_text.py` 가 같은 이유로 그렇게 한다).
+    """
+    out = bytearray(body)
+    changed = failed = toolong = 0
     at = 0
     while at < len(body):
         end = body.find(b"\x00", at)
         if end < 0:
-            out += body[at:]
             break
-        original = body[at:end]
+        room = end - at
         text = strip_name(korean.get(base + at, ""))
-        if original and text:
+        if room and text:
             try:
-                out += GT.encode(text, glyphs, bank1)
-                changed += 1
+                encoded = GT.encode(text, glyphs, bank1)
             except ValueError:
-                out += original
                 failed += 1
-        else:
-            out += original
-        out += b"\x00"
+                at = end + 1
+                continue
+            if len(encoded) > room:
+                toolong += 1
+            else:
+                out[at:at + len(encoded)] = encoded
+                out[at + len(encoded):end] = bytes([SPACE]) * (room - len(encoded))
+                changed += 1
         at = end + 1
-    return bytes(out), changed, failed
+    return bytes(out), changed, failed, toolong
 
 
 def main() -> int:
@@ -108,34 +128,29 @@ def main() -> int:
     lba, size = next((l, s) for i, l, s in OC.entries() if i == TOC_INDEX)
     raw = bytearray(PD.read_user(FT.BIN_PATH, lba, size))       # **원본에서 읽는다**
 
-    wrote = skipped = total_changed = total_failed = 0
-    over: list[str] = []
+    total_changed = total_failed = total_long = 0
+    per_section: list[str] = []
     for index, (start, end) in enumerate(sections(bytes(raw))):
         body = bytes(raw[start:end])
         if not body:
             continue
-        fresh, changed, failed = rebuild(body, start, korean, glyphs, bank1)
-        if not changed:
+        fresh, changed, failed, toolong = rebuild(body, start, korean, glyphs, bank1)
+        if not (changed or toolong or failed):
             continue
-        total_failed += failed
-        if len(fresh) > len(body):
-            over.append(f"#{index} {len(body):,}B 에 {len(fresh):,}B "
-                        f"({len(fresh) - len(body):+,})  번역 {changed}건")
-            skipped += 1
-            continue
-        # **남는 자리는 NUL 로 메운다.** 문자열 개수를 NUL 로 세는 코드가
-        # 있으므로 개수가 늘면 안 된다 — 꼬리를 원본 그대로 두면 안전하다.
-        raw[start:start + len(fresh)] = fresh
-        raw[start + len(fresh):end] = b"\x00" * (end - start - len(fresh))
-        wrote += 1
+        assert len(fresh) == len(body), "제자리 삽입은 크기를 바꾸지 않는다"
+        raw[start:end] = fresh
         total_changed += changed
+        total_failed += failed
+        total_long += toolong
+        if toolong:
+            per_section.append(f"#{index}  넣음 {changed:>3}  **자리보다 긴 것 {toolong:>3}**")
 
-    print(f"kernel.bin  LBA {lba}  {size:,}B")
-    print(f"  제자리로 쓴 섹션 {wrote}개, 문자열 {total_changed:,}건")
-    print(f"  인코딩 실패 {total_failed}건")
-    if over:
-        print(f"\n  **넘쳐서 건드리지 않은 섹션 {skipped}개** — 번역을 줄여야 한다")
-        for line in over:
+    print(f"kernel.bin  LBA {lba}  {size:,}B  (크기 불변 — 제자리 삽입)")
+    print(f"  넣은 문자열 {total_changed:,}건")
+    print(f"  자리보다 길어 못 넣은 것 {total_long:,}건, 인코딩 실패 {total_failed}건")
+    if per_section:
+        print("\n  섹션별 남은 것:")
+        for line in per_section:
             print(f"    {line}")
     if args.dry_run:
         print("\n--dry-run 이라 쓰지 않았다")
