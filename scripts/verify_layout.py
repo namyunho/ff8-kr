@@ -205,6 +205,37 @@ def main() -> int:
         rep.check(not stray, f"메뉴 글자가 모두 뱅크0(<{BANK0}) 안에 있음",
                   " ".join(f"{c}({i})" for i, c in stray[:8]))
 
+    # 7-2. 이름 글자판은 한 줄이 5바이트 고정이고, 쓰는 음절은 전부 1바이트여야 한다
+    #
+    # **이 검사를 「더 일반적」이라며 --dry-run 으로 바꿨다가 다시 깨뜨렸다.**
+    # insert_menu_text 는 블록 전체 크기만 본다. 글자판은 재배치 그룹이라 줄이
+    # 6바이트가 되어도 통과한다 — 게임은 줄을 5바이트로 세므로 그때부터 어긋난다.
+    # 둘 다 필요하다.
+    if menu_json.exists():
+        import build_name_screen as NS
+        import glyph_text as GT
+        import patch_disc as PD
+        glyphs, ours, _ = PD.korean_map(CANON)
+        keyboard = [row for row in rows
+                    if row.get("sub") == 1 and row.get("group") == 1 and row.get("ko")
+                    and any(ids.start <= row["id"] < ids.stop
+                            for ids in NS.PAGE_IDS.values())]
+        over, wide = [], []
+        for row in keyboard:
+            try:
+                size = len(GT.encode(row["ko"], glyphs, ours))
+            except Exception as error:                      # noqa: BLE001
+                over.append(f"id{row['id']} 인코딩 실패 {error}")
+                continue
+            if size != NS.CELL:
+                over.append(f"id{row['id']}:{row['ko']!r} {size}B")
+            wide += [c for c in row["ko"]
+                     if "가" <= c <= "힣" and where.get(c, 0) >= SINGLE]
+        rep.check(not over, f"이름 글자판 {len(keyboard)}줄이 {NS.CELL}바이트 고정",
+                  "; ".join(over[:6]))
+        rep.check(not wide, "글자판 음절이 모두 1바이트 구간",
+                  " ".join(f"{c}({where[c]})" for c in dict.fromkeys(wide[:8])))
+
     # 손으로 슬롯 목록을 적지 않는다. **삽입기 자신이 정본이다** — 처음에는
     # 이름 글자판(그룹1)만 확인했다가, 같은 사고를 메뉴 그룹7 '재배열' 에서 또
     # 냈다. 고정폭 슬롯은 메뉴 전반에 흩어져 있고 목록은 도구 안에 있다.
