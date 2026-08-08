@@ -1,7 +1,52 @@
 # 인계 — 대사·용어 편집기 (브랜치 `dialogue-editor`)
 
-새 세션 첫 프롬프트로 아래를 그대로 붙여 넣는다. 그 아래 「배경」은 필요할 때
-읽으면 되는 부속 자료다.
+> **2026-08-08 갱신.** 1회차가 끝났다. kernel 편집기와 자료 형태가 들어갔고
+> 지명은 자료로 빠졌다. 아래 「1회차에서 한 것」을 먼저 읽는다. 그 뒤의
+> 프롬프트와 배경은 여전히 유효한 부속 자료다.
+
+## 1회차에서 한 것 (2026-08-08)
+
+**자료 형태.** `work/text/kernel-text-ko.json` 한 행이 다섯을 나란히 담는다 —
+일본어 원문(`ja`)·원문 글리프 코드(`raw_hex`)·한국어 초벌(`ko_draft`)·
+한국어 축약문(`ko_short`)·안전 슬롯(`slot_bytes`). 우선순위는 하나다:
+**축약이 있으면 축약, 없으면 초벌**이 `ko` 로 나간다.
+
+`ko` 라는 칸 이름을 그대로 둔 것이 핵심이다. 이 칸을 읽는 소비자가 다섯인데
+(삽입기·`build_layout_all`·`verify_layout`·관제탑·기계번역기) 이름을 바꾸면
+**셋은 고쳐도 조용히 틀린다.** 그래서 삽입기는 한 줄도 안 고쳤다.
+
+**새 도구.**
+
+```
+scripts/text_measure.py      글자마다의 바이트 비용. 세지 않고 인코더를 부른다
+scripts/text_rows.py         스키마 정본·우선순위·원자적 저장(.bak + 날짜 사본)
+scripts/migrate_kernel_rows.py  일회성 이관 (멱등). 삽입 바이트 불변을 검산한다
+scripts/text_editor.py       kernel 편집 화면 (Tkinter)
+data/location-names.json     지명 19개 — 코드에서 뺐다
+```
+
+**편집기가 색으로 알려 주는 것.** 노랑 = 2바이트 음절(줄일 여지),
+빨강 = 뱅크1(화면에서 깨진다), 자주 = 배치에 없음, 파랑 = 제어 토큰.
+
+**왜 색이 중요한가.** 초과 462건의 원인은 문장 길이보다 **음절 값**이다.
+배치의 `single_byte_limit` 이 224라 인덱스 224 미만은 1바이트, 그 위는
+2바이트다. `헤이스트`가 5B 인 것은 `헤`(580)가 2바이트 구간이라서다.
+**462건 중 337건은 2바이트 음절 개수가 초과분보다 많다** — 문장을 줄이기
+전에 싼 동의어로 바꾸는 쪽이 먼저다.
+
+**함께 정리한 것.** `이름 :: 설명` 105건을 이관에서 걷어냈다(떼어낸 접두는
+`note` 에 남겼다). 삽입기가 어차피 `strip_name()` 으로 걷어내므로, 안
+걷어내면 편집기가 보여 주는 초과 바이트가 실제와 달랐다.
+
+**남은 것.** 초과 462건 / 1,248B 를 사람이 줄이는 일 자체. 메뉴·이름·필드
+어댑터는 아직 안 붙였다(필드는 기존 `dialogue_editor.py` 그대로).
+
+```bash
+./대사편집기.command                    # 1) kernel  2) 필드 대사
+python3 scripts/text_editor.py --check  # GUI 없이 초과 목록
+python3 scripts/text_rows.py --check    # 스키마 불변식
+python3 scripts/text_rows.py --selftest # 편집 왕복
+```
 
 ---
 
@@ -39,9 +84,8 @@ FF8 한국어화 저장소의 대사·용어 편집기 작업을 한다. 브랜�
   캐릭터·GF 이름     data/nameable-entities.json   <- 정본. 글자판 배열도 여기
   아이템·마법·어빌리티·전투커맨드·전투결과·
   이름을 못 바꾸는 캐릭터 이름
-                     work/text/kernel-text-ko.json
-  지명 19개          scripts/patch_location_table.py 의 NAMES 리스트
-                     <- **코드 안에 박혀 있다.** 자료로 빼내는 것도 이 작업에 포함
+                     work/text/kernel-text-ko.json   <- 편집기가 붙어 있다
+  지명 19개          data/location-names.json        <- 1회차에서 코드에서 뺐다
   튜토리얼           work/tutorial-bundle/bundle-*.md  (삽입 도구 없음)
 
 python3 scripts/tower.py --where <주제> 가 각 자료의 위치와 반영 순서를 알려 준다.

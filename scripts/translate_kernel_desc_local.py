@@ -2,9 +2,16 @@
 """kernel.bin 이름 뒤에 붙는 **설명 문장**을 로컬 모델로 초벌번역한다.
 
 `translate_kernel_local.py` 가 이름(437종 이상)을 끝낸 뒤 남는 게 이거다 —
-`work/text/kernel-text-ko.json` 에서 아직 `ko` 가 빈 항목들. 대부분 이름
+`work/text/kernel-text-ko.json` 에서 아직 초벌이 빈 항목들. 대부분 이름
 바로 다음 오프셋에 붙는 효과 설명이라(`docs/font-analysis.md`), 이름을 알고
 있다는 전제로 문맥을 프롬프트에 같이 준다.
+
+## 사람이 손댄 행은 건드리지 않는다
+
+이 도구는 **초벌(`ko_draft`)만 쓴다.** 사람이 자리에 맞춰 줄인 축약문
+(`ko_short`)이 있는 행은 아예 건너뛴다 — 정본이 낡은 줄 모르고 생성기를
+돌려 사용자 작업을 지운 적이 있다(불변식 26). 파생값 갱신과 저장은
+`text_rows` 를 거친다.
 
     python3 scripts/translate_kernel_desc_local.py --status
     python3 scripts/translate_kernel_desc_local.py --limit 100
@@ -22,7 +29,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import text_measure as TMEASURE             # noqa: E402
 import text_metrics as TM                   # noqa: E402
+import text_rows as TR                      # noqa: E402
 
 SOURCE = Path("work/text/kernel-text-ko.json")
 ENDPOINT = "http://127.0.0.1:1234/v1/chat/completions"
@@ -120,12 +129,18 @@ def main() -> int:
     args = parser.parse_args()
 
     rows = load()
+    maps = TMEASURE.load_maps()
+
+    # **사람이 줄인 행은 후보에서 뺀다.** 초벌을 다시 써 넣으면 그 위를 덮는다.
+    guarded = [i for i, r in enumerate(rows) if TR.is_shortened(r)]
     todo_idx = [i for i, r in enumerate(rows)
-                if not r.get("ko", "").strip() or args.retry_failed]
+                if i not in set(guarded)
+                and (not (r.get("ko_draft") or "").strip() or args.retry_failed)]
 
     if args.status:
-        done = len(rows) - len(todo_idx)
-        print(f"kernel 전체 {len(rows):,}건 — 확보 {done:,} / 남음 {len(todo_idx):,}")
+        done = len(rows) - len(todo_idx) - len(guarded)
+        print(f"kernel 전체 {len(rows):,}건 — 초벌 확보 {done:,} / 남음 {len(todo_idx):,}")
+        print(f"  사람이 줄인 행 {len(guarded):,}건은 건드리지 않는다")
         return 0
 
     if not todo_idx:
@@ -159,10 +174,11 @@ def main() -> int:
                 problems.append((ja, ko, why))
             else:
                 good += 1
-                rows[idx]["ko"] = ko
-                rows[idx]["source"] = "qwen-desc"
-        SOURCE.write_text(json.dumps(rows, ensure_ascii=False, indent=1),
-                          encoding="utf-8")
+                # 초벌 칸에만 쓴다. `ko`·`ko_hex`·`used_bytes` 는 파생값이라
+                # 손으로 적지 않고 `refresh` 가 다시 잰다.
+                rows[idx] = TR.refresh({**rows[idx], "ko_draft": ko,
+                                        "source": "qwen-desc"}, maps)
+        TR.save(SOURCE, rows)
         print(f"  {min(start + batch, len(plan)):>4}/{len(plan)}  "
               f"통과 {good} 실패 {bad}")
 

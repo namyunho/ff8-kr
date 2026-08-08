@@ -1,0 +1,27 @@
+{
+ "note": "IMG TOC#132 지명 표의 정본. 리스트 위치가 곧 표 인덱스이므로 순서를 바꾸지 않는다. 제어 코드 {0E:XX} 가 이 표를 참조한다 — 파라미터에서 32 를 뺀 값이 인덱스다. 한때 patch_location_table.py 안에 박혀 있던 것을 자료로 뺐다.",
+ "toc": 132,
+ "schema": "kernel 텍스트와 같은 우선순위를 쓴다 — ko_short 가 있으면 그것이, 없으면 ko_draft 가 화면에 나간다(scripts/text_rows.py).",
+ "slot": "이 표는 통째로 다시 만들므로 문자열마다의 자리 제약이 없다. 총 크기가 할당 섹터(2,048B) 안에 들어가면 된다 — patch_location_table.py 가 잰다.",
+ "names": [
+  {"index": 0, "ja": "ガルバディア", "ko_draft": "갈바디아", "ko_short": null, "source": "glossary"},
+  {"index": 1, "ja": "エスタ", "ko_draft": "에스타", "ko_short": null, "source": "glossary"},
+  {"index": 2, "ja": "バラム", "ko_draft": "발람", "ko_short": null, "source": "glossary"},
+  {"index": 3, "ja": "ドール", "ko_draft": "돌", "ko_short": null, "source": "glossary"},
+  {"index": 4, "ja": "ティンバー", "ko_draft": "팀버", "ko_short": null, "source": "glossary"},
+  {"index": 5, "ja": "トラビア", "ko_draft": "트라비아", "ko_short": null, "source": "glossary"},
+  {"index": 6, "ja": "セントラ", "ko_draft": "센트라", "ko_short": null, "source": "draft"},
+  {"index": 7, "ja": "フィッシャーマンズ・ホライズン", "ko_draft": "피셔맨즈 호라이즌", "ko_short": null, "source": "draft"},
+  {"index": 8, "ja": "学園東", "ko_draft": "학원동", "ko_short": null, "source": "draft"},
+  {"index": 9, "ja": "砂漠収容所", "ko_draft": "사막의 수용소", "ko_short": null, "source": "draft"},
+  {"index": 10, "ja": "トラビアガーデン", "ko_draft": "트라비아 가덴", "ko_short": null, "source": "draft"},
+  {"index": 11, "ja": "ルナサイドベース", "ko_draft": "루나 사이드 베이스", "ko_short": null, "source": "draft"},
+  {"index": 12, "ja": "シュミ族の村", "ko_draft": "슈미족 마을", "ko_short": null, "source": "draft"},
+  {"index": 13, "ja": "デリングシティ", "ko_draft": "델링시티", "ko_short": null, "source": "draft"},
+  {"index": 14, "ja": "バラムガーデン", "ko_draft": "발람 가든", "ko_short": null, "source": "draft"},
+  {"index": 15, "ja": "学園東駅", "ko_draft": "학원동역", "ko_short": null, "source": "draft"},
+  {"index": 16, "ja": "ドール駅", "ko_draft": "돌역", "ko_short": null, "source": "draft"},
+  {"index": 17, "ja": "収容所駅", "ko_draft": "수용소역", "ko_short": null, "source": "draft"},
+  {"index": 18, "ja": "ルナゲート", "ko_draft": "루나게이트", "ko_short": null, "source": "draft"}
+ ]
+}

@@ -119,7 +119,8 @@ CONSUMERS = [
      "TOC#26 안의 TIM. **칸 번호가 곧 글리프 인덱스**라 배치와 직접 묶인다"),
     ("kernel — 아이템·마법·GF어빌리티·전투커맨드·결과창·못 바꾸는 캐릭터 이름",
      "insert_kernel_text.py", True,
-     "681건 제자리 삽입 완료. **10개 섹션은 번역이 길어 못 넣었다**"),
+     "제자리 삽입. **자리보다 긴 번역은 안 넣고 세어서 알려 준다** — "
+     "남은 수는 --status 가 자료에서 직접 잰다"),
     ("튜토리얼", None, False,
      "번역 꾸러미만 있다(work/tutorial-bundle). **삽입 도구가 없다**"),
 ]
@@ -228,12 +229,16 @@ TOPICS = {
              ["tower.py --stage names", "tower.py --stage menu"]),
     "kernel": ("work/text/kernel-text-ko.json",
                "아이템·마법·GF어빌리티·전투커맨드·결과창, 그리고 **이름을 못 바꾸는 "
-               "캐릭터 이름**(젤·어바인·키스티스·셀피·사이퍼·이데아·라그나·키로스·워드)",
-               ["번역 수정", "build_layout_all.py 로 음절 반영", "정본 갱신",
-                "tower.py --build  (※ 삽입 단계는 아직 없다)"]),
-    "지명": ("data/? (patch_location_table.py 안)",
-             "IMG TOC#132 지명 19개",
-             ["tower.py --stage location"]),
+               "캐릭터 이름**(젤·어바인·키스티스·셀피·사이퍼·이데아·라그나·키로스·워드). "
+               "한 행에 초벌(ko_draft)·축약문(ko_short)·안전 슬롯이 함께 있고, "
+               "**축약이 있으면 축약이 나간다**",
+               ["./대사편집기.command 로 자리보다 넘치는 것을 줄인다",
+                "python3 scripts/text_rows.py --check 로 스키마 검산",
+                "build_layout_all.py 로 음절 반영", "정본 갱신",
+                "tower.py --stage kernel"]),
+    "지명": ("data/location-names.json",
+             "IMG TOC#132 지명 19개. **리스트 위치가 곧 표 인덱스**라 순서를 안 바꾼다",
+             ["번역 수정 (ko_short 를 채운다)", "tower.py --stage location"]),
     "전투이름글꼴": ("work/analysis/battle-font/",
                      "TOC#26 안의 TIM. **칸 번호가 곧 글리프 인덱스**",
                      ["inject_battle_font.py 로 그림->인덱스",
@@ -260,16 +265,71 @@ def where(topic: str | None) -> int:
 
 # **아직 화면에 안 들어간 것.** 관제탑이 이것을 알고 있어야 「다 됐다」고
 # 착각하지 않는다. 번역이 끝났다고 들어간 것이 아니다.
+def _kernel_pending() -> str:
+    """kernel 이 얼마나 남았는가를 **세지 말고 잰다.**
+
+    손으로 적은 숫자는 낡는다 — 여기 「681건」이라고 적혀 있는 동안 실제로는
+    858건이 들어가고 있었다. 자료가 `slot_bytes`·`used_bytes` 를 들고 있으니
+    그것을 읽는다.
+    """
+    path = ROOT / "work" / "text" / "kernel-text-ko.json"
+    if not path.exists():
+        return f"{path} 가 없다"
+    rows = json.loads(path.read_text(encoding="utf-8"))
+    if not rows or "slot_bytes" not in rows[0]:
+        return ("아직 편집기 스키마로 옮기지 않았다 — "
+                "python3 scripts/migrate_kernel_rows.py")
+
+    over = [r for r in rows if (r.get("used_bytes") or 0) > r["slot_bytes"]]
+    excess = sum(r["used_bytes"] - r["slot_bytes"] for r in over)
+    by_section: dict = {}
+    for row in over:
+        key = row.get("section")
+        by_section[key] = by_section.get(key, 0) + (row["used_bytes"] - row["slot_bytes"])
+    worst = sorted(by_section.items(), key=lambda kv: -kv[1])[:3]
+    shortened = sum(1 for r in rows if r.get("ko_short"))
+
+    return (f"{len(rows) - len(over):,}/{len(rows):,}건은 자리에 들어간다. "
+            f"남은 {len(over):,}건이 합계 {excess:,}B 넘친다 — "
+            + " ".join(f"#{k}(+{v}B)" for k, v in worst)
+            + f". 사람이 줄인 것 {shortened:,}건. "
+            "**./대사편집기.command 로 줄인다** (2바이트 음절을 싼 것으로 "
+            "바꾸는 쪽이 먼저다)")
+
+
+# **아직 화면에 안 들어간 것.** 관제탑이 이것을 알고 있어야 「다 됐다」고
+# 착각하지 않는다. 번역이 끝났다고 들어간 것이 아니다.
+#
+# 숫자를 여기 적어 두지 않는다 — 배치가 바뀌면 초과 바이트가 다시 계산되는데,
+# 한 번 적어 둔 값이 낡은 채로 남아 있었다. **볼 때마다 자료에서 잰다.**
+
+
+def kernel_pending() -> str:
+    """kernel 초과 현황을 그때그때 잰다."""
+    done = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "text_editor.py"), "--check"],
+        capture_output=True, text=True, cwd=ROOT)
+    got = {}
+    for line in done.stdout.splitlines():
+        parts = line.strip().rsplit(None, 1)
+        if len(parts) == 2:
+            got[parts[0]] = parts[1]
+    if not got:
+        return "text_editor.py --check 가 답하지 않았다"
+    return (f"전체 {got.get('전체','?')} · 축약함 {got.get('축약함','?')} · "
+            f"**초과 {got.get('초과','?')}건 {got.get('초과 바이트','?')}B** · "
+            f"뱅크1 {got.get('뱅크1 사용','?')} · 인코딩불가 {got.get('인코딩 불가','?')}"
+            "\n             **./대사편집기.command 로 줄인다** "
+            "(2바이트 음절을 싼 것으로 바꾸는 쪽이 먼저다)")
+
+
 PENDING = [
-    ("kernel 나머지 10섹션", "work/text/kernel-text-ko.json",
-     "681/1,320건은 들어갔다. 남은 것은 번역이 원래 자리보다 길다 — "
-     "전투커맨드(#31 +33B) 마법(#32 +180B) 아이템설명(#39 +240B) 등. "
-     "**번역을 줄이거나** 섹션을 옮겨 크기를 키운다(파일 여유 888B)"),
+    ("kernel 자리 넘치는 것", "work/text/kernel-text-ko.json", kernel_pending),
     ("튜토리얼 삽입", "work/tutorial-bundle/",
-     "번역 꾸러미만 있다 · **삽입 도구가 없다**"),
+     lambda: "번역 꾸러미만 있다 · **삽입 도구가 없다**"),
     ("전투 이름 글꼴 출처", "work/analysis/battle-font/",
-     "디스크의 TOC#26 에 넣고 있지만, 게임이 전투마다 **다시 싣는 원본 아카이브**는 "
-     "아직 못 찾았다 (docs/roadmap.md 항목 6)"),
+     lambda: "디스크의 TOC#26 에 넣고 있지만, 게임이 전투마다 **다시 싣는 원본 "
+             "아카이브**는 아직 못 찾았다 (docs/roadmap.md 항목 6)"),
 ]
 
 
@@ -277,7 +337,7 @@ def pending_report() -> None:
     for title, where, why in PENDING:
         print(f"  [ 미반영 ] {title}")
         print(f"             {where}")
-        print(f"             {why}")
+        print(f"             {why() if callable(why) else why}")
 
 
 def links_report() -> int:

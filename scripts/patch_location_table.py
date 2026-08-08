@@ -17,15 +17,14 @@
 `sub_8002F6C4` 가 읽는 인덱스는 제어 코드 파라미터에서 32 를 뺀 값이다
 (`sub_8002F73C` 의 `{0E:XX}`/`{0F:XX}` 분기, `docs/external-sources.md` 참고).
 
-## 지명 19개 — 실측 원문과 대응
+## 지명 19개 — 정본은 `data/location-names.json`
 
-    0 ガルバディア   1 エスタ       2 バラム       3 ドール
-    4 ティンバー     5 トラビア     6 セントラ
-    7 フィッシャーマンズ・ホライズン
-    8 学園東         9 砂漠収容所   10 トラビアガーデン
-    11 ルナサイドベース  12 シュミ族の村  13 デリングシティ
-    14 バラムガーデン   15 学園東駅   16 ドール駅
-    17 収容所駅        18 ルナゲート
+한때 이 파일 안에 리스트로 박혀 있었다. 코드와 자료 양쪽에 두면 어느 쪽이
+새것인지 가릴 수 없어(불변식 24·26) 자료 하나로 옮겼다. **리스트 위치가 곧
+표 인덱스**라 순서를 바꾸면 지명이 뒤바뀐다 — `load_names` 가 그것을 본다.
+
+축약문 우선순위는 kernel 텍스트와 같다(`scripts/text_rows.py`) — `ko_short`
+가 있으면 그것이, 없으면 `ko_draft` 가 나간다.
 
     python3 scripts/patch_location_table.py --dry-run
     python3 scripts/patch_location_table.py
@@ -43,23 +42,35 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import patch_disc as PD                      # noqa: E402
 import glyph_text as GT                      # noqa: E402
 import psx_disc as PSX                       # noqa: E402
+import text_rows as TR                       # noqa: E402
 
 TOC_INDEX = 132
 LAYOUT = Path("data/glyph-layout.json")
-
-# 실측 원문(디스크에서 직접 읽은 것) -> 초벌 한글. 0~5 는 확정 용어집
-# (work/text/glossary-additions.csv)을 따랐고, 나머지는 표준 FF8 표기를
-# 참고한 초벌번역이다 — 다른 번역과 마찬가지로 교정 대상이다.
-NAMES = [
-    "갈바디아", "에스타", "발람", "돌", "팀버", "트라비아", "센트라",
-    "피셔맨즈 호라이즌", "학원동", "사막의 수용소", "트라비아 가덴",
-    "루나 사이드 베이스", "슈미족 마을", "델링시티", "발람 가든",
-    "학원동역", "돌역", "수용소역", "루나게이트",
-]
+NAMES_JSON = Path("data/location-names.json")
 
 
-def build_table(glyphs: GT.GlyphMap, bank1) -> bytes:
-    encoded = [bytes(GT.encode(name, glyphs, bank1)) + b"\x00" for name in NAMES]
+def load_names(path: Path = NAMES_JSON) -> list[str]:
+    """지명 19개의 **정본은 자료 파일 하나**다. 코드에 사본을 두지 않는다.
+
+    한때 이 목록이 이 파일 안에 박혀 있었다. 코드와 자료 양쪽에 두면
+    어느 쪽이 새것인지 가릴 수 없다(불변식 24·26). 파일이 없으면 표를
+    만들지 않고 멈춘다 — 조용히 옛 목록으로 되돌아가는 쪽이 더 나쁘다.
+
+    리스트 위치가 곧 표 인덱스라 `index` 가 0..n-1 로 이어지는지 본다.
+    """
+    import json
+
+    document = json.loads(path.read_text(encoding="utf-8"))
+    entries = document["names"]
+    for position, entry in enumerate(entries):
+        if entry.get("index") != position:
+            raise ValueError(f"지명 순서가 어긋났다: {position}번째의 index "
+                             f"{entry.get('index')}")
+    return [TR.effective(entry) for entry in entries]
+
+
+def build_table(glyphs: GT.GlyphMap, bank1, names: list[str]) -> bytes:
+    encoded = [bytes(GT.encode(name, glyphs, bank1)) + b"\x00" for name in names]
     count = len(encoded)
     header_size = 2 + count * 2
     offsets = []
@@ -79,6 +90,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--layout", type=Path, default=LAYOUT)
+    parser.add_argument("--names", type=Path, default=NAMES_JSON)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -88,14 +100,21 @@ def main() -> int:
         return 1
     glyphs, bank1, _ = PD.korean_map(args.layout)
 
-    table = build_table(glyphs, bank1)
+    try:
+        names = load_names(args.names)
+    except (OSError, KeyError, ValueError) as error:
+        print(f"지명 정본을 못 읽었다 ({args.names}): {error}", file=sys.stderr)
+        return 1
+
+    table = build_table(glyphs, bank1, names)
 
     disc = PSX.Disc(PD.PATCH_BIN)
     toc = {e["index"]: e for e in PSX.read_toc(disc)}
     entry = toc[TOC_INDEX]
     lba, size = entry["lba"], entry["size"]
     print(f"TOC#{TOC_INDEX}  LBA {lba}  원본 {size}B  새 표 {len(table)}B")
-    for i, name in enumerate(NAMES):
+    print(f"  정본 {args.names}")
+    for i, name in enumerate(names):
         print(f"  [{i:2d}] {name}")
 
     if len(table) > size:

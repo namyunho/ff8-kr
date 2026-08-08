@@ -223,36 +223,82 @@ def main() -> int:
 
     tally = counts(args.fields, args.menu, args.also)
 
-    # **고정폭 슬롯이 쓰는 음절은 1바이트 구간에 있어야 한다.** 글자판(5바이트
-    # 고정)뿐 아니라 메뉴의 제자리 그룹(insert_menu_text.STRICT_GROUPS)도 원래
-    # 길이를 못 넘는다. 한국어가 원문보다 짧아 대개 남지만, 어떤 음절이
-    # 2바이트로 밀리는 순간 그 줄만 넘친다 — 실제로 그룹7 `재배열` 의 `열` 이
-    # 두 번 그랬다. 그래서 이름 음절과 같은 등급으로 보호한다.
-    # 전부 보호하면 자주 쓰는 필드 음절이 밀려나 본문이 4% 늘었다. **넘칠
-    # 위험이 있는 줄만** 잡는다 — 한국어를 전부 1바이트로 봐도 여유가 2바이트
-    # 미만인 줄이다. 그런 줄의 음절 하나가 2바이트가 되면 바로 넘친다.
+    # **고정폭 슬롯은 어림으로 재지 말고 실제로 인코딩해 본다.**
+    #
+    # 처음엔 「한국어를 전부 1바이트로 봐도 여유가 2바이트 미만인 줄」만
+    # 보호했다. 두 번 새 나갔다 — 제어 토큰(`{0A:27}`)이 먹는 바이트를 안 셌고,
+    # 배치가 바뀌면 어느 음절이 2바이트가 되는지도 달라진다.
+    #
+    # 그래서 배치를 만들고 → **삽입기가 쓰는 인코더로 실제로 재고** → 넘친
+    # 줄의 음절을 1바이트 구간에 못 박고 → 다시 만든다. 넘치는 줄이 없을
+    # 때까지 되풀이한다. 필요한 만큼만 보호하므로 본문이 덜 늘어난다.
     import insert_menu_text as IM
+    import patch_disc as PD
+    import tempfile
+
+    strict = []
     if args.menu.exists():
         for row in json.loads(args.menu.read_text(encoding="utf-8")):
-            if row.get("sub") != 1 or row.get("group") not in IM.STRICT_GROUPS:
-                continue
-            ko = TOKEN.sub("", row.get("ko", "") or "")
-            if not ko:
-                continue
+            if row.get("sub") == 1 and row.get("group") in IM.STRICT_GROUPS \
+                    and (row.get("ko") or "").strip():
+                strict.append(row)
+
+    def overflowing(candidate: list[str]) -> list[dict]:
+        """이 배치로 실제 인코딩해서 자리를 넘는 줄을 고른다."""
+        if not strict:
+            return []
+        with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False,
+                                         encoding="utf-8") as handle:
+            json.dump({"chars": candidate, "single_byte_limit": SINGLE},
+                      handle, ensure_ascii=False)
+            probe = Path(handle.name)
+        try:
+            glyphs, bank1, _ = PD.korean_map(probe)
+        finally:
+            probe.unlink(missing_ok=True)
+        bad = []
+        for row in strict:
             try:
                 room = len(GT.encode(row.get("ja", ""), japanese, None))
+                if len(GT.encode(row["ko"], glyphs, bank1)) > room:
+                    bad.append(row)
             except Exception:                                # noqa: BLE001
                 continue
-            if room - len(ko) >= 2:                          # 여유가 넉넉하다
-                continue
-            for char in ko:
-                if char not in keyboard:
-                    keyboard.append(char)
+        return bad
+
+    # **뱅크0 에 먼저 넣어야 하는 글자.** 메뉴를 그리는 오버레이는 뱅크 비트를
+    # 안 더하므로 뱅크1(게임 인덱스 >= 882) 글자는 그것만 엉뚱한 평면으로 나온다.
+    # 메뉴만 챙기고 **kernel 을 빠뜨렸다가 `닉`(피닉스의 꼬리)을 비롯한 104자가
+    # 뱅크1 로 가 화면에서 깨졌다.** kernel 은 아이템·마법·어빌리티·전투커맨드·
+    # 전투결과를 같은 오버레이가 그린다 — 같은 제약을 받는다.
     menu_chars: set[str] = set()
     if args.menu.exists():
         for row in json.loads(args.menu.read_text(encoding="utf-8")):
             menu_chars.update(TOKEN.sub("", row.get("ko", "")))
+    only_menu = len(menu_chars)
+    for path in args.also or []:
+        if not path.exists():
+            continue
+        for row in json.loads(path.read_text(encoding="utf-8")):
+            menu_chars.update(TOKEN.sub("", row.get("ko", "") or ""))
+    print(f"뱅크0 우선 {len(menu_chars)}종 (메뉴 {only_menu} + kernel 등)")
+
     chars = build(tally, pins, keyboard, menu_chars)
+    for _ in range(8):
+        bad = overflowing(chars)
+        if not bad:
+            break
+        added = 0
+        for row in bad:
+            for char in TOKEN.sub("", row["ko"]):
+                if char.strip() and char not in keyboard:
+                    keyboard.append(char)
+                    added += 1
+        print(f"  고정폭 {len(bad)}줄이 넘쳐 음절 {added}자를 1바이트 구간에 못 박고 다시 만든다")
+        if not added:
+            print("  **더 못 박을 음절이 없다 — 번역을 줄여야 한다**", file=sys.stderr)
+            break
+        chars = build(tally, pins, keyboard, menu_chars)
 
     print(f"못 박은 자리 {len(pins)}칸  이름 음절 {len(keyboard)}자")
     print(f"배치 {len(chars)}자 / {SLOTS}칸")
@@ -282,7 +328,7 @@ def main() -> int:
     if stray:
         print(f"**메뉴 글자가 뱅크1 에 있다**: {''.join(stray)}", file=sys.stderr)
         return 1
-    print(f"메뉴가 쓰는 {len(menu_chars)}종이 모두 뱅크0 안에 있다")
+    print(f"뱅크0 우선 {len(menu_chars)}종이 모두 뱅크0 안에 있다")
 
     if args.measure:
         print("\n--measure 라 쓰지 않았다")
