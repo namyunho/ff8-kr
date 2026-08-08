@@ -232,7 +232,9 @@ TOPICS = {
                "캐릭터 이름**(젤·어바인·키스티스·셀피·사이퍼·이데아·라그나·키로스·워드). "
                "한 행에 초벌(ko_draft)·축약문(ko_short)·안전 슬롯이 함께 있고, "
                "**축약이 있으면 축약이 나간다**",
-               ["./대사편집기.command 로 자리보다 넘치는 것을 줄인다",
+               ["build_layout_all.py --relieve 0.5 로 **배치가 덜 수 있는 만큼 먼저 던다** "
+                "(사람이 줄이기 전에 한다 — 배치를 바꾸면 초과가 다시 계산된다)",
+                "./대사편집기.command 로 남은 것을 줄인다",
                 "python3 scripts/text_rows.py --check 로 스키마 검산",
                 "build_layout_all.py 로 음절 반영", "정본 갱신",
                 "tower.py --stage kernel"]),

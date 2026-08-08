@@ -208,6 +208,11 @@ def main() -> int:
                         help="함께 셀 번역 JSON (기본: kernel)")
     parser.add_argument("--measure", action="store_true",
                         help="현재 배치와 견주기만 하고 쓰지 않는다")
+    # kernel 자리 초과를 배치로 더는 예산. 본문 바이트가 이 %% 이상 늘면 멈춘다.
+    parser.add_argument("--relieve", type=float, default=0.0,
+                        help="kernel 초과를 덜려고 음절을 1바이트 구간으로 "
+                             "올린다. 본문이 이 %%까지 느는 것을 허용한다 "
+                             "(0이면 안 한다)")
     args = parser.parse_args()
 
     japanese = GT.GlyphMap.load()
@@ -299,6 +304,111 @@ def main() -> int:
             print("  **더 못 박을 음절이 없다 — 번역을 줄여야 한다**", file=sys.stderr)
             break
         chars = build(tally, pins, keyboard, menu_chars)
+
+    # **kernel 자리 초과를 배치로 던다.**
+    #
+    # kernel 문자열은 원래 자리 바이트를 못 넘는다(절대 오프셋 234개가 가리킨다).
+    # 넘치는 줄의 원인은 문장 길이보다 **음절 값**이다 — `헤이스트`가 5바이트인
+    # 것은 `헤`가 2바이트 구간에 있어서다. 음절 하나를 1바이트 구간으로 올리면
+    # 그 음절을 쓰는 줄이 통째로 들어가기도 한다.
+    #
+    # 대가는 밀려나는 필드 음절의 바이트다. 그래서 **예산을 두고** 탐욕적으로
+    # 고르되, 어림하지 말고 매번 다시 배치해서 `cost()` 로 실측한다.
+    if args.relieve > 0:
+        import insert_kernel_text as IK
+        import text_measure as TM
+        import text_rows as TR
+
+        kernel_rows = []
+        for path in args.also or []:
+            if not path.exists():
+                continue
+            for row in json.loads(path.read_text(encoding="utf-8")):
+                text = IK.strip_name(TR.effective(row)).strip()
+                if text and row.get("slot_bytes") is not None:
+                    kernel_rows.append((text, row["slot_bytes"]))
+
+        def kernel_over(candidate: list[str]) -> list[dict]:
+            """이 배치로 실제 인코딩해서 자리를 넘는 kernel 줄과 그 음절.
+
+            **어느 음절이 2바이트인가를 인덱스로 넘겨짚지 않는다.** 한 번
+            그렇게 했다가 배치의 빈칸 채움 문자(`" "`)를 2바이트 음절로 세어
+            「공백을 올리면 284줄이 해소된다」는 헛것을 봤다. 조각내기는
+            `text_measure` 가 인코더를 그대로 불러서 한다.
+            """
+            with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False,
+                                             encoding="utf-8") as handle:
+                json.dump({"chars": candidate, "single_byte_limit": SINGLE},
+                          handle, ensure_ascii=False)
+                probe = Path(handle.name)
+            try:
+                maps = TM.load_maps(probe)
+            finally:
+                probe.unlink(missing_ok=True)
+            bad = []
+            for text, room in kernel_rows:
+                used = TM.encoded_length(text, maps)
+                if used is None or used <= room:
+                    continue
+                bad.append({"need": used - room, "two": collections.Counter(
+                    span.text for span in TM.spans(text, maps)
+                    if span.kind == TM.TWO)})
+            return bad
+
+        # **고르는 근거도 예측이 아니라 실측이다.** 「이 음절을 쓰는 줄이 몇
+        # 개인가」로 고르면 틀린다 — 올린 음절이 1바이트 자리를 차지하면 대신
+        # **밀려나는 음절이 있고, 그것이 멀쩡하던 줄을 새로 넘치게 한다.**
+        # `'용'` 을 올렸더니 397줄로 줄어들 것이 428줄로 늘었다. 그래서 후보를
+        # 몇 개만 추린 뒤 각각 실제로 배치해서 넘치는 줄을 다시 센다.
+        PROBES = 15
+        base, _ = cost(tally, chars)
+        budget = int(base * args.relieve / 100)
+        over = kernel_over(chars)
+        start = len(over)
+        print(f"kernel 초과 덜기: {start}줄에서 시작, "
+              f"본문 예산 {budget:+,}바이트 ({args.relieve}%)")
+        spent = 0
+        stop = "더 나아지는 음절이 없다"
+        for _ in range(64):
+            if not over:
+                break
+            # 혼자 올려서 그 줄을 통째로 들여보내는 음절만 후보로 본다
+            gain = collections.Counter()
+            for row in over:
+                for char, n in row["two"].items():
+                    if char not in keyboard and n >= row["need"]:
+                        gain[char] += 1
+            chosen, probed, cramped = None, 0, False
+            for char, _predicted in gain.most_common():
+                if probed >= PROBES:
+                    break
+                try:
+                    trial = build(tally, pins, keyboard + [char], menu_chars)
+                except ValueError:                # 1바이트 빈자리가 동났다
+                    cramped = True
+                    break
+                paid = cost(tally, trial)[0] - base
+                if paid > budget:
+                    continue
+                probed += 1
+                after = kernel_over(trial)
+                if len(after) < len(over) and (chosen is None
+                                               or len(after) < len(chosen[2])):
+                    chosen = (char, trial, after, paid)
+            if chosen is None:
+                if cramped:
+                    stop = "1바이트 구간에 빈자리가 없다"
+                elif not probed:
+                    stop = f"예산 {budget:,}바이트를 다 썼다"
+                break
+            char, chars, over, spent = chosen
+            keyboard.append(char)
+            print(f"  '{char}' 올려 초과 {len(over)}줄 "
+                  f"(본문 {spent:+,}바이트)")
+        else:
+            stop = "64번을 다 돌았다 — 더 돌리려면 상한을 올린다"
+        print(f"kernel 초과 {start} -> {len(over)}줄 "
+              f"({start - len(over)}줄 해소, 본문 {spent:+,}바이트) — {stop}")
 
     print(f"못 박은 자리 {len(pins)}칸  이름 음절 {len(keyboard)}자")
     print(f"배치 {len(chars)}자 / {SLOTS}칸")
