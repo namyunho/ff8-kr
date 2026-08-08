@@ -86,10 +86,11 @@ STAGES: list[Stage] = [
           ["scripts/patch_battle_font.py"],
           "TOC#26 안의 TIM 을 갈아 끼우고 다시 압축한다", writes_disc=True),
     Stage("kernel", "kernel 텍스트",
-          ["scripts/insert_kernel_text.py"],
+          ["scripts/insert_kernel_text.py", "--repack", "all"],
           "아이템·마법·어빌리티·전투커맨드·결과창과 **이름을 못 바꾸는 캐릭터 이름**. "
-          "제자리 삽입. **자리보다 긴 번역은 안 넣고 세어서 알려 준다**. "
-          "--repack 은 실기에서 깨졌다 — 문자열이 절대 위치로 가리켜진다",
+          "글자 섹션을 다시 짜면서 **오프셋 표까지 함께 고친다**(--repack). "
+          "표는 kernel_offset_tables 가 찾고, kernel_repack 이 항등·밀기 검산을 "
+          "통과한 뒤에만 쓴다. 섹션 크기·파일 크기는 그대로다",
           writes_disc=True),
     Stage("field", "필드 대사",
           ["scripts/patch_disc.py", "--apply", "work/apply-plan.json"],
@@ -119,8 +120,8 @@ CONSUMERS = [
     ("전투 이름 글꼴", "patch_battle_font.py", True,
      "TOC#26 안의 TIM. **칸 번호가 곧 글리프 인덱스**라 배치와 직접 묶인다"),
     ("kernel — 아이템·마법·GF어빌리티·전투커맨드·결과창·못 바꾸는 캐릭터 이름",
-     "insert_kernel_text.py", True,
-     "제자리 삽입. **자리보다 긴 번역은 안 넣고 세어서 알려 준다** — "
+     "insert_kernel_text.py --repack all", True,
+     "글자 섹션을 다시 짜고 **오프셋 표를 함께 고친다** — "
      "남은 수는 --status 가 자료에서 직접 잰다"),
     ("튜토리얼", None, False,
      "번역 꾸러미만 있다(work/tutorial-bundle). **삽입 도구가 없다**"),
@@ -308,31 +309,41 @@ def _kernel_pending() -> str:
 
 
 def kernel_pending() -> str:
-    """kernel 초과 현황을 그때그때 잰다."""
+    """kernel 이 **실제로 몇 건 들어가는지** 그때그때 잰다.
+
+    한때 `text_editor.py --check` 의 「초과 N건」을 그대로 옮겨 적었다. 그
+    숫자는 **문자열 하나하나가 원래 자리에 들어가는가**를 재는 것인데,
+    `--repack` 이 들어오면서 제약이 **섹션 단위**로 바뀌었다. 그래서 둘이
+    갈라졌다(삽입기 0건 vs 편집기 23건). **삽입기에게 직접 묻는다.**
+    """
     done = subprocess.run(
-        [sys.executable, str(ROOT / "scripts" / "text_editor.py"), "--check"],
+        [sys.executable, str(ROOT / "scripts" / "insert_kernel_text.py"),
+         "--dry-run", "--repack", "all"],
         capture_output=True, text=True, cwd=ROOT)
-    got = {}
+    put = long = short = None
     for line in done.stdout.splitlines():
-        parts = line.strip().rsplit(None, 1)
-        if len(parts) == 2:
-            got[parts[0]] = parts[1]
-    if not got:
-        return "text_editor.py --check 가 답하지 않았다"
-    return (f"전체 {got.get('전체','?')} · 축약함 {got.get('축약함','?')} · "
-            f"**초과 {got.get('초과','?')}건 {got.get('초과 바이트','?')}B** · "
-            f"뱅크1 {got.get('뱅크1 사용','?')} · 인코딩불가 {got.get('인코딩 불가','?')}"
-            "\n             **./대사편집기.command 로 줄인다** "
+        if "넣은 문자열" in line:
+            put = line.split()[-1]
+        elif "자리보다 길어 못 넣은 것" in line:
+            long = line.split()[5].rstrip("건,")
+        elif "모자라 제자리로 되돌림" in line:
+            short = (short or 0) + 1
+    if put is None:
+        return "insert_kernel_text.py 가 답하지 않았다"
+    tail = ("" if not short else
+            f"\n             섹션 {short}개는 자리가 모자라 제자리 삽입으로 되돌았다")
+    return (f"넣은 문자열 **{put}** · 못 넣은 것 **{long}건**" + tail +
+            "\n             자리가 모자라면 ./대사편집기.command 로 줄인다 "
             "(2바이트 음절을 싼 것으로 바꾸는 쪽이 먼저다)")
 
 
 PENDING = [
     ("kernel 자리 넘치는 것", "work/text/kernel-text-ko.json", kernel_pending),
-    ("kernel 다시 짜기 실기 확인", "scripts/insert_kernel_text.py --repack",
-     lambda: "글자 섹션 25개를 다시 짜서 넣었다(초과 0건). **게임에서 아직 안 봤다** — "
-             "아이템·마법·어빌리티 이름과 설명, 전투 결과창, 그리고 **키스티스 등 "
-             "이름을 못 바꾸는 캐릭터의 이름**이 정상인지 봐야 한다. "
-             "이름이 공백이 되면 절대 오프셋 참조가 있다는 뜻이니 --repack 을 뺀다"),
+    ("kernel 다시 짜기 실기 확인", "scripts/kernel_repack.py --selftest",
+     lambda: "오프셋 표 42벌을 찾아 자리를 옮기며 표까지 고친다(문자열 1,320/1,320). "
+             "항등 검산·밀기 검산 통과, 표를 따라가 1,320건 전부 뜻대로 나온다. "
+             "**게임에서는 아직 안 봤다** — 아이템·마법·어빌리티, 전투 결과창, "
+             "그리고 키스티스 등 이름을 못 바꾸는 캐릭터의 이름을 봐야 한다"),
     ("튜토리얼 삽입", "work/tutorial-bundle/",
      lambda: "번역 꾸러미만 있다 · **삽입 도구가 없다**"),
     ("전투 이름 글꼴 출처", "work/analysis/battle-font/",

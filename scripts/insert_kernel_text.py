@@ -124,41 +124,14 @@ def split(body: bytes) -> tuple[list[bytes], int]:
     return parts, max(0, pad - 1)      # 마지막 문자열의 NUL 은 패딩이 아니다
 
 
-def repack(body: bytes, base: int, korean: dict[int, str],
-           glyphs, bank1) -> tuple[bytes | None, int, int, int]:
-    """섹션 하나를 **처음부터 다시 짠다.** 자리를 옮겨도 되는 경우다.
-
-    `(새 몸통 또는 None, 바꾼 건수, 실패 건수, 모자란 바이트)`.
-
-    ## 왜 옮겨도 되는가
-
-    게임은 **N번째 문자열을 널을 N번 세어** 찾는다. 글자를 담은 섹션 25개가
-    예외 없이 「섹션 시작부터 널로 이어 붙인 순열」이고, 번역 자료가 아는
-    문자열 1,320개의 자리가 그 순열과 정확히 일치한다. 그러면 지켜야 할 것은
-    **개수와 차례**지 절대 위치가 아니다 — 길이는 바꿔도 된다.
-
-    ## 그래도 지키는 것
-
-    - **섹션 크기**가 그대로다 (뒤 섹션도 파일 크기도 안 건드린다)
-    - **널 개수**가 그대로다 (세는 코드가 안 밀린다)
-    - **차례**가 그대로다
-    - 꼬리 정렬 패딩 길이가 그대로다
-
-    남는 자리는 **마지막 문자열 뒤에 공백(`0x5f`)** 으로 붙인다. 널로 메우면
-    개수가 늘고, 마지막 널 뒤에 두면 없던 문자열이 하나 생긴다.
-
-    ## 위험
-
-    구조체 섹션이 문자열을 **절대 오프셋으로 가리키는 곳이 있으면** 그것만
-    어긋난다(예전에 캐릭터 이름이 공백이 된 것이 이 증상이다). 참조가
-    규칙적인 표를 이루지 않아 자료만으로는 못 가린다 — 그래서 `--repack` 은
-    **섹션을 하나씩 켤 수 있게** 해 두었다. 실기로 가린다.
-    """
-    parts, pad = split(body)
+def encode_section(plan, index: int, korean: dict[int, str],
+                   glyphs, bank1) -> tuple[list[bytes], int, int]:
+    """섹션 하나의 문자열을 번역으로 갈아 끼운 목록. `(조각들, 바꾼 수, 실패 수)`."""
+    base = plan.secs[index][0]
     fresh: list[bytes] = []
     changed = failed = 0
     at = 0
-    for piece in parts:
+    for piece in plan.strings[index]:
         text = strip_name(korean.get(base + at, ""))
         use = piece
         if piece and text:
@@ -169,21 +142,7 @@ def repack(body: bytes, base: int, korean: dict[int, str],
                 failed += 1
         fresh.append(use)
         at += len(piece) + 1
-
-    budget = len(body) - pad
-    need = sum(len(p) + 1 for p in fresh)
-    if need > budget:
-        return None, 0, failed, need - budget
-
-    fresh[-1] += bytes([SPACE]) * (budget - need)      # 남는 자리는 끝에 공백으로
-    out = b"".join(p + b"\x00" for p in fresh) + b"\x00" * pad
-
-    # 지켜야 할 것을 그 자리에서 검산한다
-    assert len(out) == len(body), "섹션 크기가 바뀌었다"
-    assert out.count(0) == body.count(0), "널 개수가 바뀌었다"
-    back, back_pad = split(out)
-    assert len(back) == len(parts) and back_pad == pad, "문자열 개수·차례가 바뀌었다"
-    return out, changed, failed, 0
+    return fresh, changed, failed
 
 
 def main() -> int:
@@ -219,19 +178,40 @@ def main() -> int:
     total_changed = total_failed = total_long = 0
     per_section: list[str] = []
     repacked: list[str] = []
+
+    # **다시 짜기는 표를 함께 고친다.** 자리를 옮기면 그것을 가리키는 u16 이
+    # 어긋나므로, `kernel_repack` 이 표까지 새 값으로 쓴다. 표를 못 찾은
+    # 섹션은 애초에 목록에 없다 (`kernel_offset_tables` 가 가려낸다).
+    if want:
+        import kernel_repack as KR
+        plan = KR.survey()
+        replace = {}
+        for index in sorted(set(plan.tables) & want):
+            fresh, changed, failed = encode_section(plan, index, korean, glyphs, bank1)
+            replace[index] = fresh
+            total_failed += failed
+        merged, refused = KR.apply(plan, replace)
+        for index in sorted(replace):
+            if index in refused:
+                a, b = plan.secs[index]
+                need = sum(len(p) + 1 for p in replace[index])
+                repacked.append(f"#{index}  **{need - (b - a - plan.pad[index])}B "
+                                f"모자라 제자리로 되돌림**")
+            else:
+                total_changed += sum(1 for p in replace[index] if p)
+                repacked.append(f"#{index}  다시 짬  넣음 {len(replace[index]):>3}")
+        raw = bytearray(merged)
+        want -= set(refused)
+        skip = set(replace) - set(refused)
+    else:
+        skip = set()
+
     for index, (start, end) in enumerate(sections(bytes(raw))):
+        if index in skip:
+            continue
         body = bytes(raw[start:end])
         if not body:
             continue
-        if index in want:
-            fresh, changed, failed, short = repack(body, start, korean, glyphs, bank1)
-            if fresh is not None:
-                raw[start:end] = fresh
-                total_changed += changed
-                total_failed += failed
-                repacked.append(f"#{index}  다시 짬  넣음 {changed:>3}")
-                continue
-            repacked.append(f"#{index}  **{short}B 모자라 제자리로 되돌림**")
         fresh, changed, failed, toolong = rebuild(body, start, korean, glyphs, bank1)
         if not (changed or toolong or failed):
             continue
@@ -264,21 +244,26 @@ def main() -> int:
         print("  **쓴 대로 안 읽힌다**", file=sys.stderr)
         return 1
 
-    # 다시 짠 섹션은 **널 개수와 차례**가 목숨이다. 원본과 맞대어 검산한다.
-    origin = PD.read_user(FT.BIN_PATH, lba, size)
-    for index, (start, end) in enumerate(sections(back)):
-        if index not in want:
-            continue
-        was, now = origin[start:end], back[start:end]
-        a, apad = split(was)
-        b, bpad = split(now)
-        if (len(was), was.count(0), len(a), apad) != (len(now), now.count(0), len(b), bpad):
-            print(f"  **#{index} 이 불변식을 깼다** — "
-                  f"크기 {len(was)}->{len(now)} 널 {was.count(0)}->{now.count(0)} "
-                  f"문자열 {len(a)}->{len(b)} 패딩 {apad}->{bpad}", file=sys.stderr)
-            return 1
+    # **게임이 하듯 표를 따라가 확인한다.** 예전엔 크기·널 개수·차례만 봤는데
+    # 그건 내가 내 모델에서 뽑은 불변식이라, 모델이 틀리면 검사도 같이 틀렸다.
+    # 표를 역참조하는 것은 모델이 아니라 게임의 동작을 흉내 내는 것이다.
     if want:
-        print(f"  다시 짠 섹션 {len(want)}개: 크기·널 개수·문자열 차례가 원본과 같다")
+        wrong = 0
+        for index in sorted(want):
+            got = KR.deref(plan, back, index)
+            for k, (piece, expect) in enumerate(zip(got, replace[index])):
+                if piece.rstrip(bytes([SPACE])) != expect.rstrip(bytes([SPACE])):
+                    wrong += 1
+                    if wrong <= 3:
+                        print(f"  **#{index} {k}번째가 어긋난다** — "
+                              f"표를 따라가니 {piece.hex()} 인데 {expect.hex()} 여야 한다",
+                              file=sys.stderr)
+        if wrong:
+            print(f"  **표를 따라간 결과 {wrong}건이 어긋난다**", file=sys.stderr)
+            return 1
+        total = sum(len(replace[i]) for i in want)
+        print(f"  다시 짠 섹션 {len(want)}개: "
+              f"표를 따라가 {total:,}건 전부 뜻대로 나온다")
     print(f"\n  썼다. 되읽기 일치 → {PD.PATCH_BIN}")
     return 0
 
