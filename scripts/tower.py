@@ -85,6 +85,11 @@ STAGES: list[Stage] = [
     Stage("battlefont", "전투 이름 글꼴",
           ["scripts/patch_battle_font.py"],
           "TOC#26 안의 TIM 을 갈아 끼우고 다시 압축한다", writes_disc=True),
+    Stage("kernel", "kernel 텍스트",
+          ["scripts/insert_kernel_text.py"],
+          "아이템·마법·어빌리티·전투커맨드·결과창과 **이름을 못 바꾸는 캐릭터 이름**. "
+          "원래 크기에 들어가는 섹션만 제자리로 쓴다 — 넘치는 것은 목록으로 알려 준다",
+          writes_disc=True),
     Stage("field", "필드 대사",
           ["scripts/patch_disc.py", "--apply", "work/apply-plan.json"],
           "원본에서 읽어 사본에 쓴다(멱등). 가장 오래 걸린다", writes_disc=True),
@@ -112,8 +117,9 @@ CONSUMERS = [
      "기본 이름 21칸 + 글자판 36칸 (메뉴에 실려 들어간다)"),
     ("전투 이름 글꼴", "patch_battle_font.py", True,
      "TOC#26 안의 TIM. **칸 번호가 곧 글리프 인덱스**라 배치와 직접 묶인다"),
-    ("kernel — 아이템·마법·GF어빌리티·전투커맨드·결과창", None, False,
-     "번역 1,320건 완료(work/text/kernel-text-ko.json). **삽입 도구가 없다**"),
+    ("kernel — 아이템·마법·GF어빌리티·전투커맨드·결과창·못 바꾸는 캐릭터 이름",
+     "insert_kernel_text.py", True,
+     "681건 제자리 삽입 완료. **10개 섹션은 번역이 길어 못 넣었다**"),
     ("튜토리얼", None, False,
      "번역 꾸러미만 있다(work/tutorial-bundle). **삽입 도구가 없다**"),
 ]
@@ -255,9 +261,10 @@ def where(topic: str | None) -> int:
 # **아직 화면에 안 들어간 것.** 관제탑이 이것을 알고 있어야 「다 됐다」고
 # 착각하지 않는다. 번역이 끝났다고 들어간 것이 아니다.
 PENDING = [
-    ("kernel 삽입", "work/text/kernel-text-ko.json",
-     "번역 1,320건 완료 · 음절은 배치 v13 에 반영됨 · **디스크에 쓰는 도구가 없다**. "
-     "문자열 풀을 다시 짜면 들어간다(원본 15,965B -> 한국어 16,222B, 섹터 여유 888B)"),
+    ("kernel 나머지 10섹션", "work/text/kernel-text-ko.json",
+     "681/1,320건은 들어갔다. 남은 것은 번역이 원래 자리보다 길다 — "
+     "전투커맨드(#31 +33B) 마법(#32 +180B) 아이템설명(#39 +240B) 등. "
+     "**번역을 줄이거나** 섹션을 옮겨 크기를 키운다(파일 여유 888B)"),
     ("튜토리얼 삽입", "work/tutorial-bundle/",
      "번역 꾸러미만 있다 · **삽입 도구가 없다**"),
     ("전투 이름 글꼴 출처", "work/analysis/battle-font/",
